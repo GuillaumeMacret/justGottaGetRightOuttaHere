@@ -1,0 +1,162 @@
+# Protocols
+
+## Pregame (login and create)
+
+### Give game list (server)
+```JSON
+{
+    Action:"gameList",
+    Games:[
+        Game:{
+            id:[gameId],
+            nbPlayers:[0|1|2|3|4],
+        },
+        OtherGame:{
+            ...
+        }
+    ]
+}
+```
+
+### Create a game (client)
+```JSON
+{
+    Action:"createGame"
+}
+```
+Response from server : Game list
+
+### Ask to join a game (client)
+```JSON
+{
+  Action:"joinGame",
+  GameId:[id]
+}
+```
+Responses to join a game (server)
+```JSON
+{
+  Action:"joinedGame",
+  GameId:[id]
+}
+```
+```JSON
+{
+  Action:"cantJoinGame",
+  GameId:[id],
+  MoreInfo:["gameFull"|"communicationError"|"gameDoesNotExist"|...]
+}
+```
+
+### Ask to change player's role (client)
+
+```JSON
+{
+    Action:"roleChange",
+    RoleId:[id]
+}
+```
+
+Responses from server
+```JSON
+{
+  Action:"roleChange",
+  PlayerId:[id],
+  RoleId:[id]
+}
+```
+```JSON
+{
+  Action:"cantChangeRole",
+  MoreInfo:[...]
+}
+```
+
+### Ask Start game (client)(leader)
+
+```JSON
+{
+    Action:"startGame"
+}
+```
+
+Responses from server
+```JSON
+{
+  Action:"LoadLevel",
+  Level:[[1,0,4,3,1,1,1,..],[...]],
+  Players:[{xPos:0,yPos:0},{xPos:0,yPos:0},{xPos:0,yPos:0},{xPos:0,yPos:0}]
+}
+```
+
+```JSON
+{
+  Action:"cantStartGame",
+  MoreInfo:["Not enough players"|"Dup role"|...]
+}
+```
+
+## Ingame
+
+### Ask for a movement (client)
+
+```JSON
+{
+    Action:"move",
+    Direction:"up|down|left|right"
+}
+```
+
+### Send a player movement (server)
+
+```JSON
+{
+    Action:"move",
+    PosX:[val],
+    PosY:[val],
+    Player:[id]
+}
+```
+
+### Action (player) (if appropriate)
+
+```JSON
+{
+    Action:"action"
+}
+```
+
+Response from server if action allowed (new map status)
+
+```JSON
+{
+    Action:"action",
+    Level:[[1,0,4,3,1,1,1,..],[...]]
+}
+```
+
+### Players wons (server)
+
+```JSON
+{
+    Action:"win"
+}
+```
+
+### Goto next level (client)(leader)
+
+```JSON
+{
+    Action:"nextLevel"
+}
+```
+
+Response from server : load level (see "Ask Start game" response)
+
+### Quit game
+
+TODO
+
+### Restart level
+
+TODO

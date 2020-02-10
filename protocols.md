@@ -24,7 +24,13 @@
     Action:"createGame"
 }
 ```
-Response from server : Game list
+Response from server :
+```JSON
+{
+    MapList: ["level1", "level2", ...]
+}
+```
+
 
 ### Ask to join a game (client)
 ```JSON
@@ -37,7 +43,10 @@ Responses to join a game (server)
 ```JSON
 {
   Action:"joinedGame",
-  GameId:[id]
+  GameId:[id],
+  Players:[id, id, ...],
+  PlayerId: id,
+  Map: "name"
 }
 ```
 ```JSON
@@ -57,7 +66,7 @@ Responses to join a game (server)
 }
 ```
 
-Responses from server
+Responses from server (broadcast)
 ```JSON
 {
   Action:"roleChange",
@@ -65,10 +74,26 @@ Responses from server
   RoleId:[id]
 }
 ```
+OSEF
 ```JSON
 {
   Action:"cantChangeRole",
   MoreInfo:[...]
+}
+```
+
+### Ask Change Map (leader)
+```JSON
+{
+    Action:"changeMap",
+    Map: "name"
+}
+```
+Responses from server
+```JSON
+{
+    Action:"changedMap",
+    Map: "name"
 }
 ```
 

@@ -29,7 +29,7 @@
 
 class Server {
     std::vector<class Game *> _games;
-
+    
     public:
         Server();
 

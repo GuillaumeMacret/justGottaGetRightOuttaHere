@@ -29,6 +29,7 @@
 
 class Server {
     std::vector<class Game *> _games;
+    class TCPConnection TCPConn;
     
     public:
         Server();

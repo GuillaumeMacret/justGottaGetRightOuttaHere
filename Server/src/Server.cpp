@@ -1,6 +1,7 @@
 #include "Server.hpp"
 #include "Globals.hpp"
 #include "Game.hpp"
+#include "TCPConnection.hpp"
 #include <stdio.h>
 
 Server::Server() {}

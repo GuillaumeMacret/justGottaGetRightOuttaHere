@@ -11,23 +11,6 @@
 #define ERROR_NOT_ENOUGH_PLAYERS "notEnoughPlayers"
 #define ERROR_DUPLICATE_ROLE "dupRole"
 
-#define ACTION_GAME_LIST "gameList"
-#define ACTION_CREATE_GAME "createGame"
-#define ACTION_JOIN_GAME "joinGame"
-#define ACTION_JOINED_GAME "joinedGame"
-#define ACTION_CANT_JOIN_GAME "cantJoinGame"
-#define ACTION_CHANGE_ROLE "roleChange"
-#define ACTION_CANT_CHANGE_ROLE "cantChangeRole"
-#define ACTION_CHANGE_MAP "changeMap"
-#define ACTION_START_GAME "startGame"
-#define ACTION_LOAD_LEVEL "loadLevel"
-#define ACTION_CANT_START_GAME "cantStartGame"
-#define ACTION_MOVE "move"
-#define ACTION_ACTION "action"
-#define ACTION_WIN "win"
-#define ACTION_NEXT_LEVEL "nextLevel"
-#define ACTION_LEAVE_GAME "leaveGame"
-
 #define TCP_PORT 1789
 
 class Server
@@ -43,6 +26,19 @@ public:
     ~Server();
 
     void run();
+
+    /* Called after a request from the client */
+    /* TO DO: Methods parameters */
+    void requestGamesList();
+    void requestChangeRole();
+    void requestChangeMap();
+    void requestAction();
+    void requestCreateGame();
+    void requestJoinGame();
+    void requestStartGame();
+    void requestMove();
+    void requestNextLevel();
+    void requestLeaveGame();
 };
 
 #endif

@@ -13,6 +13,29 @@
 #define SEND_ERROR "Error when sending"
 #define MAX_CONNECTION_ERROR "Maximum connection reached"
 
+/* Client actions */
+#define ACTION_CREATE_GAME "createGame"
+#define ACTION_JOIN_GAME "joinGame"
+#define ACTION_START_GAME "startGame"
+#define ACTION_MOVE "move"
+#define ACTION_NEXT_LEVEL "nextLevel"
+#define ACTION_LEAVE_GAME "leaveGame"
+
+/* Server actions */
+#define ACTION_JOINED_GAME "joinedGame"
+#define ACTION_CANT_JOIN_GAME "cantJoinGame"
+#define ACTION_CANT_CHANGE_ROLE "cantChangeRole"
+#define ACTION_LOAD_LEVEL "loadLevel"
+#define ACTION_CANT_START_GAME "cantStartGame"
+#define ACTION_WIN "win"
+
+/* Client & Server actions */
+#define ACTION_GAMES_LIST "gameList"
+#define ACTION_CHANGE_ROLE "roleChange"
+#define ACTION_CHANGE_MAP "changeMap"
+#define ACTION_ACTION "action"
+
+
 #define syserror(x) perror(x)
 #define fatalsyserror(x) syserror(x), exit(1)
 

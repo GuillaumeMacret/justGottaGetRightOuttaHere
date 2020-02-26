@@ -42,3 +42,14 @@ void Server::run()
         }
     }
 }
+
+void Server::requestGamesList() {}
+void Server::requestChangeRole() {}
+void Server::requestChangeMap() {}
+void Server::requestAction() {}
+void Server::requestCreateGame() {}
+void Server::requestJoinGame() {}
+void Server::requestStartGame() {}
+void Server::requestMove() {}
+void Server::requestNextLevel() {}
+void Server::requestLeaveGame() {}

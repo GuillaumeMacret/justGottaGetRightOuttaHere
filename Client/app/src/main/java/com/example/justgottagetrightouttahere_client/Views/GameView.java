@@ -5,24 +5,39 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-
-import androidx.constraintlayout.solver.widgets.Rectangle;
+import android.view.ViewGroup;
 
 import com.example.justgottagetrightouttahere_client.R;
 import com.example.justgottagetrightouttahere_client.model.GameModel;
-import com.example.justgottagetrightouttahere_client.model.TilesSprites;
+import com.example.justgottagetrightouttahere_client.model.Player;
+import com.example.justgottagetrightouttahere_client.model.ResourcesMaps;
 
 import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_SIZE_X;
 import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_SIZE_Y;
-import static com.example.justgottagetrightouttahere_client.Constants.Constants.TILE_SIZE;
+import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_TILE_SIZE;
 
 public class GameView extends View {
     GameModel gameModel;
+    /**The size of a tile in pixels, adapted to screen size**/
+    int renderTileSize = DEFAULT_TILE_SIZE;
+    boolean renderTileSizeCalculated = false;
+
+    public void calculateTileSize(){
+        //TODO FIXME
+        int height = getMeasuredHeight();
+        int width = getRootView().getWidth();
+        int renderTileSize_X = width / gameModel.sizeX;
+        int renderTileSize_Y = height/ gameModel.sizeY;
+
+        renderTileSize = renderTileSize_X < renderTileSize_Y ? renderTileSize_X:renderTileSize_Y;
+        System.err.println(renderTileSize);
+    }
 
     /**
      * Creates the game view without initializing the game model
@@ -30,8 +45,14 @@ public class GameView extends View {
      */
     public GameView(Context context) {
         super(context);
-        TilesSprites.LoadSprites();
+        ResourcesMaps.LoadSprites();
         gameModel = new GameModel(DEFAULT_SIZE_X,DEFAULT_SIZE_Y);
+
+        //FIXME remove this (testing purpose)
+        gameModel.players.add(new Player(0,0,0,0));
+        gameModel.players.add(new Player(1,0,1,1));
+        gameModel.players.add(new Player(0,1,2,2));
+        gameModel.players.add(new Player(1,1,3,3));
     }
 
     /**
@@ -43,34 +64,60 @@ public class GameView extends View {
     public GameView(Context context, int sizeX, int sizeY) {
         super(context);
         gameModel = new GameModel(sizeX,sizeY);
-        TilesSprites.LoadSprites();
+        ResourcesMaps.LoadSprites();
     }
 
+    /**
+     * Draws the game model in the given canvas
+     * @param canvas
+     * **/
     @Override
     public void draw(Canvas canvas){
         super.draw(canvas);
         canvas.drawColor(Color.RED);
+        if(!renderTileSizeCalculated){
+            calculateTileSize();
+        }
+
         drawMatrix(canvas);
+        drawPlayers(canvas);
     }
 
+    /**
+     * Draws the players in the given canvas
+     * @param canvas
+     */
+    private void drawPlayers(Canvas canvas){
+        for(Player p : gameModel.players){
+            System.err.println("Drawing player "+p.id);
+
+            int playerSpriteId = ResourcesMaps.playerSpritesMap.get(p.roleId);
+            drawImage(canvas,p.posX*renderTileSize, p.posY*renderTileSize,p.posX*renderTileSize+renderTileSize,p.posY*renderTileSize+renderTileSize,playerSpriteId);
+        }
+    }
+
+    /**
+     * Draws the tile matrix in the given canvas
+     * @param canvas
+     */
     private void drawMatrix(Canvas canvas){
-        for(int i = 0; i < gameModel.gameMatrix.length;++i){
-            for(int j = 0; j < gameModel.gameMatrix[i].length;++j){
-                int tileId = TilesSprites.tilesSpritesMap.get(gameModel.gameMatrix[i][j]);
-                drawImage(canvas,i*TILE_SIZE,j+TILE_SIZE,i*TILE_SIZE+TILE_SIZE,j*TILE_SIZE+TILE_SIZE, tileId);
+        for(int i = 0; i < gameModel.sizeX;++i){
+            for(int j = 0; j < gameModel.sizeY;++j){
+                System.err.println("Drawing tile");
+
+                int tileSpriteId = ResourcesMaps.tilesSpritesMap.get(gameModel.gameMatrix[i][j]);
+                drawImage(canvas,i*renderTileSize,j*renderTileSize,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize, tileSpriteId);
             }
         }
     }
 
 
 
-    private void drawImage(Canvas canvas,int posX,int posY, int sizeX, int sizeY, int imageRessource){
+    private void drawImage(Canvas canvas,int left,int top, int right, int bot, int imageRessource){
         Paint p = new Paint();
         Bitmap b= BitmapFactory.decodeResource(getResources(), imageRessource);
-        //p.setColor(Color.YELLOW);
-        Rect r = new Rect(posX,posY,sizeX,sizeY);
+        Rect r = new Rect(left,top,right,bot);
         canvas.drawBitmap(b, null, r, p);
-        System.err.println(r);
     }
 
     public boolean onTouchEvent(MotionEvent event){

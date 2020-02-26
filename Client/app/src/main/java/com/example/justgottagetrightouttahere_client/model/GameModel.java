@@ -8,9 +8,9 @@ import java.util.List;
  * This is NOT including the lobby
  */
 public class GameModel {
-    int sizeX, sizeY;
+    public int sizeX, sizeY;
     public int [][] gameMatrix;
-    List<Player> players;
+    public List<Player> players;
 
     /**
      * Creates the game with its matrix according to size given in parameter
@@ -22,9 +22,5 @@ public class GameModel {
         this.sizeY = sizeY;
         gameMatrix = new int[sizeX][sizeY];
         players = new ArrayList<>();
-    }
-
-    public void addPlayer(){
-        players.add(new Player());
     }
 }

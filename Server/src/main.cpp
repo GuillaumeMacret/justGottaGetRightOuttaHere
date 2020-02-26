@@ -1,10 +1,11 @@
 #include <iostream>
-#include "Game.hpp"
+#include "Server.hpp"
 
 using namespace std;
 
 int main()
 {
-    //Game *game;
+    Server s;
+    s.run();
     return 0;
 }

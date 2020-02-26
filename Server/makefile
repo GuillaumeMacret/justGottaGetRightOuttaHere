@@ -22,11 +22,10 @@ CDEBUG = -g
 OS := $(shell uname)
 ifeq ($(OS), Linux)
     INC := -I$(HDR_DIR)
-    LIBS := -L/usr/lib/x86_64-linux-gnu/ -lSDL2 -lSDL2_ttf
+    LIBS := -L/usr/lib/x86_64-linux-gnu/ -lpthread
 else ifeq ($(OS), Darwin)
-    INC := -I$(HDR_DIR) -I/Library/Frameworks/SDL2.framework/Headers/\
-           -I/Library/Frameworks/SDL2_ttf.framework/Headers -F/Library/Frameworks/
-    LIBS := -F /Library/Frameworks -framework SDL2 -framework SDL2_ttf
+    INC := -I$(HDR_DIR) 
+    LIBS := -F /Library/Frameworks -lpthread
 endif
 CFLAGS = -std=c++11 -Wall -O $(CDEBUG) $(INC)
 LDFLAGS = -g

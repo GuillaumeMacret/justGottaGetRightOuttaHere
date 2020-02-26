@@ -2,6 +2,7 @@
 #define _SERVER_H_
 
 #include <vector>
+#include "TCPConnection.hpp"
 
 #define ERROR_GAME_FULL "gameFull"
 #define ERROR_COMMUNICATION "communicationError"
@@ -27,14 +28,21 @@
 #define ACTION_NEXT_LEVEL "nextLevel"
 #define ACTION_LEAVE_GAME "leaveGame"
 
-class Server {
-    std::vector<class Game *> _games;
-    class TCPConnection TCPConn;
-    
-    public:
-        Server();
+#define TCP_PORT 1789
 
-        ~Server();
+class Server
+{
+    std::vector<class Game *> _games;
+    TCPConnection TCPConn;
+
+private:
+    void runPlayer(int fd);
+
+public:
+    Server();
+    ~Server();
+
+    void run();
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <stdlib.h>
+#include <string>
 #include <string.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -78,21 +79,21 @@ int TCPConnection::server_accept()
 /**
 read incoming message from the tcp server
 */
-ssize_t TCPConnection::server_receive(int fd, char *buf, size_t size)
+std::string TCPConnection::server_receive(int fd)
 {
-  ssize_t len;
-  if ((len = recv(fd, buf, size, 0)) == ERR)
+  char buf[BUFFER_SIZE];
+  if ((recv(fd, buf, BUFFER_SIZE, 0)) == ERR)
   {
     close(fd);
     syserror(RECEIVE_ERROR);
   }
-  return len;
+  return std::move(std::string(buf));
 }
 
 /**
 Send message to the tcp client
 */
-int TCPConnection::server_send(int fd, char *msg)
+int TCPConnection::server_send(int fd, const char *msg)
 {
   if (send(fd, msg, strlen(msg), MSG_NOSIGNAL) == ERR)
   {

@@ -24,8 +24,8 @@ public:
 	void server_bind(int port);
 	void server_listen();
 	int server_accept();
-	ssize_t server_receive(int fd, char *buf, size_t size);
-	int server_send(int fd, char *msg);
+	std::string server_receive(int fd);
+	int server_send(int fd, const char *msg);
 };
 
 #endif

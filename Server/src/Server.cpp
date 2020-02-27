@@ -2,6 +2,7 @@
 #include "Globals.hpp"
 #include "Game.hpp"
 #include "TCPConnection.hpp"
+#include "Parser.hpp"
 #include <iostream>
 #include <thread>
 
@@ -20,8 +21,18 @@ void Server::runPlayer(int fd)
 {
     for (;;)
     {
-        std::cout << "New player : " << fd << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::string req = TCPConn.server_receive(fd);
+        std::cout << req << std::endl;
+        // std::this_thread::sleep_for(std::chrono::seconds(3));
+        if (Parser::getInstance().getAction(req, *this))
+        {
+            std::cerr << "Error" << std::endl;
+        }
+        else
+        {
+            std::string o = "OK";
+            TCPConn.server_send(fd, o.c_str());
+        }
     }
 }
 

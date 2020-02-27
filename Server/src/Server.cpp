@@ -44,12 +44,12 @@ void Server::run()
 }
 
 void Server::requestGamesList() {}
-void Server::requestChangeRole() {}
-void Server::requestChangeMap() {}
+void Server::requestChangeRole(int roleID) {}
+void Server::requestChangeMap(std::string mapName) {}
 void Server::requestAction() {}
 void Server::requestCreateGame() {}
-void Server::requestJoinGame() {}
+void Server::requestJoinGame(int gameID) {}
 void Server::requestStartGame() {}
-void Server::requestMove() {}
+void Server::requestMove(std::string moveDir) {}
 void Server::requestNextLevel() {}
 void Server::requestLeaveGame() {}

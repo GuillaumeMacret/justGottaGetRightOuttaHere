@@ -2,6 +2,7 @@
 #define _SERVER_H_
 
 #include <vector>
+#include <string>
 #include "TCPConnection.hpp"
 
 #define ERROR_GAME_FULL "gameFull"
@@ -28,15 +29,14 @@ public:
     void run();
 
     /* Called after a request from the client */
-    /* TO DO: Methods parameters */
     void requestGamesList();
-    void requestChangeRole();
-    void requestChangeMap();
+    void requestChangeRole(int roleID);
+    void requestChangeMap(std::string mapName);
     void requestAction();
     void requestCreateGame();
-    void requestJoinGame();
+    void requestJoinGame(int gameID);
     void requestStartGame();
-    void requestMove();
+    void requestMove(std::string moveDir);
     void requestNextLevel();
     void requestLeaveGame();
 };

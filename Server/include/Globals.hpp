@@ -35,7 +35,6 @@
 #define ACTION_CHANGE_MAP "changeMap"
 #define ACTION_ACTION "action"
 
-
 #define syserror(x) perror(x)
 #define fatalsyserror(x) syserror(x), exit(1)
 

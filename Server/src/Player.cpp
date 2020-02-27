@@ -8,7 +8,11 @@ int Player::getPosX() { return _posX; }
 
 int Player::getPosY() { return _posY; }
 
-void Player::setPos(int posX, int posY) { _posX = posX; _posY = posY; }
+void Player::setPos(int posX, int posY)
+{
+    _posX = posX;
+    _posY = posY;
+}
 
 int Player::getRole() { return _role; }
 

@@ -2,6 +2,7 @@
 #define SERVERTCP_H
 
 #include <netinet/in.h>
+#include <string>
 
 #define MAX_CONNECTION_TCP 256
 
@@ -15,6 +16,7 @@ class TCPConnection
 
 public:
 	int new_fd[MAX_CONNECTION_TCP];
+	std::string answers[MAX_CONNECTION_TCP];
 	struct sockaddr_in cli[MAX_CONNECTION_TCP];
 
 public:
@@ -24,8 +26,8 @@ public:
 	void server_bind(int port);
 	void server_listen();
 	int server_accept();
-	std::string server_receive(int fd);
-	int server_send(int fd, const char *msg);
+	std::string server_receive(int index);
+	int server_send(int index);
 };
 
 #endif

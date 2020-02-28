@@ -79,10 +79,10 @@ int TCPConnection::server_accept()
 /**
 read incoming message from the tcp server
 */
-std::string TCPConnection::server_receive(int fd)
+std::string TCPConnection::server_receive(int index)
 {
   char buf[BUFFER_SIZE];
-  if ((recv(fd, buf, BUFFER_SIZE, 0)) == ERR)
+  if ((recv(new_fd[index], buf, BUFFER_SIZE, 0)) == ERR)
   {
     close(fd);
     syserror(RECEIVE_ERROR);
@@ -93,9 +93,9 @@ std::string TCPConnection::server_receive(int fd)
 /**
 Send message to the tcp client
 */
-int TCPConnection::server_send(int fd, const char *msg)
+int TCPConnection::server_send(int index)
 {
-  if (send(fd, msg, strlen(msg), MSG_NOSIGNAL) == ERR)
+  if (send(new_fd[index], answers[index].c_str(), answers[index].size(), MSG_NOSIGNAL) == ERR)
   {
     close(fd);
     syserror(SEND_ERROR);

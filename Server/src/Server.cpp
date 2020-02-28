@@ -1,7 +1,7 @@
+#include "TCPConnection.hpp"
 #include "Server.hpp"
 #include "Globals.hpp"
 #include "Game.hpp"
-#include "TCPConnection.hpp"
 #include "Parser.hpp"
 #include <iostream>
 #include <thread>
@@ -17,21 +17,25 @@ Server::~Server()
         delete g;
 }
 
-void Server::runPlayer(int fd)
+void Server::runPlayer(int index)
 {
     for (;;)
     {
-        std::string req = TCPConn.server_receive(fd);
+        std::string req = TCPConn.server_receive(index);
         std::cout << req << std::endl;
         // std::this_thread::sleep_for(std::chrono::seconds(3));
-        if (Parser::getInstance().getAction(req, *this))
+
+        std::string answer;
+        if (Parser::getInstance().getAction(req, *this, index) != 0)
         {
-            std::cerr << "Error" << std::endl;
+            TCPConn.answers[index] = "Error";
         }
-        else
+
+        if (TCPConn.server_send(index) == ERR)
         {
-            std::string o = "OK";
-            TCPConn.server_send(fd, o.c_str());
+            //if player in game remove him
+
+            return;
         }
     }
 }
@@ -47,20 +51,20 @@ void Server::run()
             printf("tcp connection from %d port : %d\n",
                    TCPConn.cli[cliNum].sin_addr.s_addr,
                    TCPConn.cli[cliNum].sin_port);
-            std::thread t(&Server::runPlayer, this, TCPConn.new_fd[cliNum]);
+            std::thread t(&Server::runPlayer, this, cliNum);
             t.detach();
             i++;
         }
     }
 }
 
-void Server::requestGamesList() {}
-void Server::requestChangeRole(int roleID) {}
-void Server::requestChangeMap(std::string mapName) {}
-void Server::requestAction() {}
-void Server::requestCreateGame() {}
-void Server::requestJoinGame(int gameID) {}
-void Server::requestStartGame() {}
-void Server::requestMove(std::string moveDir) {}
-void Server::requestNextLevel() {}
-void Server::requestLeaveGame() {}
+void Server::requestGamesList(int userIndex) { TCPConn.answers[userIndex] = "OK"; }
+void Server::requestChangeRole(int userIndex, int roleID) { TCPConn.answers[userIndex] = "OK"; }
+void Server::requestChangeMap(int userIndex, std::string mapName) { TCPConn.answers[userIndex] = "OK"; }
+void Server::requestAction(int userIndex) { TCPConn.answers[userIndex] = "OK"; }
+void Server::requestCreateGame(int userIndex) { TCPConn.answers[userIndex] = "OK"; }
+void Server::requestJoinGame(int userIndex, int gameID) { TCPConn.answers[userIndex] = "OK"; }
+void Server::requestStartGame(int userIndex) { TCPConn.answers[userIndex] = "OK"; }
+void Server::requestMove(int userIndex, std::string moveDir) { TCPConn.answers[userIndex] = "OK"; }
+void Server::requestNextLevel(int userIndex) { TCPConn.answers[userIndex] = "OK"; }
+void Server::requestLeaveGame(int userIndex) { TCPConn.answers[userIndex] = "OK"; }

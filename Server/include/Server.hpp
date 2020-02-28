@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 #include "TCPConnection.hpp"
 
 #define ERROR_GAME_FULL "gameFull"
@@ -17,7 +18,8 @@
 class Server
 {
     std::vector<class Game *> _games;
-    TCPConnection TCPConn;
+    class TCPConnection TCPConn;
+    std::map<int, std::string> _answers;
 
 private:
     void runPlayer(int fd);
@@ -29,16 +31,16 @@ public:
     void run();
 
     /* Called after a request from the client */
-    void requestGamesList();
-    void requestChangeRole(int roleID);
-    void requestChangeMap(std::string mapName);
-    void requestAction();
-    void requestCreateGame();
-    void requestJoinGame(int gameID);
-    void requestStartGame();
-    void requestMove(std::string moveDir);
-    void requestNextLevel();
-    void requestLeaveGame();
+    void requestGamesList(int userIndex);
+    void requestChangeRole(int userIndex, int roleID);
+    void requestChangeMap(int userIndex, std::string mapName);
+    void requestAction(int userIndex);
+    void requestCreateGame(int userIndex);
+    void requestJoinGame(int userIndex, int gameID);
+    void requestStartGame(int userIndex);
+    void requestMove(int userIndex, std::string moveDir);
+    void requestNextLevel(int userIndex);
+    void requestLeaveGame(int userIndex);
 };
 
 #endif

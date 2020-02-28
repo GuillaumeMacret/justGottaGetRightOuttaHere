@@ -19,7 +19,6 @@ class Server
 {
     std::vector<class Game *> _games;
     class TCPConnection TCPConn;
-    std::map<int, std::string> _answers;
 
 private:
     void runPlayer(int fd);

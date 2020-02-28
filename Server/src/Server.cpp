@@ -25,7 +25,6 @@ void Server::runPlayer(int index)
         std::cout << req << std::endl;
         // std::this_thread::sleep_for(std::chrono::seconds(3));
 
-        std::string answer;
         if (Parser::getInstance().getAction(req, *this, index) != 0)
         {
             TCPConn.answers[index] = "Error";

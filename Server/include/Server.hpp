@@ -15,9 +15,11 @@
 
 #define TCP_PORT 1789
 
+class Game;
+
 class Server
 {
-    std::vector<class Game *> _games;
+    std::vector<Game *> _games;
     class TCPConnection TCPConn;
 
 private:
@@ -40,6 +42,8 @@ public:
     void requestMove(int userIndex, std::string moveDir);
     void requestNextLevel(int userIndex);
     void requestLeaveGame(int userIndex);
+
+    Game *getGameFromPlayer(int userIndex);
 };
 
 #endif

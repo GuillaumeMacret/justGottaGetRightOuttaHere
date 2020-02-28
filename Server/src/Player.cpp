@@ -1,8 +1,8 @@
 #include "Player.hpp"
 
-Player::Player() : _posX(0), _posY(0), _role(0) {}
+Player::Player() : _posX(0), _posY(0), _role(0), _index(0) {}
 
-Player::Player(int posX, int posY, int role) : _posX(posX), _posY(posY) {}
+Player::Player(int index) : _index(index) {}
 
 int Player::getPosX() { return _posX; }
 
@@ -17,5 +17,7 @@ void Player::setPos(int posX, int posY)
 int Player::getRole() { return _role; }
 
 void Player::setRole(int role) { _role = role; }
+
+int Player::getIndex() { return _index; }
 
 Player::~Player() {}

@@ -1,7 +1,7 @@
 #include "Game.hpp"
 #include "Player.hpp"
 
-Game::Game() : _nbPlayers(0), _currentLevel(0) {}
+Game::Game(int gameID) : _nbPlayers(0), _currentLevel(0), _gameID(gameID) {}
 
 Player *Game::movePlayer(int playerID, std::string direction)
 {
@@ -32,6 +32,18 @@ Player *Game::movePlayer(int playerID, std::string direction)
     return _players[playerID];
 }
 
+void Game::addPlayer(Player *p) {
+    _players.push_back(p);
+}
+
+void Game::removePlayer(int playerIndex) {
+    for(auto it = _players.begin(); it != _players.end(); ++it) {
+        if((*it)->getIndex() == playerIndex) {
+            _players.erase(it);
+        }
+    }
+}
+
 void Game::changeMap(std::string mapName)
 {
     _selectedMap = mapName;
@@ -43,15 +55,19 @@ void Game::changeRole(int roleID, int playerID)
     _players[playerID]->setRole(roleID);
 }
 
+void Game::increaseLevel() {
+    ++_currentLevel;
+}
+
+int Game::getGameID() { return _gameID; }
+
+std::string Game::getMapName() { return _selectedMap; }
+
+std::vector<Player *> Game::getPlayers() { return _players; }
+
 Game::~Game()
 {
-    for (int i = 0; i < NB_PLAYERS; ++i)
-    {
-        if (_players[i])
-        {
-            delete _players[i];
-        }
-    }
+    for(Player *p : _players) delete p;
 
     for (int i = 0; i < _height; ++i)
     {

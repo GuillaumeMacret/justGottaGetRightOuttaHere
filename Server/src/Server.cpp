@@ -75,28 +75,13 @@ void Server::requestChangeRole(int userIndex, int roleID) {
     Game *g = getGameFromPlayer(userIndex);
     if(g != nullptr) {
         std::string answer = "{Action:\"" ACTION_CHANGE_ROLE "\", ";
-        bool available = true;
+        answer += "PlayerId:" + userIndex;
+        answer += ", RoleId:" + roleID;
+        answer += "}";
         for(Player *p : g->getPlayers()) {
-            if(p->getRole() == roleID) {
-                available = false;
-                break;
-            }
-        }
-        if(available) {
-            answer += "PlayerId:" + userIndex;
-            answer += ", RoleId:" + roleID;
-            answer += "}";
-
-            for(Player *p : g->getPlayers()) {
-                TCPConn.answers[p->getIndex()] = answer;
-            }
-        } else {
-            //TO DO: error role not available
-            answer += "}";
-            TCPConn.answers[userIndex] = answer;
+            TCPConn.answers[p->getIndex()] = answer;
         }
     }
-    //TO DO: error change role => game doesn't exist
 }
 
 void Server::requestChangeMap(int userIndex, std::string mapName) {
@@ -115,12 +100,10 @@ void Server::requestChangeMap(int userIndex, std::string mapName) {
 
 void Server::requestAction(int userIndex) {
     //TO DO: change the map state according to the action
-
     TCPConn.answers[userIndex] = "OK";
 }
 
 void Server::requestCreateGame(int userIndex) {
-    //TO DO: create a new game and a new player, add the player to the game
     Game *g = new Game(_games.size()+1);
     Player *p = new Player(userIndex);
     g->addPlayer(p);
@@ -168,7 +151,28 @@ void Server::requestJoinGame(int userIndex, int gameID) {
 
 void Server::requestStartGame(int userIndex) {
     //TO DO: init players position and the map using Game::_selectedMap
+    std::string answer;
 
+    Game *g = getGameFromPlayer(userIndex);
+    if(g != nullptr) {
+        std::vector<Player *> players = g->getPlayers();
+        bool available = true;
+        for(size_t i = 0; i < players.size() - 1; ++i) {
+            for(size_t j = i + 1; j < players.size(); ++j) {
+                if(players[i]->getRole() == players[j]->getRole()) {
+                    available = false;
+                    i=j=players.size();
+                }
+            }
+        }
+        if(available) {
+            answer = "{Action:\"" ACTION_LOAD_LEVEL "\", Level:";
+            answer += g->getMapToJSON();
+            answer += g->getPlayersToJSON();
+        } else {
+
+        }
+    }
     TCPConn.answers[userIndex] = "OK";
 }
 

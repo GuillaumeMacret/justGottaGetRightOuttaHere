@@ -45,6 +45,8 @@ public:
     int getGameID();
     void increaseLevel();
     std::string getMapName();
+    std::string getMapToJSON();
+    std::string getPlayersToJSON();
     std::vector<Player *> getPlayers();
 
     ~Game();

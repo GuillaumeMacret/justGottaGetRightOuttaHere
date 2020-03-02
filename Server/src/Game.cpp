@@ -51,7 +51,6 @@ void Game::changeMap(std::string mapName)
 
 void Game::changeRole(int roleID, int playerID)
 {
-    //TO DO
     _players[playerID]->setRole(roleID);
 }
 
@@ -62,6 +61,33 @@ void Game::increaseLevel() {
 int Game::getGameID() { return _gameID; }
 
 std::string Game::getMapName() { return _selectedMap; }
+
+std::string Game::getMapToJSON() {
+    std::string mapJSON = "Level:[";
+    for(int i = 0; i < _height; ++i) {
+        mapJSON += "[";
+        for(int j = 0; j < _width; ++j) {
+            mapJSON += _grid[i][j];
+        }
+        mapJSON += "],";
+    }
+    mapJSON += "],";
+    return mapJSON;
+}
+
+std::string Game::getPlayersToJSON() {
+    std::string playersJSON = "Players:[";
+    size_t i = 0;
+    for(Player *p : _players) {
+        playersJSON += "{xPos:" + p->getPosX();
+        playersJSON += ",yPos:" + p->getPosY();
+        playersJSON += "}";
+        if(i != _players.size() - 1) playersJSON += ",";
+        ++i;
+    }
+    playersJSON +="]";
+    return playersJSON;
+}
 
 std::vector<Player *> Game::getPlayers() { return _players; }
 

@@ -7,10 +7,11 @@ class Player
     int _posY;
     int _role;
     int _index;
+    class Game *_game;
 
 public:
     Player();
-    Player(int index);
+    Player(int index, class Game *game);
 
     int getPosX();
     void setPosY(int posX);
@@ -19,6 +20,7 @@ public:
     int getRole();
     void setRole(int role);
     int getIndex();
+    class Game *getGame();
 
     ~Player();
 };

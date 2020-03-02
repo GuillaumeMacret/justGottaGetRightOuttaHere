@@ -105,7 +105,7 @@ void Server::requestAction(int userIndex) {
 
 void Server::requestCreateGame(int userIndex) {
     Game *g = new Game(_games.size()+1);
-    Player *p = new Player(userIndex);
+    Player *p = new Player(userIndex, g);
     g->addPlayer(p);
     _games.push_back(g);
     std::string answer = "{Action:\"" ACTION_CREATE_GAME "\"}";
@@ -210,12 +210,5 @@ void Server::requestLeaveGame(int userIndex) {
 }
 
 Game *Server::getGameFromPlayer(int userIndex) {
-    for(Game *g : _games) {
-        for(Player *p : g->getPlayers()) {
-            if(p->getIndex() == userIndex) {
-                return g;
-            }
-        }
-    }
-    return nullptr;
+    return _players[userIndex]->getGame();
 }

@@ -16,11 +16,14 @@
 #define TCP_PORT 1789
 
 class Game;
+class TCPConnection;
+class Player;
 
 class Server
 {
     std::vector<Game *> _games;
-    class TCPConnection TCPConn;
+    TCPConnection TCPConn;
+    Player *_players[MAX_CONNECTION_TCP];
 
 private:
     void runPlayer(int fd);

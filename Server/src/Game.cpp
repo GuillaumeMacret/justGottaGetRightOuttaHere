@@ -32,13 +32,18 @@ Player *Game::movePlayer(int playerID, std::string direction)
     return _players[playerID];
 }
 
-void Game::addPlayer(Player *p) {
+void Game::addPlayer(Player *p)
+{
+    p->setInGameID(_players.size());
     _players.push_back(p);
 }
 
-void Game::removePlayer(int playerIndex) {
-    for(auto it = _players.begin(); it != _players.end(); ++it) {
-        if((*it)->getIndex() == playerIndex) {
+void Game::removePlayer(int playerIndex)
+{
+    for (auto it = _players.begin(); it != _players.end(); ++it)
+    {
+        if ((*it)->getIndex() == playerIndex)
+        {
             _players.erase(it);
         }
     }
@@ -54,7 +59,8 @@ void Game::changeRole(int roleID, int playerID)
     _players[playerID]->setRole(roleID);
 }
 
-void Game::increaseLevel() {
+void Game::increaseLevel()
+{
     ++_currentLevel;
 }
 
@@ -62,11 +68,14 @@ int Game::getGameID() { return _gameID; }
 
 std::string Game::getMapName() { return _selectedMap; }
 
-std::string Game::getMapToJSON() {
+std::string Game::getMapToJSON()
+{
     std::string mapJSON = "Level:[";
-    for(int i = 0; i < _height; ++i) {
+    for (int i = 0; i < _height; ++i)
+    {
         mapJSON += "[";
-        for(int j = 0; j < _width; ++j) {
+        for (int j = 0; j < _width; ++j)
+        {
             mapJSON += _grid[i][j];
         }
         mapJSON += "],";
@@ -75,17 +84,20 @@ std::string Game::getMapToJSON() {
     return mapJSON;
 }
 
-std::string Game::getPlayersToJSON() {
+std::string Game::getPlayersToJSON()
+{
     std::string playersJSON = "Players:[";
     size_t i = 0;
-    for(Player *p : _players) {
+    for (Player *p : _players)
+    {
         playersJSON += "{xPos:" + p->getPosX();
         playersJSON += ",yPos:" + p->getPosY();
         playersJSON += "}";
-        if(i != _players.size() - 1) playersJSON += ",";
+        if (i != _players.size() - 1)
+            playersJSON += ",";
         ++i;
     }
-    playersJSON +="]";
+    playersJSON += "]";
     return playersJSON;
 }
 
@@ -93,7 +105,8 @@ std::vector<Player *> Game::getPlayers() { return _players; }
 
 Game::~Game()
 {
-    for(Player *p : _players) delete p;
+    for (Player *p : _players)
+        delete p;
 
     for (int i = 0; i < _height; ++i)
     {

@@ -51,6 +51,7 @@ void Server::run()
             printf("tcp connection from %d port : %d\n",
                    TCPConn.cli[cliNum].sin_addr.s_addr,
                    TCPConn.cli[cliNum].sin_port);
+            _players[cliNum] = new Player(cliNum);
             std::thread t(&Server::runPlayer, this, cliNum);
             t.detach();
             i++;
@@ -58,53 +59,67 @@ void Server::run()
     }
 }
 
-void Server::requestGamesList(int userIndex) {
+void Server::requestGamesList(int userIndex)
+{
     //just send the list to the dest
     std::string answer = "{Action:\"" ACTION_GAMES_LIST "\", Games:[";
 
-    for(Game *g : _games) {
+    for (Game *g : _games)
+    {
         answer += "Game:{id:" + g->getGameID();
         answer += ", nbPlayers:" + g->getPlayers().size();
     }
 
     answer += "]}";
-    TCPConn.answers[userIndex] = answer.c_str();
+    TCPConn.answers[userIndex] = answer;
 }
 
-void Server::requestChangeRole(int userIndex, int roleID) {
+void Server::requestChangeRole(int userIndex, int roleID)
+{
     Game *g = getGameFromPlayer(userIndex);
-    if(g != nullptr) {
+    if (g != nullptr)
+    {
         std::string answer = "{Action:\"" ACTION_CHANGE_ROLE "\", ";
-        answer += "PlayerId:" + userIndex;
+        answer += "PlayerId:" + _players[userIndex]->getInGameID();
         answer += ", RoleId:" + roleID;
         answer += "}";
-        for(Player *p : g->getPlayers()) {
+        for (Player *p : g->getPlayers())
+        {
+            //TO DO don't use answers for broadcast
             TCPConn.answers[p->getIndex()] = answer;
         }
     }
 }
 
-void Server::requestChangeMap(int userIndex, std::string mapName) {
+void Server::requestChangeMap(int userIndex, std::string mapName)
+{
     Game *g = getGameFromPlayer(userIndex);
     std::string answer = "{Action:\"" ACTION_CHANGE_MAP "\", ";
-    if(g != nullptr) {
+    if (g != nullptr)
+    {
         g->changeMap(mapName);
         answer += "Map:\"" + mapName + "\"}";
-        for(Player *p : g->getPlayers()) {
+        for (Player *p : g->getPlayers())
+        {
+            //TO DO don't use answers for broadcast
             TCPConn.answers[p->getIndex()] = answer;
         }
-    } else {
+    }
+    else
+    {
         //error sent to the requesting player
     }
 }
 
-void Server::requestAction(int userIndex) {
+void Server::requestAction(int userIndex)
+{
     //TO DO: change the map state according to the action
     TCPConn.answers[userIndex] = "OK";
 }
 
-void Server::requestCreateGame(int userIndex) {
-    Game *g = new Game(_games.size()+1);
+void Server::requestCreateGame(int userIndex)
+{
+    Game *g = new Game(_games.size() + 1);
     Player *p = new Player(userIndex, g);
     g->addPlayer(p);
     _games.push_back(g);
@@ -112,36 +127,46 @@ void Server::requestCreateGame(int userIndex) {
     TCPConn.answers[userIndex] = answer;
 }
 
-void Server::requestJoinGame(int userIndex, int gameID) {
+void Server::requestJoinGame(int userIndex, int gameID)
+{
     std::string answer;
 
     Game *g = getGameFromPlayer(userIndex);
-    if(g != nullptr) {
-        if(g->getPlayers().size() < 4) {
-            Player *newp = new Player(userIndex);
-            g->addPlayer(newp);
+    if (g != nullptr)
+    {
+        if (g->getPlayers().size() < 4)
+        {
+            g->addPlayer(_players[userIndex]);
 
             answer = "{Action:\"" ACTION_JOINED_GAME ", GameId:" + gameID;
             answer += ", Players:[";
             int i = 0;
-            for(Player *p : g->getPlayers()) {
-                if(i) answer += ", ";
-            answer += p->getIndex();
+            for (Player *p : g->getPlayers())
+            {
+                if (i)
+                    answer += ", ";
+                answer += p->getIndex();
                 ++i;
             }
-            answer += "], PlayerId:" + userIndex;
+            answer += "], PlayerId:" + _players[userIndex]->getInGameID();
             answer += ", Map:\"" + g->getMapName();
             answer += "\"}";
-            
-            for(Player *p : g->getPlayers()) {
+
+            for (Player *p : g->getPlayers())
+            {
+                //TO DO don't use answers for broadcast
                 TCPConn.answers[p->getIndex()] = answer;
             }
             return;
-        } else {
+        }
+        else
+        {
             answer = "{Action:\"" ACTION_CANT_JOIN_GAME ", GameId:" + gameID;
             answer += "MoreInfo:\"" ERROR_GAME_FULL "\"";
         }
-    } else {
+    }
+    else
+    {
         answer = "{Action:\"" ACTION_CANT_JOIN_GAME ", GameId:" + gameID;
         answer += "MoreInfo:\"" ERROR_GAME_DOES_NOT_EXIST "\"";
     }
@@ -149,57 +174,82 @@ void Server::requestJoinGame(int userIndex, int gameID) {
     TCPConn.answers[userIndex] = answer;
 }
 
-void Server::requestStartGame(int userIndex) {
+void Server::requestStartGame(int userIndex)
+{
     //TO DO: init players position and the map using Game::_selectedMap
     std::string answer;
 
     Game *g = getGameFromPlayer(userIndex);
-    if(g != nullptr) {
+    if (g != nullptr)
+    {
         std::vector<Player *> players = g->getPlayers();
         bool available = true;
-        for(size_t i = 0; i < players.size() - 1; ++i) {
-            for(size_t j = i + 1; j < players.size(); ++j) {
-                if(players[i]->getRole() == players[j]->getRole()) {
+        for (size_t i = 0; i < players.size() - 1; ++i)
+        {
+            for (size_t j = i + 1; j < players.size(); ++j)
+            {
+                if (players[i]->getRole() == players[j]->getRole())
+                {
                     available = false;
-                    i=j=players.size();
+                    i = j = players.size();
                 }
             }
         }
-        if(available) {
+        if (available)
+        {
             answer = "{Action:\"" ACTION_LOAD_LEVEL "\", Level:";
             answer += g->getMapToJSON();
             answer += g->getPlayersToJSON();
-        } else {
-
+        }
+        else
+        {
         }
     }
-    TCPConn.answers[userIndex] = "OK";
+    TCPConn.answers[userIndex] = answer;
 }
 
-void Server::requestMove(int userIndex, std::string moveDir) {
-    //TO DO: check if the player can move
-    
-    TCPConn.answers[userIndex] = "OK";
+void Server::requestMove(int userIndex, std::string moveDir)
+{
+    Game *g = getGameFromPlayer(userIndex);
+    if (g != nullptr)
+    {
+        g->movePlayer(_players[userIndex]->getInGameID(), moveDir);
+    }
+
+    std::string answer;
+    answer = "{Action:\"" ACTION_MOVE "\", PosX:" + _players[userIndex]->getPosX();
+    answer += ", PosY:" + _players[userIndex]->getPosY();
+    answer += ", Player:" + _players[userIndex]->getInGameID();
+    answer += "}";
+
+    TCPConn.answers[userIndex] = answer;
 }
 
-void Server::requestNextLevel(int userIndex) {
+void Server::requestNextLevel(int userIndex)
+{
     //TO DO: init players position and the map
     Game *g = getGameFromPlayer(userIndex);
-    if(g != nullptr) {
+    if (g != nullptr)
+    {
         g->increaseLevel();
     }
-    
+
     TCPConn.answers[userIndex] = "OK";
 }
 
-void Server::requestLeaveGame(int userIndex) {
+void Server::requestLeaveGame(int userIndex)
+{
     //delete the player, and the game if empty
     Game *g = getGameFromPlayer(userIndex);
-    if(g != nullptr) {
+    if (g != nullptr)
+    {
         g->removePlayer(userIndex);
-        if(g->getPlayers().empty()) {
-            for(auto it = _games.begin(); it != _games.end(); ++it) {
-                if((*it)->getGameID() == g->getGameID()) {
+        if (g->getPlayers().empty())
+        {
+            for (auto it = _games.begin(); it != _games.end(); ++it)
+            {
+                if ((*it)->getGameID() == g->getGameID())
+                {
                     _games.erase(it);
                 }
             }
@@ -209,6 +259,7 @@ void Server::requestLeaveGame(int userIndex) {
     TCPConn.answers[userIndex] = "OK";
 }
 
-Game *Server::getGameFromPlayer(int userIndex) {
+Game *Server::getGameFromPlayer(int userIndex)
+{
     return _players[userIndex]->getGame();
 }

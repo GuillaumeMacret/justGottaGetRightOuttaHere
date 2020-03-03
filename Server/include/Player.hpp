@@ -8,10 +8,11 @@ class Player
     int _role;
     int _index;
     class Game *_game;
+    int _inGameID;
 
 public:
     Player();
-    Player(int index, class Game *game);
+    Player(int index, class Game *game = nullptr);
 
     int getPosX();
     void setPosY(int posX);
@@ -21,6 +22,8 @@ public:
     void setRole(int role);
     int getIndex();
     class Game *getGame();
+    int getInGameID();
+    void setInGameID(int inGameID);
 
     ~Player();
 };

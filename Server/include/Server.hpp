@@ -27,6 +27,7 @@ class Server
 
 private:
     void runPlayer(int fd);
+    void broadcastGame(Game *game, std::string msg);
 
 public:
     Server();

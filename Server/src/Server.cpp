@@ -83,11 +83,7 @@ void Server::requestChangeRole(int userIndex, int roleID)
         answer += "PlayerId:" + _players[userIndex]->getInGameID();
         answer += ", RoleId:" + roleID;
         answer += "}";
-        for (Player *p : g->getPlayers())
-        {
-            //TO DO don't use answers for broadcast
-            TCPConn.answers[p->getIndex()] = answer;
-        }
+        broadcastGame(g, answer);
     }
 }
 
@@ -99,11 +95,7 @@ void Server::requestChangeMap(int userIndex, std::string mapName)
     {
         g->changeMap(mapName);
         answer += "Map:\"" + mapName + "\"}";
-        for (Player *p : g->getPlayers())
-        {
-            //TO DO don't use answers for broadcast
-            TCPConn.answers[p->getIndex()] = answer;
-        }
+        broadcastGame(g, answer);
     }
     else
     {
@@ -152,11 +144,7 @@ void Server::requestJoinGame(int userIndex, int gameID)
             answer += ", Map:\"" + g->getMapName();
             answer += "\"}";
 
-            for (Player *p : g->getPlayers())
-            {
-                //TO DO don't use answers for broadcast
-                TCPConn.answers[p->getIndex()] = answer;
-            }
+            broadcastGame(g, answer);
             return;
         }
         else
@@ -262,4 +250,15 @@ void Server::requestLeaveGame(int userIndex)
 Game *Server::getGameFromPlayer(int userIndex)
 {
     return _players[userIndex]->getGame();
+}
+
+void Server::broadcastGame(Game *game, std::string msg)
+{
+    for (Player *p : game->getPlayers())
+    {
+        if (TCPConn.server_send(p->getIndex(), msg) == ERR)
+        {
+            //if player in game remove him
+        }
+    }
 }

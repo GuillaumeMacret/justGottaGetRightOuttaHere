@@ -28,6 +28,7 @@ public:
 	int server_accept();
 	std::string server_receive(int index);
 	int server_send(int index);
+	int server_send(int index, std::string msg);
 };
 
 #endif

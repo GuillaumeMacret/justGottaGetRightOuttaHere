@@ -103,3 +103,17 @@ int TCPConnection::server_send(int index)
   }
   return 0;
 }
+
+/**
+Send message to the tcp client
+*/
+int TCPConnection::server_send(int index, std::string msg)
+{
+  if (send(new_fd[index], msg.c_str(), msg.size(), MSG_NOSIGNAL) == ERR)
+  {
+    close(fd);
+    syserror(SEND_ERROR);
+    return ERR;
+  }
+  return 0;
+}

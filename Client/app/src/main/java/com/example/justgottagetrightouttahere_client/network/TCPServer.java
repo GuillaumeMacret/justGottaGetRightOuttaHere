@@ -13,6 +13,10 @@ import java.net.Socket;
 
 public class TCPServer implements Runnable{
     ServerSocket serverSocket = null;
+
+    /**
+     * TCP server for tests
+     */
     public TCPServer(){
         try {
             serverSocket = new ServerSocket(Constants.SERVER_PORT);

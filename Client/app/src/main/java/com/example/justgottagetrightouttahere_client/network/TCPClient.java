@@ -11,6 +11,9 @@ import java.net.Socket;
 public class TCPClient{
     Socket clientSocket;
 
+    /**
+     * Connects the socket to default port and adress given in Constants file
+     */
     public TCPClient(){
         try {
             clientSocket =  new Socket(Constants.SRVER_ADDRESS,Constants.SERVER_PORT);
@@ -19,6 +22,10 @@ public class TCPClient{
         }
     }
 
+    /**
+     * Sends the given string over the socket
+     * @param s
+     */
     public void send(String s){
         PrintWriter printWriter = null;
         try {
@@ -79,9 +86,12 @@ class ClientReceiver implements Runnable{
         this.socket = socket;
     }
 
+    /**
+     * Listen to the socket given when building the object
+     * And calls the message handler when a message is received (if null does nothing)
+     */
     @Override
     public void run() {
-        String read;
         BufferedReader reader = null;
         StringBuffer stringBuffer = new StringBuffer();
 

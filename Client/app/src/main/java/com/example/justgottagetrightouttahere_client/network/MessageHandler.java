@@ -1,5 +1,6 @@
 package com.example.justgottagetrightouttahere_client.network;
 
 public interface MessageHandler {
-    public void handle(String s);
+
+    void handle(String s);
 }

@@ -7,10 +7,11 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TCPServer {
+public class TCPServer implements Runnable{
     ServerSocket serverSocket = null;
     public TCPServer(){
         try {
@@ -20,34 +21,45 @@ public class TCPServer {
         }
     }
 
-    void run(){
-        Socket socket;
-        BufferedReader input = null;
-        System.err.println("Server listening for connections");
+    public void run(){
+        Socket socket = null;
+        BufferedReader reader = null;
+        StringBuffer stringBuffer = new StringBuffer();
+
+        System.err.println("[SRV] Server listening for connections");
         try {
             socket = serverSocket.accept();
-            input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.err.println("Client connected!");
+        System.err.println("[SRV] Client connected!");
 
-        String read=null;
         for(;;){
+            stringBuffer = new StringBuffer();
             try {
-
-                read = input.readLine();
-
-                if(read!=null)System.err.println("Read from client : " + read);
-                /*
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-                    out.write("TstMsg");
-                    updateConversationHandler.post(new updateUIThread(read));
-                */
+                stringBuffer.append(reader.readLine());
+                System.err.println("[SRV] Received : " + stringBuffer.toString());
+                if(stringBuffer.length()>0){
+                    send("Well received : "+stringBuffer.toString(),socket);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        //System.err.println("[SRV] Client disconected!");
+    }
+
+    public void send(String s, Socket socket){
+        PrintWriter printWriter = null;
+        try {
+            printWriter = new PrintWriter(socket.getOutputStream(),true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.err.println("[CLI] Client sending "+s);
+        printWriter.println(s);
+        printWriter.flush();
     }
 
     public static void main(String[] args) {

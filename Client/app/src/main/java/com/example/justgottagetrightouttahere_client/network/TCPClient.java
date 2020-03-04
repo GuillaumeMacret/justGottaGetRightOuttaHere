@@ -2,11 +2,13 @@ package com.example.justgottagetrightouttahere_client.network;
 
 import com.example.justgottagetrightouttahere_client.Constants.Constants;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class TCPClient {
+public class TCPClient{
     Socket clientSocket;
 
     public TCPClient(){
@@ -24,20 +26,82 @@ public class TCPClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        printWriter.write(s);
+        System.err.println("[CLI] Client sending "+s);
+        printWriter.println(s);
         printWriter.flush();
-        printWriter.close();
     }
 
+    /**
+     * Test purpose don't use this
+      * @param args
+     */
     public static void main(String[] args) {
+        TCPServer server = new TCPServer();
+        Thread serverT = new Thread(server);
+        serverT.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        /*############################*/
+
         TCPClient client = new TCPClient();
+        Thread clientT = new Thread(new ClientReceiver(client.clientSocket,null));
+        clientT.start();
+
+        client.send("a");
+
+        /*W8 before closing*/
+        try {
+            serverT.join();
+            clientT.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        /*
+        try {
+            client.clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+         */
     }
 }
 
-class ClientReceiveThread implements Runnable{
+class ClientReceiver implements Runnable{
+    Socket socket;
+    MessageHandler handler;
+
+    public ClientReceiver(Socket socket, MessageHandler handler){
+        this.socket = socket;
+    }
 
     @Override
     public void run() {
+        String read;
+        BufferedReader reader = null;
+        StringBuffer stringBuffer = new StringBuffer();
 
+        try {
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        System.err.println("[CLI] Client listening ...");
+
+        for(;;){
+            try {
+                stringBuffer.append(reader.readLine());
+                System.err.println("[CLI] Received : " + stringBuffer.toString());
+                if(handler != null)handler.handle(stringBuffer.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
     }
 }

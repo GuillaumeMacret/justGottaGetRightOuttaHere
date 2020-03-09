@@ -34,7 +34,19 @@ void Server::runPlayer(int index)
         if (TCPConn.server_send(index) == ERR)
         {
             //if player in game remove him
-
+            
+            // Game * g = getGameFromPlayer(index);
+            // g->removePlayer(index);
+            // if (g->getPlayers().empty())
+            // {
+            //     for (auto it = _games.begin(); it != _games.end(); ++it)
+            //     {
+            //         if ((*it)->getGameID() == g->getGameID())
+            //         {
+            //             _games.erase(it);
+            //         }
+            //     }
+            // }
             return;
         }
     }
@@ -194,7 +206,7 @@ void Server::requestStartGame(int userIndex)
         {
         }
     }
-    TCPConn.answers[userIndex] = answer;
+    broadcastGame(g, answer);
 }
 
 void Server::requestMove(int userIndex, std::string moveDir)
@@ -211,7 +223,7 @@ void Server::requestMove(int userIndex, std::string moveDir)
     answer += ", Player:" + _players[userIndex]->getInGameID();
     answer += "}\n";
 
-    TCPConn.answers[userIndex] = answer;
+    broadcastGame(g, answer);
 }
 
 void Server::requestNextLevel(int userIndex)
@@ -223,7 +235,12 @@ void Server::requestNextLevel(int userIndex)
         g->increaseLevel();
     }
 
-    TCPConn.answers[userIndex] = "OK";
+    std::string answer;
+    answer = "{Action:\"" ACTION_LOAD_LEVEL "\", Level:";
+    answer += g->getMapToJSON();
+    answer += g->getPlayersToJSON();
+    answer += "\n";
+    broadcastGame(g, answer);
 }
 
 void Server::requestLeaveGame(int userIndex)
@@ -246,7 +263,6 @@ void Server::requestLeaveGame(int userIndex)
     std::string answer;
     answer = "{Action:\"" ACTION_LEAVE_GAME "\", Player:" + _players[userIndex]->getInGameID();
     answer += "}\n";
-    TCPConn.answers[userIndex] = answer;
     broadcastGame(g, answer);
     }
 }
@@ -262,7 +278,18 @@ void Server::broadcastGame(Game *game, std::string msg)
     {
         if (TCPConn.server_send(p->getIndex(), msg) == ERR)
         {
-            //if player in game remove him
+            // Game *g = p->getGame();
+            // g->removePlayer(p->getIndex());
+            // if (g->getPlayers().empty())
+            // {
+            //     for (auto it = _games.begin(); it != _games.end(); ++it)
+            //     {
+            //         if ((*it)->getGameID() == g->getGameID())
+            //         {
+            //             _games.erase(it);
+            //         }
+            //     }
+            // }
         }
     }
 }

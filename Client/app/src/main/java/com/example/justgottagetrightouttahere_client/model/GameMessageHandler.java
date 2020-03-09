@@ -2,6 +2,9 @@ package com.example.justgottagetrightouttahere_client.model;
 
 import com.example.justgottagetrightouttahere_client.network.MessageHandler;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class GameMessageHandler implements MessageHandler {
 
     /**
@@ -11,6 +14,13 @@ public class GameMessageHandler implements MessageHandler {
      */
     @Override
     public void handle(String s){
-        System.err.println("Handle message <"+s+"> TODO");
+        System.err.println("Handling message < "+s+" > TODO");
+        try {
+            JSONObject jsonObject = new JSONObject("{\"Action\":\"TestAction\"}");
+            //System.out.println("Action : "+jsonObject.getString("Action"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 }

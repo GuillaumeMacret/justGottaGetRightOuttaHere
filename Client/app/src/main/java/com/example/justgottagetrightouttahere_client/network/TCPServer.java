@@ -45,7 +45,7 @@ public class TCPServer implements Runnable{
                 stringBuffer.append(reader.readLine());
                 System.err.println("[SRV] Received : " + stringBuffer.toString());
                 if(stringBuffer.length()>0){
-                    send("Well received : "+stringBuffer.toString(),socket);
+                    send("{\"Action\":\"TestAction\"}",socket);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -61,7 +61,7 @@ public class TCPServer implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.err.println("[CLI] Client sending "+s);
+        System.err.println("[SRV] Server sending "+s);
         printWriter.println(s);
         printWriter.flush();
     }

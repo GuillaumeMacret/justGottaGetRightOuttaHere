@@ -1,6 +1,7 @@
 package com.example.justgottagetrightouttahere_client.network;
 
 import com.example.justgottagetrightouttahere_client.Constants.Constants;
+import com.example.justgottagetrightouttahere_client.model.GameMessageHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,10 +10,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class TCPClient{
+    /**Socket to bind to the server**/
     Socket clientSocket;
+    /**The thread that will listen for incoming messages**/
+    Thread listeningThread;
 
     /**
-     * Connects the socket to default port and adress given in Constants file
+     * Connects the socket to default port and address given in Constants file
      */
     public TCPClient(){
         try {
@@ -39,7 +43,17 @@ public class TCPClient{
     }
 
     /**
-     * Test purpose don't use this
+     * Launches a new thread to listen for incoming messages
+     */
+    public void startListeningThread(MessageHandler messageHandler){
+        listeningThread = new Thread(new ClientReceiver(clientSocket,messageHandler));
+        listeningThread.start();
+    }
+
+    /**
+     * Test purpose don't use this or I will find you, and I will kill you
+     * Launches both client and server and try to send one message each way
+     * This throws an exception when used in console only beacuse json is handled by android
       * @param args
      */
     public static void main(String[] args) {
@@ -55,15 +69,14 @@ public class TCPClient{
         /*############################*/
 
         TCPClient client = new TCPClient();
-        Thread clientT = new Thread(new ClientReceiver(client.clientSocket,null));
-        clientT.start();
+        client.startListeningThread(new GameMessageHandler());
 
         client.send("a");
 
         /*W8 before closing*/
         try {
             serverT.join();
-            clientT.join();
+            client.listeningThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -84,6 +97,7 @@ class ClientReceiver implements Runnable{
 
     public ClientReceiver(Socket socket, MessageHandler handler){
         this.socket = socket;
+        this.handler = handler;
     }
 
     /**
@@ -101,16 +115,16 @@ class ClientReceiver implements Runnable{
             e.printStackTrace();
             System.exit(1);
         }
-        System.err.println("[CLI] Client listening ...");
+        System.err.println("[CLI] Client thread listening ...");
 
         for(;;){
             try {
                 stringBuffer.append(reader.readLine());
                 System.err.println("[CLI] Received : " + stringBuffer.toString());
                 if(handler != null)handler.handle(stringBuffer.toString());
+                else System.err.println("[CLI][WARN] Handler is null! Skipping handling");
             } catch (IOException e) {
                 e.printStackTrace();
-                System.exit(1);
             }
         }
     }

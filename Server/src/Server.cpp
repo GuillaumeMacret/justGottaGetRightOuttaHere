@@ -33,20 +33,7 @@ void Server::runPlayer(int index)
 
         if (TCPConn.server_send(index) == ERR)
         {
-            //if player in game remove him
-            
-            // Game * g = getGameFromPlayer(index);
-            // g->removePlayer(index);
-            // if (g->getPlayers().empty())
-            // {
-            //     for (auto it = _games.begin(); it != _games.end(); ++it)
-            //     {
-            //         if ((*it)->getGameID() == g->getGameID())
-            //         {
-            //             _games.erase(it);
-            //         }
-            //     }
-            // }
+            removePlayerFromGame(index);
             return;
         }
     }
@@ -117,8 +104,14 @@ void Server::requestChangeMap(int userIndex, std::string mapName)
 
 void Server::requestAction(int userIndex)
 {
+    Game *g = getGameFromPlayer(userIndex);
     //TO DO: change the map state according to the action
-    TCPConn.answers[userIndex] = "OK";
+
+    std::string answer;
+    answer = "{Action:\"" ACTION_ACTION "\", Level:";
+    answer += g->getMapToJSON();
+    answer += "}\n";
+    broadcastGame(g, answer);
 }
 
 void Server::requestCreateGame(int userIndex)
@@ -198,7 +191,7 @@ void Server::requestStartGame(int userIndex)
         if (available)
         {
             answer = "{Action:\"" ACTION_LOAD_LEVEL "\", Level:";
-            answer += g->getMapToJSON();
+            answer += g->getMapToJSON() + ',';
             answer += g->getPlayersToJSON();
             answer += "\n";
         }
@@ -249,21 +242,11 @@ void Server::requestLeaveGame(int userIndex)
     Game *g = getGameFromPlayer(userIndex);
     if (g != nullptr)
     {
-        g->removePlayer(userIndex);
-        if (g->getPlayers().empty())
-        {
-            for (auto it = _games.begin(); it != _games.end(); ++it)
-            {
-                if ((*it)->getGameID() == g->getGameID())
-                {
-                    _games.erase(it);
-                }
-            }
-        }
-    std::string answer;
-    answer = "{Action:\"" ACTION_LEAVE_GAME "\", Player:" + _players[userIndex]->getInGameID();
-    answer += "}\n";
-    broadcastGame(g, answer);
+        removePlayerFromGame(userIndex);
+        std::string answer;
+        answer = "{Action:\"" ACTION_LEAVE_GAME "\", Player:" + _players[userIndex]->getInGameID();
+        answer += "}\n";
+        broadcastGame(g, answer);
     }
 }
 
@@ -278,18 +261,26 @@ void Server::broadcastGame(Game *game, std::string msg)
     {
         if (TCPConn.server_send(p->getIndex(), msg) == ERR)
         {
-            // Game *g = p->getGame();
-            // g->removePlayer(p->getIndex());
-            // if (g->getPlayers().empty())
-            // {
-            //     for (auto it = _games.begin(); it != _games.end(); ++it)
-            //     {
-            //         if ((*it)->getGameID() == g->getGameID())
-            //         {
-            //             _games.erase(it);
-            //         }
-            //     }
-            // }
+            removePlayerFromGame(p->getIndex());
+        }
+    }
+}
+
+void Server::removePlayerFromGame(int index)
+{
+    Game *g = getGameFromPlayer(index);
+    if (g)
+    {
+        g->removePlayer(index);
+        if (g->getPlayers().empty())
+        {
+            for (auto it = _games.begin(); it != _games.end(); ++it)
+            {
+                if ((*it)->getGameID() == g->getGameID())
+                {
+                    _games.erase(it);
+                }
+            }
         }
     }
 }

@@ -80,7 +80,7 @@ std::string Game::getMapToJSON()
         }
         mapJSON += "],";
     }
-    mapJSON += "],";
+    mapJSON += "]";
     return mapJSON;
 }
 

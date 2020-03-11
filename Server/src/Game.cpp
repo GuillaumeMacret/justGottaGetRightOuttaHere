@@ -32,21 +32,47 @@ Player *Game::movePlayer(int playerID, std::string direction)
     return _players[playerID];
 }
 
-void Game::addPlayer(Player *p)
+bool Game::addPlayer(Player *p)
 {
-    p->setInGameID(_players.size());
-    _players.push_back(p);
+    if (_players.size() < 4)
+    {
+        p->setInGameID(_players.size());
+        _players.push_back(p);
+        return true;
+    }
+    for (auto it : _players)
+    {
+        if (!it->isConnected())
+        {
+            it->setIndex(p->getIndex());
+            p = it;
+            return true;
+        }
+    }
+    return false;
 }
 
-void Game::removePlayer(int playerIndex)
+void Game::disconnectPlayer(int playerIndex)
 {
     for (auto it = _players.begin(); it != _players.end(); ++it)
     {
         if ((*it)->getIndex() == playerIndex)
         {
-            _players.erase(it);
+            (*it)->setConnected(false);
         }
     }
+}
+
+bool Game::isPlayerListEmpty()
+{
+    for (auto it = _players.begin(); it != _players.end(); ++it)
+    {
+        if ((*it)->isConnected())
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 void Game::changeMap(std::string mapName)

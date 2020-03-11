@@ -131,10 +131,8 @@ void Server::requestJoinGame(int userIndex, int gameID)
     Game *g = getGameFromPlayer(userIndex);
     if (g != nullptr)
     {
-        if (g->getPlayers().size() < 4)
+        if (g->addPlayer(_players[userIndex]))
         {
-            g->addPlayer(_players[userIndex]);
-
             answer = "{Action:\"" ACTION_JOINED_GAME ", GameId:" + gameID;
             answer += ", Players:[";
             int i = 0;
@@ -259,7 +257,7 @@ void Server::broadcastGame(Game *game, std::string msg)
 {
     for (Player *p : game->getPlayers())
     {
-        if (TCPConn.server_send(p->getIndex(), msg) == ERR)
+        if (p->isConnected() && TCPConn.server_send(p->getIndex(), msg) == ERR)
         {
             removePlayerFromGame(p->getIndex());
         }
@@ -271,8 +269,8 @@ void Server::removePlayerFromGame(int index)
     Game *g = getGameFromPlayer(index);
     if (g)
     {
-        g->removePlayer(index);
-        if (g->getPlayers().empty())
+        g->disconnectPlayer(index);
+        if (g->isPlayerListEmpty())
         {
             for (auto it = _games.begin(); it != _games.end(); ++it)
             {

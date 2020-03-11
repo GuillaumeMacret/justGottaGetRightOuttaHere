@@ -9,6 +9,7 @@ class Player
     int _index;
     class Game *_game;
     int _inGameID;
+    bool _connected;
 
 public:
     Player();
@@ -21,9 +22,12 @@ public:
     int getRole();
     void setRole(int role);
     int getIndex();
+    void setIndex(int index);
     class Game *getGame();
     int getInGameID();
     void setInGameID(int inGameID);
+    bool isConnected();
+    void setConnected(bool connected);
 
     ~Player();
 };

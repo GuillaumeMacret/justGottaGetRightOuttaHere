@@ -38,8 +38,9 @@ public:
         * Returns the player with its new position. */
     Player *movePlayer(int playerID, std::string direction);
 
-    void addPlayer(Player *p);
-    void removePlayer(int playerIndex);
+    bool addPlayer(Player *p);
+    void disconnectPlayer(int playerIndex);
+    bool isPlayerListEmpty();
     void changeMap(std::string mapName);
     void changeRole(int roleID, int playerID);
     int getGameID();

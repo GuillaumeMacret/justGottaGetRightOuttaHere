@@ -3,7 +3,7 @@
 
 Player::Player() : _posX(0), _posY(0), _role(0), _index(0), _connected(true) {}
 
-Player::Player(int index, Game *game) : _index(index), _game(game) {}
+Player::Player(int index, Game *game) : _index(index), _game(game), _lastDirection("down") {}
 
 int Player::getPosX() { return _posX; }
 
@@ -34,3 +34,7 @@ Player::~Player() {}
 bool Player::isConnected() { return _connected; }
 
 void Player::setConnected(bool connected) { _connected = connected; }
+
+std::string Player::getLastDirection() { return _lastDirection; }
+
+void Player::setLastDirection(std::string direction) { _lastDirection = direction; }

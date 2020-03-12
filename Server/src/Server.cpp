@@ -107,6 +107,11 @@ void Server::requestAction(int userIndex)
     Game *g = getGameFromPlayer(userIndex);
     //TO DO: change the map state according to the action
 
+    if (g != nullptr)
+    {
+        g->doActionPlayer(_players[userIndex]->getInGameID());
+    }
+
     std::string answer;
     answer = "{Action:\"" ACTION_ACTION "\", Level:";
     answer += g->getMapToJSON();

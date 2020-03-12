@@ -37,6 +37,7 @@ public:
         * @direction: up, down, left or right
         * Returns the player with its new position. */
     Player *movePlayer(int playerID, std::string direction);
+    Player *doActionPlayer(int playerID);
 
     bool addPlayer(Player *p);
     void disconnectPlayer(int playerIndex);

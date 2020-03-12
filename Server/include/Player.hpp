@@ -1,6 +1,8 @@
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 
+#include <string>
+
 class Player
 {
     int _posX;
@@ -10,6 +12,7 @@ class Player
     class Game *_game;
     int _inGameID;
     bool _connected;
+    std::string _lastDirection;
 
 public:
     Player();
@@ -28,6 +31,8 @@ public:
     void setInGameID(int inGameID);
     bool isConnected();
     void setConnected(bool connected);
+    std::string getLastDirection();
+    void setLastDirection(std::string direction);
 
     ~Player();
 };

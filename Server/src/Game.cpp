@@ -27,9 +27,36 @@ Player *Game::movePlayer(int playerID, std::string direction)
     {
         //TO-DO: check if _grid[posY][posX] is walkable
         _players[playerID]->setPos(posX, posY);
+        _players[playerID]->setLastDirection(direction);
     }
 
     return _players[playerID];
+}
+
+Player *Game::doActionPlayer(int playerID)
+{
+    Player *p = _players[playerID];
+    int posX = p->getPosX(), posY = p->getPosY();
+    if (p->getLastDirection() == "up")
+    {
+        --posY;
+    }
+    else if (p->getLastDirection() == "down")
+    {
+        ++posY;
+    }
+    else if (p->getLastDirection() == "left")
+    {
+        --posX;
+    }
+    else if (p->getLastDirection() == "right")
+    {
+        ++posX;
+    }
+
+    //TODO check if tile [posX, posY] correspond to p->getRole()
+
+    return p;
 }
 
 bool Game::addPlayer(Player *p)

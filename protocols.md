@@ -182,6 +182,13 @@ Response from server : load level (see "Ask Start game" response)
 
 TODO
 
+Response from server (broadcast)
+```
+{
+    Action:"leaveGame",
+    Player:[id]
+}
+```
 ### Restart level
 
 TODO

@@ -4,8 +4,12 @@ import android.util.Log;
 
 import com.example.justgottagetrightouttahere_client.network.MessageHandler;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameMessageHandler implements MessageHandler {
 
@@ -31,6 +35,9 @@ public class GameMessageHandler implements MessageHandler {
                 case "move":
                     movePlayerAction(jsonObject);
                     break;
+                case "action":
+                    playerActionAction(jsonObject);
+                    break;
                 default:
                     Log.e("ERROR","Game handler can't handle action "+jsonObject.getString("Action"));
             }
@@ -49,5 +56,20 @@ public class GameMessageHandler implements MessageHandler {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    void playerActionAction(JSONObject jsonObject){
+        List<Tile> tilesToChange = new ArrayList<>();
+        try {
+            JSONArray jsonTilesArray = jsonObject.getJSONArray("Changes");
+            int arrayLength = jsonTilesArray.length();
+            for(int i = 0; i < arrayLength;++i){
+                JSONObject jsonTile = jsonTilesArray.getJSONObject(i);
+                tilesToChange.add(new Tile(jsonTile.getInt("xPos"),jsonTile.getInt("yPos"),jsonTile.getInt("value")));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        model.updateTiles(tilesToChange);
     }
 }

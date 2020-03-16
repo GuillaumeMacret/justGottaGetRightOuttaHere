@@ -31,4 +31,10 @@ public class GameModel {
         players.get(playerId).posX = xPos;
         players.get(playerId).posY = yPos;
     }
+
+    public void updateTiles(List<Tile>tiles){
+        for(Tile t : tiles){
+            gameMatrix[t.posX][t.posY] = t.spriteId;
+        }
+    }
 }

@@ -119,7 +119,6 @@ public class GameView extends View {
             int playerSpriteId = ResourcesMaps.playerSpritesMap.get(p.roleId);
             drawImage(canvas,p.posX*renderTileSize, p.posY*renderTileSize,p.posX*renderTileSize+renderTileSize,p.posY*renderTileSize+renderTileSize,playerSpriteId);
         }
-        Log.e("info",""+gameModel.players.get(1).posX);
     }
 
     /**

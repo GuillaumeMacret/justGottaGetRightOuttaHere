@@ -1,5 +1,7 @@
 package com.example.justgottagetrightouttahere_client.model;
 
+import android.util.Log;
+
 import com.example.justgottagetrightouttahere_client.network.MessageHandler;
 
 import org.json.JSONException;
@@ -16,8 +18,8 @@ public class GameMessageHandler implements MessageHandler {
     public void handle(String s){
         System.err.println("Handling message < "+s+" > TODO");
         try {
-            JSONObject jsonObject = new JSONObject("{\"Action\":\"TestAction\"}");
-            //System.out.println("Action : "+jsonObject.getString("Action"));
+            JSONObject jsonObject = new JSONObject(s);
+            Log.e("INFO","Action : "+jsonObject.getString("Action"));
         } catch (JSONException e) {
             e.printStackTrace();
         }

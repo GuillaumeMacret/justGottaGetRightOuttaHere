@@ -8,6 +8,6 @@ public interface Constants {
 
     /* NETWORK */
     int SERVER_PORT = 1789;
-    String SRVER_ADDRESS = "localhost";
+    String SERVER_ADDRESS = "10.0.2.2";
 
 }

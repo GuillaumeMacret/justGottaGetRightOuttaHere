@@ -1,5 +1,7 @@
 package com.example.justgottagetrightouttahere_client.network;
 
+import android.util.Log;
+
 import com.example.justgottagetrightouttahere_client.Constants.Constants;
 import com.example.justgottagetrightouttahere_client.model.GameMessageHandler;
 
@@ -9,21 +11,45 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class TCPClient{
+public class TCPClient implements Runnable{
     /**Socket to bind to the server**/
     Socket clientSocket;
     /**The thread that will listen for incoming messages**/
     Thread listeningThread;
 
+    ClientReceiver receiver = null;
+
     /**
-     * Connects the socket to default port and address given in Constants file
+     *
      */
-    public TCPClient(){
+    @Override
+    public void run() {
+        Log.e("INFO", "Client socket opening ...");
         try {
-            clientSocket =  new Socket(Constants.SRVER_ADDRESS,Constants.SERVER_PORT);
+            clientSocket =  new Socket(Constants.SERVER_ADDRESS,Constants.SERVER_PORT);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if(clientSocket != null){
+            Log.e("INFO","Socket open, starting listening thread");
+            startListeningThread(null);
+        }else{
+            Log.e("ERROR", "Could not connect to server");
+        }
+    }
+
+    /**
+     * Tries to set the receiver message handler. This can fail if the receiver thread was not started
+     * @param messageHandler
+     * @return true if the message handler was setted, false otherwise
+     */
+    public boolean setMessageHandler(MessageHandler messageHandler){
+        if(receiver==null){
+            Log.e("ERROR","Can't set Handler because receiver is null");
+            return false;
+        }
+        receiver.setMessageHandler(messageHandler);
+        return true;
     }
 
     /**
@@ -46,7 +72,9 @@ public class TCPClient{
      * Launches a new thread to listen for incoming messages
      */
     public void startListeningThread(MessageHandler messageHandler){
-        listeningThread = new Thread(new ClientReceiver(clientSocket,messageHandler));
+        receiver = new ClientReceiver(clientSocket,messageHandler);
+        Log.e("INFO","Starting listening thread, receiver : " + receiver);
+        listeningThread = new Thread(receiver);
         listeningThread.start();
     }
 
@@ -89,6 +117,7 @@ public class TCPClient{
 
          */
     }
+
 }
 
 class ClientReceiver implements Runnable{
@@ -119,6 +148,7 @@ class ClientReceiver implements Runnable{
 
         for(;;){
             try {
+                stringBuffer = new StringBuffer();
                 stringBuffer.append(reader.readLine());
                 System.err.println("[CLI] Received : " + stringBuffer.toString());
                 if(handler != null)handler.handle(stringBuffer.toString());
@@ -127,5 +157,9 @@ class ClientReceiver implements Runnable{
                 e.printStackTrace();
             }
         }
+    }
+
+    public void setMessageHandler(MessageHandler messageHandler){
+        this.handler = messageHandler;
     }
 }

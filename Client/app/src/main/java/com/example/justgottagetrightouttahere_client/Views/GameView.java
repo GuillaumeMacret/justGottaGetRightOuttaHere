@@ -58,22 +58,23 @@ public class GameView extends View {
         messageHandler = new GameMessageHandler();
 
         TCPClient client = new TCPClient();
-        client.startListeningThread(messageHandler);
-
-
-        //TODO test
+        Thread clientThread = new Thread(client);
+        clientThread.start();
+        while(!client.setMessageHandler(messageHandler)){}
 
         //FIXME remove this (testing purpose)
         gameModel.players.add(new Player(0,0,0,0));
         gameModel.players.add(new Player(1,0,1,1));
         gameModel.players.add(new Player(0,1,2,2));
         gameModel.players.add(new Player(1,1,3,3));
+        /*
         try {
             JSONObject jsonObject = new JSONObject("{\"Action\":\"TestAction\"}");
             Log.e("INFO","Action : " + jsonObject.getString("Action"));
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+            //{Action:"move",PosX:[val],PosY:[val],Player:[id]}
+        }*/
     }
 
     /**

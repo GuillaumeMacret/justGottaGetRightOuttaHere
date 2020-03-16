@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class TCPServer implements Runnable{
     ServerSocket serverSocket = null;
@@ -40,16 +41,11 @@ public class TCPServer implements Runnable{
         System.err.println("[SRV] Client connected!");
 
         for(;;){
-            stringBuffer = new StringBuffer();
-            try {
-                stringBuffer.append(reader.readLine());
-                System.err.println("[SRV] Received : " + stringBuffer.toString());
-                if(stringBuffer.length()>0){
-                    send("Well received : "+stringBuffer.toString(),socket);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+            System.err.println("Enter line to send");
+
+            String line = myObj.nextLine();  // Read user input
+            send(line,socket);
         }
         //System.err.println("[SRV] Client disconected!");
     }
@@ -61,7 +57,7 @@ public class TCPServer implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.err.println("[CLI] Client sending "+s);
+        System.err.println("[SRV] Server sending "+s);
         printWriter.println(s);
         printWriter.flush();
     }

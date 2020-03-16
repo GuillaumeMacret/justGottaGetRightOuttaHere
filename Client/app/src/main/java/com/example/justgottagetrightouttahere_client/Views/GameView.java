@@ -55,7 +55,7 @@ public class GameView extends View {
         ResourcesMaps.LoadSprites();
         gameModel = new GameModel(DEFAULT_SIZE_X,DEFAULT_SIZE_Y);
 
-        messageHandler = new GameMessageHandler();
+        messageHandler = new GameMessageHandler(gameModel);
 
         TCPClient client = new TCPClient();
         Thread clientThread = new Thread(client);
@@ -64,6 +64,7 @@ public class GameView extends View {
 
         //FIXME remove this (testing purpose)
         gameModel.players.add(new Player(0,0,0,0));
+        gameModel.movePlayer(0,2,2);
         gameModel.players.add(new Player(1,0,1,1));
         gameModel.players.add(new Player(0,1,2,2));
         gameModel.players.add(new Player(1,1,3,3));
@@ -103,6 +104,8 @@ public class GameView extends View {
 
         drawMatrix(canvas);
         drawPlayers(canvas);
+        //FIXME find a clever way to ask for a refresh
+        invalidate();
     }
 
     /**
@@ -116,6 +119,7 @@ public class GameView extends View {
             int playerSpriteId = ResourcesMaps.playerSpritesMap.get(p.roleId);
             drawImage(canvas,p.posX*renderTileSize, p.posY*renderTileSize,p.posX*renderTileSize+renderTileSize,p.posY*renderTileSize+renderTileSize,playerSpriteId);
         }
+        Log.e("info",""+gameModel.players.get(1).posX);
     }
 
     /**
@@ -132,8 +136,6 @@ public class GameView extends View {
             }
         }
     }
-
-
 
     private void drawImage(Canvas canvas,int left,int top, int right, int bot, int imageRessource){
         Paint p = new Paint();

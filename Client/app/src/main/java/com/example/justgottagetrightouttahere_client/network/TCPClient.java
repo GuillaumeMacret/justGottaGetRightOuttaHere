@@ -97,7 +97,7 @@ public class TCPClient implements Runnable{
         /*############################*/
 
         TCPClient client = new TCPClient();
-        client.startListeningThread(new GameMessageHandler());
+        client.startListeningThread(new GameMessageHandler(null));
 
         client.send("a");
 

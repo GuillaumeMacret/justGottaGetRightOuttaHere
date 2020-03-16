@@ -1,5 +1,7 @@
 package com.example.justgottagetrightouttahere_client.model;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,5 +24,11 @@ public class GameModel {
         this.sizeY = sizeY;
         gameMatrix = new int[sizeX][sizeY];
         players = new ArrayList<>();
+    }
+
+    public void movePlayer(int playerId, int xPos, int yPos){
+        Log.e("INFO","Game model : Moving player "+playerId);
+        players.get(playerId).posX = xPos;
+        players.get(playerId).posY = yPos;
     }
 }

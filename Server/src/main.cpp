@@ -1,9 +1,11 @@
 #include <iostream>
-#include "../lib/test2.hpp"
+#include "Server.hpp"
 
 using namespace std;
 
-int main(){
-    test t;
-    cout<<t.hello()<<endl;
+int main()
+{
+    Server s;
+    s.run();
+    return 0;
 }

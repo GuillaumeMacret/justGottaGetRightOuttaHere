@@ -61,12 +61,12 @@ void Server::run()
 void Server::requestGamesList(int userIndex)
 {
     //just send the list to the dest
-    std::string answer = "{Action:\"" ACTION_GAMES_LIST "\", Games:[";
+    std::string answer = "{\"Action\":\"" ACTION_GAMES_LIST "\", \"Games\":[";
 
     for (Game *g : _games)
     {
-        answer += "Game:{id:" + g->getGameID();
-        answer += ", nbPlayers:" + g->getPlayers().size();
+        answer += "{\"id\":" + g->getGameID();
+        answer += ", \"nbPlayers\":" + g->getPlayers().size();
     }
 
     answer += "]}\n";
@@ -78,9 +78,9 @@ void Server::requestChangeRole(int userIndex, int roleID)
     Game *g = getGameFromPlayer(userIndex);
     if (g != nullptr)
     {
-        std::string answer = "{Action:\"" ACTION_CHANGE_ROLE "\", ";
-        answer += "PlayerId:" + _players[userIndex]->getInGameID();
-        answer += ", RoleId:" + roleID;
+        std::string answer = "{\"Action\":\"" ACTION_CHANGE_ROLE "\", ";
+        answer += "\"PlayerId\":" + _players[userIndex]->getInGameID();
+        answer += ", \"RoleId\":" + roleID;
         answer += "}\n";
         broadcastGame(g, answer);
     }
@@ -89,11 +89,11 @@ void Server::requestChangeRole(int userIndex, int roleID)
 void Server::requestChangeMap(int userIndex, std::string mapName)
 {
     Game *g = getGameFromPlayer(userIndex);
-    std::string answer = "{Action:\"" ACTION_CHANGE_MAP "\", ";
+    std::string answer = "{\"Action\":\"" ACTION_CHANGE_MAP "\", ";
     if (g != nullptr)
     {
         g->changeMap(mapName);
-        answer += "Map:\"" + mapName + "\"}\n";
+        answer += "\"Map\":\"" + mapName + "\"}\n";
         broadcastGame(g, answer);
     }
     else
@@ -109,14 +109,12 @@ void Server::requestAction(int userIndex)
 
     if (g != nullptr)
     {
-        g->doActionPlayer(_players[userIndex]->getInGameID());
+        std::string answer;
+        answer = "{\"Action\":\"" ACTION_ACTION "\", \"Changes\":";
+        answer += g->doActionPlayer(_players[userIndex]->getInGameID());
+        answer += "}\n";
+        broadcastGame(g, answer);
     }
-
-    std::string answer;
-    answer = "{Action:\"" ACTION_ACTION "\", Level:";
-    answer += g->getMapToJSON();
-    answer += "}\n";
-    broadcastGame(g, answer);
 }
 
 void Server::requestCreateGame(int userIndex)
@@ -125,7 +123,7 @@ void Server::requestCreateGame(int userIndex)
     Player *p = new Player(userIndex, g);
     g->addPlayer(p);
     _games.push_back(g);
-    std::string answer = "{Action:\"" ACTION_CREATE_GAME "\"}\n";
+    std::string answer = "{\"Action\":\"" ACTION_CREATE_GAME "\"}\n";
     TCPConn.answers[userIndex] = answer;
 }
 
@@ -138,8 +136,8 @@ void Server::requestJoinGame(int userIndex, int gameID)
     {
         if (g->addPlayer(_players[userIndex]))
         {
-            answer = "{Action:\"" ACTION_JOINED_GAME ", GameId:" + gameID;
-            answer += ", Players:[";
+            answer = "{\"Action\":\"" ACTION_JOINED_GAME ", \"GameId\":" + gameID;
+            answer += ", \"Players\":[";
             int i = 0;
             for (Player *p : g->getPlayers())
             {
@@ -148,8 +146,8 @@ void Server::requestJoinGame(int userIndex, int gameID)
                 answer += p->getIndex();
                 ++i;
             }
-            answer += "], PlayerId:" + _players[userIndex]->getInGameID();
-            answer += ", Map:\"" + g->getMapName();
+            answer += "], \"PlayerId\":" + _players[userIndex]->getInGameID();
+            answer += ", \"Map\":\"" + g->getMapName();
             answer += "\"}\n";
 
             broadcastGame(g, answer);
@@ -157,14 +155,14 @@ void Server::requestJoinGame(int userIndex, int gameID)
         }
         else
         {
-            answer = "{Action:\"" ACTION_CANT_JOIN_GAME ", GameId:" + gameID;
-            answer += "MoreInfo:\"" ERROR_GAME_FULL "\"";
+            answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME ", \"GameId\":" + gameID;
+            answer += "\"MoreInfo\":\"" ERROR_GAME_FULL "\"";
         }
     }
     else
     {
-        answer = "{Action:\"" ACTION_CANT_JOIN_GAME ", GameId:" + gameID;
-        answer += "MoreInfo:\"" ERROR_GAME_DOES_NOT_EXIST "\"";
+        answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME ", \"GameId\":" + gameID;
+        answer += "\"MoreInfo\":\"" ERROR_GAME_DOES_NOT_EXIST "\"";
     }
     answer += "}\n";
     TCPConn.answers[userIndex] = answer;
@@ -193,7 +191,7 @@ void Server::requestStartGame(int userIndex)
         }
         if (available)
         {
-            answer = "{Action:\"" ACTION_LOAD_LEVEL "\", Level:";
+            answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", \"Level\":";
             answer += g->getMapToJSON() + ',';
             answer += g->getPlayersToJSON();
             answer += "\n";
@@ -214,9 +212,9 @@ void Server::requestMove(int userIndex, std::string moveDir)
     }
 
     std::string answer;
-    answer = "{Action:\"" ACTION_MOVE "\", PosX:" + _players[userIndex]->getPosX();
-    answer += ", PosY:" + _players[userIndex]->getPosY();
-    answer += ", Player:" + _players[userIndex]->getInGameID();
+    answer = "{\"Action\":\"" ACTION_MOVE "\", \"PosX\":" + _players[userIndex]->getPosX();
+    answer += ", \"PosY\":" + _players[userIndex]->getPosY();
+    answer += ", \"Player\":" + _players[userIndex]->getInGameID();
     answer += "}\n";
 
     broadcastGame(g, answer);
@@ -232,7 +230,7 @@ void Server::requestNextLevel(int userIndex)
     }
 
     std::string answer;
-    answer = "{Action:\"" ACTION_LOAD_LEVEL "\", Level:";
+    answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", \"Level\":";
     answer += g->getMapToJSON();
     answer += g->getPlayersToJSON();
     answer += "\n";
@@ -247,7 +245,7 @@ void Server::requestLeaveGame(int userIndex)
     {
         removePlayerFromGame(userIndex);
         std::string answer;
-        answer = "{Action:\"" ACTION_LEAVE_GAME "\", Player:" + _players[userIndex]->getInGameID();
+        answer = "{\"Action\":\"" ACTION_LEAVE_GAME "\", \"Player\":" + _players[userIndex]->getInGameID();
         answer += "}\n";
         broadcastGame(g, answer);
     }

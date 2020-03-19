@@ -33,8 +33,9 @@ Player *Game::movePlayer(int playerID, std::string direction)
     return _players[playerID];
 }
 
-Player *Game::doActionPlayer(int playerID)
+std::string Game::doActionPlayer(int playerID)
 {
+    std::string res = "[";
     Player *p = _players[playerID];
     int posX = p->getPosX(), posY = p->getPosY();
     if (p->getLastDirection() == "up")
@@ -55,8 +56,13 @@ Player *Game::doActionPlayer(int playerID)
     }
 
     //TODO check if tile [posX, posY] correspond to p->getRole()
+    res += "{\"xPos\": " + posX;
+    res += ",\"yPos\": " + posY;
+    res += ",\"value\": " + _grid[posX][posY];
+    res += "}";
 
-    return p;
+    res += "]";
+    return res;
 }
 
 bool Game::addPlayer(Player *p)
@@ -123,7 +129,7 @@ std::string Game::getMapName() { return _selectedMap; }
 
 std::string Game::getMapToJSON()
 {
-    std::string mapJSON = "Level:[";
+    std::string mapJSON = "\"Level\":[";
     for (int i = 0; i < _height; ++i)
     {
         mapJSON += "[";
@@ -139,12 +145,12 @@ std::string Game::getMapToJSON()
 
 std::string Game::getPlayersToJSON()
 {
-    std::string playersJSON = "Players:[";
+    std::string playersJSON = "\"Players\":[";
     size_t i = 0;
     for (Player *p : _players)
     {
-        playersJSON += "{xPos:" + p->getPosX();
-        playersJSON += ",yPos:" + p->getPosY();
+        playersJSON += "{\"xPos\":" + p->getPosX();
+        playersJSON += ",\"yPos\":" + p->getPosY();
         playersJSON += "}";
         if (i != _players.size() - 1)
             playersJSON += ",";

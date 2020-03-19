@@ -147,8 +147,7 @@ Responses from server
 
 ```JSON
 {
-    "Action":"action",
-    "Changes":[{xPos:[val],yPos:[val],value:[val]},{xPos:[val],yPos:[val],value:[val]}]
+    "Action":"action"
 }
 ```
 
@@ -157,7 +156,7 @@ Response from server if action allowed (new map status)
 ```JSON
 {
     "Action":"action",
-    "Level":[[1,0,4,3,1,1,1,..],[...]]
+    "Changes":[{xPos:[val],yPos:[val],value:[val]},{xPos:[val],yPos:[val],value:[val]}]
 }
 ```
 

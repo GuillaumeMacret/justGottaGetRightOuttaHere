@@ -87,11 +87,11 @@ public class GameMessageHandler implements MessageHandler {
                 JSONArray line = map.getJSONArray(i);
                 arrayWidth = line.length();
                 if(i == 0){
-                    matrix = new int[arrayHeight][arrayWidth];
+                    matrix = new int[arrayWidth][arrayHeight];
                 }
 
                 for(int j = 0; j < arrayWidth; ++j){
-                    matrix[i][j] = line.getInt(j);
+                    matrix[j][i] = line.getInt(j);
                 }
             }
             model.loadLevel(matrix);

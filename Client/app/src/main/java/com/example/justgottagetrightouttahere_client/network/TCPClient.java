@@ -49,6 +49,8 @@ public class TCPClient implements Runnable{
             return false;
         }
         receiver.setMessageHandler(messageHandler);
+
+        Log.e("INFO","Handler was set with "+messageHandler.getClass());
         return true;
     }
 

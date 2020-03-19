@@ -24,6 +24,8 @@ import com.example.justgottagetrightouttahere_client.network.TCPClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_SIZE_X;
 import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_SIZE_Y;
 import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_TILE_SIZE;
@@ -96,24 +98,28 @@ public class GameView extends View {
      * **/
     @Override
     public void draw(Canvas canvas){
+        //FIXME find a clever way to ask for a refresh
+        Log.e("INFO","Drawing canvas");
+
         super.draw(canvas);
         canvas.drawColor(Color.RED);
         if(!renderTileSizeCalculated){
             calculateTileSize();
         }
 
-        drawMatrix(canvas);
-        drawPlayers(canvas);
-        //FIXME find a clever way to ask for a refresh
+        drawMatrix(canvas,gameModel.gameMatrix,gameModel.sizeX, gameModel.sizeY);
+        drawPlayers(canvas,gameModel.players);
+        //gameModel.setRedrawDone();
         invalidate();
+
     }
 
     /**
      * Draws the players in the given canvas
      * @param canvas
      */
-    private void drawPlayers(Canvas canvas){
-        for(Player p : gameModel.players){
+    private void drawPlayers(Canvas canvas, List<Player> players){
+        for(Player p : players){
             //System.err.println("Drawing player "+p.id);
 
             int playerSpriteId = ResourcesMaps.playerSpritesMap.get(p.roleId);
@@ -125,20 +131,20 @@ public class GameView extends View {
      * Draws the tile matrix in the given canvas
      * @param canvas
      */
-    private void drawMatrix(Canvas canvas){
-        for(int i = 0; i < gameModel.sizeX;++i){
-            for(int j = 0; j < gameModel.sizeY;++j){
+    private void drawMatrix(Canvas canvas, int matrix[][], int sizeX, int sizeY){
+        for(int i = 0; i < sizeX;++i){
+            for(int j = 0; j < sizeY;++j){
                 //System.err.println("Drawing tile");
-
-                int tileSpriteId = ResourcesMaps.tilesSpritesMap.get(gameModel.gameMatrix[i][j]);
+                //Log.e("INFO","I = "+i+", J = "+j);
+                int tileSpriteId = ResourcesMaps.tilesSpritesMap.get(matrix[i][j]);
                 drawImage(canvas,i*renderTileSize,j*renderTileSize,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize, tileSpriteId);
             }
         }
     }
 
-    private void drawImage(Canvas canvas,int left,int top, int right, int bot, int imageRessource){
+    private void drawImage(Canvas canvas,int left,int top, int right, int bot, int imageResource){
         Paint p = new Paint();
-        Bitmap b= BitmapFactory.decodeResource(getResources(), imageRessource);
+        Bitmap b= BitmapFactory.decodeResource(getResources(), imageResource);
         Rect r = new Rect(left,top,right,bot);
         canvas.drawBitmap(b, null, r, p);
     }

@@ -26,7 +26,7 @@ public class GameMessageHandler implements MessageHandler {
      */
     @Override
     public void handle(String s){
-        System.err.println("Handling message < "+s+" > TODO");
+        System.err.println("Handling message < "+s+" >");
         try {
             JSONObject jsonObject = new JSONObject(s);
             Log.e("INFO","Action : "+jsonObject.getString("Action"));
@@ -37,6 +37,9 @@ public class GameMessageHandler implements MessageHandler {
                     break;
                 case "action":
                     playerActionAction(jsonObject);
+                    break;
+                case "loadLevel":
+                    loadLevel(jsonObject);
                     break;
                 default:
                     Log.e("ERROR","Game handler can't handle action "+jsonObject.getString("Action"));
@@ -71,5 +74,29 @@ public class GameMessageHandler implements MessageHandler {
             e.printStackTrace();
         }
         model.updateTiles(tilesToChange);
+    }
+
+    void loadLevel(JSONObject jsonObject){
+        try {
+            int arrayHeight, arrayWidth;
+            int matrix[][] = new int[0][0];
+
+            JSONArray map = jsonObject.getJSONArray("Level");
+            arrayHeight = map.length();
+            for(int i = 0; i < arrayHeight; ++i){
+                JSONArray line = map.getJSONArray(i);
+                arrayWidth = line.length();
+                if(i == 0){
+                    matrix = new int[arrayHeight][arrayWidth];
+                }
+
+                for(int j = 0; j < arrayWidth; ++j){
+                    matrix[i][j] = line.getInt(j);
+                }
+            }
+            model.loadLevel(matrix);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

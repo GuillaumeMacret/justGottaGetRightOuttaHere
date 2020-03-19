@@ -8,12 +8,20 @@
 
 class Player;
 
+struct Tile {
+    int posX;
+    int posY;
+    int value;
+};
+
 class Game
 {
 private:
     //Player *_players[NB_PLAYERS];
     std::vector<Player *> _players;
     char **_grid;
+    //will be splitted in multiple vectors once we have the map
+    std::vector<Tile *> _objects;
     int _width;
     int _height;
     int _nbPlayers;

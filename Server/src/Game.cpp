@@ -129,17 +129,29 @@ std::string Game::getMapName() { return _selectedMap; }
 
 std::string Game::getMapToJSON()
 {
-    std::string mapJSON = "\"Level\":[";
+    //TO DO: read map from file and add it to mapJSON as we read it
+
+    std::string mapJSON = "\"Blocks\":[";
     for (int i = 0; i < _height; ++i)
     {
-        mapJSON += "[";
+        if(i) mapJSON += ',';
+        mapJSON += '[';
         for (int j = 0; j < _width; ++j)
-        {
+        {   
+            if(j) mapJSON += ',';
             mapJSON += _grid[i][j];
         }
-        mapJSON += "],";
+        mapJSON += ']';
     }
-    mapJSON += "]";
+    mapJSON += "],\"Objects\":[";
+    for(size_t i = 0; i < _objects.size(); ++i) {
+        if(i) mapJSON += ',';
+        mapJSON += "{xPos:" + _objects[i]->posX;
+        mapJSON += ",yPos:" + _objects[i]->posY;
+        mapJSON += ",value:" + _objects[i]->value;
+        mapJSON += '}';
+    }
+    mapJSON += ']';
     return mapJSON;
 }
 
@@ -153,10 +165,10 @@ std::string Game::getPlayersToJSON()
         playersJSON += ",\"yPos\":" + p->getPosY();
         playersJSON += "}";
         if (i != _players.size() - 1)
-            playersJSON += ",";
+            playersJSON += ',';
         ++i;
     }
-    playersJSON += "]";
+    playersJSON += ']';
     return playersJSON;
 }
 

@@ -15,9 +15,6 @@ public class GameModel {
     public int [][] gameMatrix;
     public List<Player> players;
 
-    static Semaphore redrawMutex = new Semaphore(1);
-    private boolean needsRedraw = false;
-
     /**
      * Creates the game with its matrix according to size given in parameter
      * @param sizeX
@@ -44,7 +41,6 @@ public class GameModel {
         for(Tile t : tiles){
             gameMatrix[t.posX][t.posY] = t.spriteId;
         }
-        callForRedraw();
     }
 
     public void loadLevel(int matrix[][]){
@@ -57,38 +53,6 @@ public class GameModel {
                 gameMatrix[i][j] = matrix[i][j];
             }
         }
-        callForRedraw();
     }
 
-    private void callForRedraw(){
-        try {
-            redrawMutex.acquire();
-            needsRedraw = true;
-            redrawMutex.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void setRedrawDone(){
-        try {
-            redrawMutex.acquire();
-            needsRedraw = false;
-            redrawMutex.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean checkNeedsRedraw(){
-        boolean result = false;
-        try {
-            redrawMutex.acquire();
-            result = needsRedraw;
-            redrawMutex.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
 }

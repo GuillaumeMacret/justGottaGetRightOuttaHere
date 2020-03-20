@@ -81,7 +81,8 @@ public class GameMessageHandler implements MessageHandler {
             int arrayHeight, arrayWidth;
             int matrix[][] = new int[0][0];
 
-            JSONArray map = jsonObject.getJSONArray("Level");
+            /*Loading blocks*/
+            JSONArray map = jsonObject.getJSONArray("Blocks");
             arrayHeight = map.length();
             for(int i = 0; i < arrayHeight; ++i){
                 JSONArray line = map.getJSONArray(i);
@@ -95,6 +96,16 @@ public class GameMessageHandler implements MessageHandler {
                 }
             }
             model.loadLevel(matrix);
+
+            /*Loading Objects*/
+
+            /*Loading players*/
+            map = jsonObject.getJSONArray("Players");
+            for(int i = 0; i < map.length(); ++i){
+                JSONObject JsonPlayers = map.getJSONObject(i);
+                model.players.get(i).posX = JsonPlayers.getInt("xPos");
+                model.players.get(i).posY = JsonPlayers.getInt("yPos");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

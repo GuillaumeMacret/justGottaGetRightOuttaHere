@@ -108,8 +108,9 @@ Responses from server
 Responses from server
 ```JSON
 {
-  "Action":"LoadLevel",
-  "Level":[[1,0,4,3,1,1,1,..],[...]],
+  "Action":"loadLevel",
+  "Blocks":[[1,0,4,3,1,1,1,..],[...]],
+  "Objects":[{xPos:[val],yPos:[val],value:[val]},...],
   "Players":[{xPos:0,yPos:0},{xPos:0,yPos:0},{xPos:0,yPos:0},{xPos:0,yPos:0}]
 }
 ```
@@ -147,8 +148,7 @@ Responses from server
 
 ```JSON
 {
-    "Action":"action",
-    "Changes":[{xPos:[val],yPos:[val],value:[val]},{xPos:[val],yPos:[val],value:[val]}]
+    "Action":"action"
 }
 ```
 
@@ -157,7 +157,7 @@ Response from server if action allowed (new map status)
 ```JSON
 {
     "Action":"action",
-    "Level":[[1,0,4,3,1,1,1,..],[...]]
+    "Changes":[{xPos:[val],yPos:[val],value:[val]},{xPos:[val],yPos:[val],value:[val]}]
 }
 ```
 

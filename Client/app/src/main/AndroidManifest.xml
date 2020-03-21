@@ -9,9 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.GameActivity"></activity>
-        <activity android:name=".Activities.LobbyActivity"></activity>
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".Activities.GameActivity" android:configChanges="orientation|screenSize|keyboardHidden"></activity>
+        <activity android:name=".Activities.LobbyActivity" android:configChanges="orientation|screenSize|keyboardHidden"></activity>
+        <activity android:name=".Activities.GameListActivity" android:configChanges="orientation|screenSize|keyboardHidden"></activity>
+        <activity android:name=".Activities.MainActivity" android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

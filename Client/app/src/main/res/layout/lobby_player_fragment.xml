@@ -15,17 +15,15 @@
             android:id="@+id/player_image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
             android:contentDescription="Player"
-            android:minWidth="50dp"
-            android:minHeight="50dp"
+            android:minWidth="45dp"
+            android:minHeight="45dp"
             app:srcCompat="@drawable/floor_0" />
 
         <Button
             android:id="@+id/switch_character_button"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_weight="1"
+            android:layout_height="27dp"
             android:background="@android:color/transparent"
             android:text="Change"
             android:textSize="9sp" />

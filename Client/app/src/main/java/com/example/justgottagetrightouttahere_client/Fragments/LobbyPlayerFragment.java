@@ -11,7 +11,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.justgottagetrightouttahere_client.Activities.GameActivity;
 import com.example.justgottagetrightouttahere_client.R;
@@ -22,6 +25,7 @@ public class LobbyPlayerFragment extends Fragment {
     public Player player;
     public boolean isMyPlayer = true;
     protected int currentCharacter = 0;
+    private Bundle bundle;
     private ImageView playerImage;
     private TextView playerIDTextView;
     private TextView abilityTextView;
@@ -48,27 +52,49 @@ public class LobbyPlayerFragment extends Fragment {
     }
 
     public void switchToNextCharacter() {
+        //TODO: Check if the fragment is the fragment of the user, sent a message to the server when switching
         if(isMyPlayer) {
             // Set next character number
             currentCharacter = (currentCharacter + 1) % 4;
-            switch (currentCharacter) {
-                case 0:
-                    playerImage.setImageResource(R.drawable.player0_idle);
-                    abilityTextView.setText(R.string.ability_player0);
-                    break;
-                case 1:
-                    playerImage.setImageResource(R.drawable.player1_idle);
-                    abilityTextView.setText(R.string.ability_player1);
-                    break;
-                case 2:
-                    playerImage.setImageResource(R.drawable.player2_idle);
-                    abilityTextView.setText(R.string.ability_player2);
-                    break;
-                case 3:
-                    playerImage.setImageResource(R.drawable.player3_idle);
-                    abilityTextView.setText(R.string.ability_player3);
-                    break;
-            }
+            updatePlayerImageAndText();
+        }
+    }
+
+    public void updatePlayerImageAndText() {
+        switch (currentCharacter) {
+            case 0:
+                playerImage.setImageResource(R.drawable.player0_idle);
+                abilityTextView.setText(R.string.ability_player0);
+                break;
+            case 1:
+                playerImage.setImageResource(R.drawable.player1_idle);
+                abilityTextView.setText(R.string.ability_player1);
+                break;
+            case 2:
+                playerImage.setImageResource(R.drawable.player2_idle);
+                abilityTextView.setText(R.string.ability_player2);
+                break;
+            case 3:
+                playerImage.setImageResource(R.drawable.player3_idle);
+                abilityTextView.setText(R.string.ability_player3);
+                break;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Save UI state changes
+        outState.putInt("currentCharacter", currentCharacter);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        // Restore UI state changes
+        if(savedInstanceState != null) {
+            currentCharacter = savedInstanceState.getInt("currentCharacter");
+            updatePlayerImageAndText();
         }
     }
 }

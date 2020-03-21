@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.justgottagetrightouttahere_client.model.GameMessageHandler;
 import com.example.justgottagetrightouttahere_client.model.GameModel;
@@ -29,6 +30,7 @@ public class GameView extends View {
     /**The size of a tile in pixels, adapted to screen size**/
     int renderTileSize = DEFAULT_TILE_SIZE;
     boolean renderTileSizeCalculated = false;
+    TCPClient client = null;
 
     public void calculateTileSize(){
         //TODO FIXME
@@ -52,7 +54,7 @@ public class GameView extends View {
 
         messageHandler = new GameMessageHandler(gameModel);
 
-        TCPClient client = new TCPClient();
+        client = new TCPClient();
         Thread clientThread = new Thread(client);
         clientThread.start();
         while(!client.setMessageHandler(messageHandler)){}
@@ -72,6 +74,14 @@ public class GameView extends View {
             e.printStackTrace();
             //{Action:"move",PosX:[val],PosY:[val],Player:[id]}
         }*/
+    }
+    public void send(String s){
+        if(client != null){
+            Log.e("DEBUG","sendmessage : "+s);
+            //client.send(s);
+        }else{
+            Log.e("ERROR","Not connected to a game");
+        }
     }
 
     /**
@@ -152,8 +162,4 @@ public class GameView extends View {
         canvas.drawBitmap(b, null, r, p);
     }
 
-    public boolean onTouchEvent(MotionEvent event){
-        return true;
-        //TODO
-    }
 }

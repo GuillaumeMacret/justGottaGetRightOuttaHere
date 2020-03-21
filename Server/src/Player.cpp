@@ -3,7 +3,7 @@
 
 Player::Player() : _posX(0), _posY(0), _role(0), _index(0), _connected(true) {}
 
-Player::Player(int index, Game *game) : _index(index), _game(game), _lastDirection("down") {}
+Player::Player(int index, Game *game) : _posX(0), _posY(0), _role(0), _index(index), _game(game), _connected(true), _lastDirection("down") {}
 
 int Player::getPosX() { return _posX; }
 
@@ -25,7 +25,7 @@ void Player::setIndex(int index) { _index = index; }
 
 Game *Player::getGame() { return _game; }
 
-void Player::setGame(Game * g) { _game = g; }
+void Player::setGame(Game *g) { _game = g; }
 
 int Player::getInGameID() { return _inGameID; }
 

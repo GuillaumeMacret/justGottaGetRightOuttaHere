@@ -140,7 +140,7 @@ void Server::requestJoinGame(int userIndex, int gameID)
 {
     std::string answer;
 
-    Game *g = getGameFromPlayer(userIndex);
+    Game *g = _games[gameID];
     if (g != nullptr)
     {
         if (g->addPlayer(_players[userIndex]))
@@ -160,7 +160,6 @@ void Server::requestJoinGame(int userIndex, int gameID)
             answer += "\"}\n";
 
             broadcastGame(g, answer);
-            TCPConn.answers[userIndex] = answer;
             return;
         }
         else

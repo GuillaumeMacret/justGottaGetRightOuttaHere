@@ -73,13 +73,13 @@ public class GameMessageHandler implements MessageHandler {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        model.updateTiles(tilesToChange);
+        model.updateBlocksLayer(tilesToChange);
     }
 
     void loadLevel(JSONObject jsonObject){
         try {
             int arrayHeight, arrayWidth;
-            int matrix[][] = new int[0][0];
+            int blocksLayer[][] = new int[0][0];
 
             /*Loading blocks*/
             JSONArray map = jsonObject.getJSONArray("Blocks");
@@ -88,16 +88,27 @@ public class GameMessageHandler implements MessageHandler {
                 JSONArray line = map.getJSONArray(i);
                 arrayWidth = line.length();
                 if(i == 0){
-                    matrix = new int[arrayWidth][arrayHeight];
+                    blocksLayer = new int[arrayWidth][arrayHeight];
                 }
 
                 for(int j = 0; j < arrayWidth; ++j){
-                    matrix[j][i] = line.getInt(j);
+                    blocksLayer[j][i] = line.getInt(j);
                 }
             }
-            model.loadLevel(matrix);
 
-            /*Loading Objects*/
+            /*Loading Objects TODO*/
+
+            int objectsLayer[][] = new int[0][0];
+
+            map = jsonObject.getJSONArray("Objects");
+            for(int i = 0; i < map.length(); ++i){
+                JSONObject object = map.getJSONObject(i);
+                //FIXME -> change 1 to object id
+                Log.e("INFO","adding object in : "+object.getInt("xPos")+"  "+object.getInt("yPos"));
+                model.objectLayer[object.getInt("xPos")][object.getInt("yPos")] = 1;
+            }
+
+            model.loadLevel(blocksLayer);
 
             /*Loading players*/
             map = jsonObject.getJSONArray("Players");

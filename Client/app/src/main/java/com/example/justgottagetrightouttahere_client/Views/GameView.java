@@ -7,22 +7,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.example.justgottagetrightouttahere_client.R;
 import com.example.justgottagetrightouttahere_client.model.GameMessageHandler;
 import com.example.justgottagetrightouttahere_client.model.GameModel;
 import com.example.justgottagetrightouttahere_client.model.Player;
 import com.example.justgottagetrightouttahere_client.model.ResourcesMaps;
 import com.example.justgottagetrightouttahere_client.network.TCPClient;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -70,6 +63,7 @@ public class GameView extends View {
         gameModel.players.add(new Player(1,0,1,1));
         gameModel.players.add(new Player(0,1,2,2));
         gameModel.players.add(new Player(1,1,3,3));
+        gameModel.objectLayer[3][3] = 1;
         /*
         try {
             JSONObject jsonObject = new JSONObject("{\"Action\":\"TestAction\"}");
@@ -99,7 +93,6 @@ public class GameView extends View {
     @Override
     public void draw(Canvas canvas){
         //FIXME find a clever way to ask for a refresh
-        Log.e("INFO","Drawing canvas");
 
         super.draw(canvas);
         canvas.drawColor(Color.RED);
@@ -107,18 +100,30 @@ public class GameView extends View {
             calculateTileSize();
         }
 
-        drawMatrix(canvas,gameModel.gameMatrix,gameModel.sizeX, gameModel.sizeY);
+        drawBlocks(canvas,gameModel.blocksLayer,gameModel.sizeX, gameModel.sizeY);
         drawPlayers(canvas,gameModel.players);
+        drawObjects(canvas,gameModel.objectLayer,gameModel.sizeX, gameModel.sizeY);
         //gameModel.setRedrawDone();
         invalidate();
 
+    }
+
+    void drawObjects(Canvas canvas, int objects[][], int sizeX, int sizeY){
+        for(int i = 0; i < sizeX;++i){
+            for(int j = 0; j < sizeY;++j){
+                if(objects[i][j] != 0){
+                    int spriteId = ResourcesMaps.objectsSpritesMap.get(objects[i][j]);
+                    drawImage(canvas,i*renderTileSize,j*renderTileSize,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize, spriteId);
+                }
+            }
+        }
     }
 
     /**
      * Draws the players in the given canvas
      * @param canvas
      */
-    private void drawPlayers(Canvas canvas, List<Player> players){
+    void drawPlayers(Canvas canvas, List<Player> players){
         for(Player p : players){
             //System.err.println("Drawing player "+p.id);
 
@@ -131,12 +136,10 @@ public class GameView extends View {
      * Draws the tile matrix in the given canvas
      * @param canvas
      */
-    private void drawMatrix(Canvas canvas, int matrix[][], int sizeX, int sizeY){
+    void drawBlocks(Canvas canvas, int matrix[][], int sizeX, int sizeY){
         for(int i = 0; i < sizeX;++i){
             for(int j = 0; j < sizeY;++j){
-                //System.err.println("Drawing tile");
-                //Log.e("INFO","I = "+i+", J = "+j);
-                int tileSpriteId = ResourcesMaps.tilesSpritesMap.get(matrix[i][j]);
+                int tileSpriteId = ResourcesMaps.blocksSpritesMap.get(matrix[i][j]);
                 drawImage(canvas,i*renderTileSize,j*renderTileSize,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize, tileSpriteId);
             }
         }

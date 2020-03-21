@@ -4,7 +4,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 /**
  * Class representing the game board and its players
@@ -12,7 +11,8 @@ import java.util.concurrent.Semaphore;
  */
 public class GameModel {
     public int sizeX, sizeY;
-    public int [][] gameMatrix;
+    public int [][] blocksLayer;
+    public int [][] objectLayer;
     public List<Player> players;
 
     /**
@@ -23,12 +23,9 @@ public class GameModel {
     public GameModel(int sizeX, int sizeY){
         this.sizeX = sizeX;
         this.sizeY = sizeY;
-        gameMatrix = new int[sizeX][sizeY];
+        blocksLayer = new int[sizeX][sizeY];
+        objectLayer = new int[sizeX][sizeY];
         players = new ArrayList<>();
-    }
-
-    public GameModel(int matrix[][]){
-        loadLevel(matrix);
     }
 
     public void movePlayer(int playerId, int xPos, int yPos){
@@ -37,20 +34,20 @@ public class GameModel {
         players.get(playerId).posY = yPos;
     }
 
-    public void updateTiles(List<Tile>tiles){
+    public void updateBlocksLayer(List<Tile>tiles){
         for(Tile t : tiles){
-            gameMatrix[t.posX][t.posY] = t.spriteId;
+            blocksLayer[t.posX][t.posY] = t.spriteId;
         }
     }
 
-    public void loadLevel(int matrix[][]){
+    public void loadLevel(int blocks[][]){
         Log.e("INFO","Loading a new level");
-        sizeX = matrix.length;
-        sizeY = matrix[0].length;
-        gameMatrix = new int[sizeX][sizeY];
-        for(int i = 0; i < matrix.length; ++i){
-            for(int j = 0; j < matrix[i].length; ++j){
-                gameMatrix[i][j] = matrix[i][j];
+        sizeX = blocks.length;
+        sizeY = blocks[0].length;
+        blocksLayer = new int[sizeX][sizeY];
+        for(int i = 0; i < blocks.length; ++i){
+            for(int j = 0; j < blocks[i].length; ++j){
+                blocksLayer[i][j] = blocks[i][j];
             }
         }
     }

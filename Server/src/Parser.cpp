@@ -113,7 +113,7 @@ int Parser::requestLeaveGame(std::string &req, Server &server, int userIndex)
 int Parser::getAction(std::string &req, Server &server, int userIndex)
 {
     std::string s = readArg(req);
-
+    
     int res = 1;
     if (s != "")
     {

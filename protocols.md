@@ -5,13 +5,13 @@
 ### Give game list (server)
 ```JSON
 {
-    Action:"gameList",
-    Games:[
-        Game:{
-            id:[gameId],
-            nbPlayers:[0|1|2|3|4],
+    "Action":"gameList",
+    "Games":[
+        "Game":{
+            "id":[gameId],
+            "nbPlayers":[0|1|2|3|4],
         },
-        OtherGame:{
+        "Game":{
             ...
         }
     ]
@@ -21,13 +21,13 @@
 ### Create a game (client)
 ```JSON
 {
-    Action:"createGame"
+    "Action":"createGame"
 }
 ```
 Response from server :
 ```JSON
 {
-    MapList: ["level1", "level2", ...]
+    "MapList": ["level1", "level2", ...]
 }
 ```
 
@@ -35,25 +35,25 @@ Response from server :
 ### Ask to join a game (client)
 ```JSON
 {
-  Action:"joinGame",
-  GameId:[id]
+  "Action":"joinGame",
+  "GameId":[id]
 }
 ```
 Responses to join a game (server)
 ```JSON
 {
-  Action:"joinedGame",
-  GameId:[id],
-  Players:[id, id, ...],
-  PlayerId: id,
-  Map: "name"
+  "Action":"joinedGame",
+  "GameId":[id],
+  "Players":[id, id, ...],
+  "PlayerId": id,
+  "Map": "name"
 }
 ```
 ```JSON
 {
-  Action:"cantJoinGame",
-  GameId:[id],
-  MoreInfo:["gameFull"|"communicationError"|"gameDoesNotExist"|...]
+  "Action":"cantJoinGame",
+  "GameId":[id],
+  "MoreInfo":["gameFull"|"communicationError"|"gameDoesNotExist"|...]
 }
 ```
 
@@ -61,39 +61,39 @@ Responses to join a game (server)
 
 ```JSON
 {
-    Action:"roleChange",
-    RoleId:[id]
+    "Action":"roleChange",
+    "RoleId":[id]
 }
 ```
 
 Responses from server (broadcast)
 ```JSON
 {
-  Action:"roleChange",
-  PlayerId:[id],
-  RoleId:[id]
+  "Action":"roleChange",
+  "PlayerId":[id],
+  "RoleId":[id]
 }
 ```
 OSEF
 ```JSON
 {
-  Action:"cantChangeRole",
-  MoreInfo:[...]
+  "Action":"cantChangeRole",
+  "MoreInfo":[...]
 }
 ```
 
 ### Ask Change Map (leader)
 ```JSON
 {
-    Action:"changeMap",
-    Map: "name"
+    "Action":"changeMap",
+    "Map": "name"
 }
 ```
 Responses from server
 ```JSON
 {
-    Action:"changedMap",
-    Map: "name"
+    "Action":"changedMap",
+    "Map": "name"
 }
 ```
 
@@ -101,23 +101,24 @@ Responses from server
 
 ```JSON
 {
-    Action:"startGame"
+    "Action":"startGame"
 }
 ```
 
 Responses from server
 ```JSON
 {
-  Action:"LoadLevel",
-  Level:[[1,0,4,3,1,1,1,..],[...]],
-  Players:[{xPos:0,yPos:0},{xPos:0,yPos:0},{xPos:0,yPos:0},{xPos:0,yPos:0}]
+  "Action":"loadLevel",
+  "Blocks":[[1,0,4,3,1,1,1,..],[...]],
+  "Objects":[{xPos:[val],yPos:[val],value:[val]},...],
+  "Players":[{xPos:0,yPos:0},{xPos:0,yPos:0},{xPos:0,yPos:0},{xPos:0,yPos:0}]
 }
 ```
 
 ```JSON
 {
-  Action:"cantStartGame",
-  MoreInfo:["Not enough players"|"Dup role"|...]
+  "Action":"cantStartGame",
+  "MoreInfo":["Not enough players"|"Dup role"|...]
 }
 ```
 
@@ -127,8 +128,8 @@ Responses from server
 
 ```JSON
 {
-    Action:"move",
-    Direction:"up|down|left|right"
+    "Action":"move",
+    "Direction":"up|down|left|right"
 }
 ```
 
@@ -136,10 +137,10 @@ Responses from server
 
 ```JSON
 {
-    Action:"move",
-    PosX:[val],
-    PosY:[val],
-    Player:[id]
+    "Action":"move",
+    "PosX":[val],
+    "PosY":[val],
+    "Player":[id]
 }
 ```
 
@@ -147,7 +148,7 @@ Responses from server
 
 ```JSON
 {
-    Action:"action"
+    "Action":"action"
 }
 ```
 
@@ -155,8 +156,8 @@ Response from server if action allowed (new map status)
 
 ```JSON
 {
-    Action:"action",
-    Level:[[1,0,4,3,1,1,1,..],[...]]
+    "Action":"action",
+    "Changes":[{xPos:[val],yPos:[val],value:[val]},{xPos:[val],yPos:[val],value:[val]}]
 }
 ```
 
@@ -164,7 +165,7 @@ Response from server if action allowed (new map status)
 
 ```JSON
 {
-    Action:"win"
+    "Action":"win"
 }
 ```
 
@@ -172,7 +173,7 @@ Response from server if action allowed (new map status)
 
 ```JSON
 {
-    Action:"nextLevel"
+    "Action":"nextLevel"
 }
 ```
 
@@ -183,10 +184,10 @@ Response from server : load level (see "Ask Start game" response)
 TODO
 
 Response from server (broadcast)
-```
+```json
 {
-    Action:"leaveGame",
-    Player:[id]
+    "Action":"leaveGame",
+    "Player":[id]
 }
 ```
 ### Restart level

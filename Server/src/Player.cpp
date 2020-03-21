@@ -25,6 +25,8 @@ void Player::setIndex(int index) { _index = index; }
 
 Game *Player::getGame() { return _game; }
 
+void Player::setGame(Game * g) { _game = g; }
+
 int Player::getInGameID() { return _inGameID; }
 
 void Player::setInGameID(int inGameID) { _inGameID = inGameID; }

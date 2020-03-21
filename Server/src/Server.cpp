@@ -6,6 +6,7 @@
 #include "Player.hpp"
 #include <iostream>
 #include <thread>
+#include <string>
 
 Server::Server()
 {
@@ -31,7 +32,7 @@ void Server::runPlayer(int index)
             TCPConn.answers[index] = "Error";
         }
 
-        if (TCPConn.server_send(index) == ERR)
+        if (!TCPConn.answers[index].empty() && TCPConn.server_send(index) == ERR)
         {
             removePlayerFromGame(index);
             return;
@@ -62,13 +63,19 @@ void Server::requestGamesList(int userIndex)
 {
     //just send the list to the dest
     std::string answer = "{\"Action\":\"" ACTION_GAMES_LIST "\", \"Games\":[";
-
-    for (Game *g : _games)
+    if (!_games.empty())
     {
-        answer += "{\"id\":" + g->getGameID();
-        answer += ", \"nbPlayers\":" + g->getPlayers().size();
+        size_t i = 0;
+        for (; i < _games.size() - 1; ++i)
+        {
+            answer += "{\"id\":" + std::to_string(_games[i]->getGameID());
+            answer += ", \"nbPlayers\":" + std::to_string(_games[i]->getPlayers().size());
+            answer += "},";
+        }
+        answer += "{\"id\":" + std::to_string(_games[i]->getGameID());
+        answer += ", \"nbPlayers\":" + std::to_string(_games[i]->getPlayers().size());
+        answer += '}';
     }
-
     answer += "]}\n";
     TCPConn.answers[userIndex] = answer;
 }
@@ -79,8 +86,8 @@ void Server::requestChangeRole(int userIndex, int roleID)
     if (g != nullptr)
     {
         std::string answer = "{\"Action\":\"" ACTION_CHANGE_ROLE "\", ";
-        answer += "\"PlayerId\":" + _players[userIndex]->getInGameID();
-        answer += ", \"RoleId\":" + roleID;
+        answer += "\"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
+        answer += ", \"RoleId\":" + std::to_string(roleID);
         answer += "}\n";
         broadcastGame(g, answer);
     }
@@ -120,10 +127,12 @@ void Server::requestAction(int userIndex)
 void Server::requestCreateGame(int userIndex)
 {
     Game *g = new Game(_games.size() + 1);
-    Player *p = new Player(userIndex, g);
-    g->addPlayer(p);
+    _players[userIndex]->setGame(g);
+    g->addPlayer(_players[userIndex]);
     _games.push_back(g);
+    //TODO {"MapList": ["level1", "level2", ...]}\n
     std::string answer = "{\"Action\":\"" ACTION_CREATE_GAME "\"}\n";
+
     TCPConn.answers[userIndex] = answer;
 }
 
@@ -136,21 +145,22 @@ void Server::requestJoinGame(int userIndex, int gameID)
     {
         if (g->addPlayer(_players[userIndex]))
         {
-            answer = "{\"Action\":\"" ACTION_JOINED_GAME ", \"GameId\":" + gameID;
+            answer = "{\"Action\":\"" ACTION_JOINED_GAME ", \"GameId\":" + std::to_string(gameID);
             answer += ", \"Players\":[";
             int i = 0;
             for (Player *p : g->getPlayers())
             {
                 if (i)
                     answer += ", ";
-                answer += p->getIndex();
+                answer += std::to_string(p->getInGameID());
                 ++i;
             }
-            answer += "], \"PlayerId\":" + _players[userIndex]->getInGameID();
+            answer += "], \"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
             answer += ", \"Map\":\"" + g->getMapName();
             answer += "\"}\n";
 
             broadcastGame(g, answer);
+            TCPConn.answers[userIndex] = answer;
             return;
         }
         else
@@ -212,9 +222,9 @@ void Server::requestMove(int userIndex, std::string moveDir)
     }
 
     std::string answer;
-    answer = "{\"Action\":\"" ACTION_MOVE "\", \"PosX\":" + _players[userIndex]->getPosX();
-    answer += ", \"PosY\":" + _players[userIndex]->getPosY();
-    answer += ", \"Player\":" + _players[userIndex]->getInGameID();
+    answer = "{\"Action\":\"" ACTION_MOVE "\", \"PosX\":" + std::to_string(_players[userIndex]->getPosX());
+    answer += ", \"PosY\":" + std::to_string(_players[userIndex]->getPosY());
+    answer += ", \"Player\":" + std::to_string(_players[userIndex]->getInGameID());
     answer += "}\n";
 
     broadcastGame(g, answer);
@@ -245,7 +255,7 @@ void Server::requestLeaveGame(int userIndex)
     {
         removePlayerFromGame(userIndex);
         std::string answer;
-        answer = "{\"Action\":\"" ACTION_LEAVE_GAME "\", \"Player\":" + _players[userIndex]->getInGameID();
+        answer = "{\"Action\":\"" ACTION_LEAVE_GAME "\", \"Player\":" + std::to_string(_players[userIndex]->getInGameID());
         answer += "}\n";
         broadcastGame(g, answer);
     }
@@ -280,6 +290,7 @@ void Server::removePlayerFromGame(int index)
                 if ((*it)->getGameID() == g->getGameID())
                 {
                     _games.erase(it);
+                    return;
                 }
             }
         }

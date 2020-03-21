@@ -101,6 +101,7 @@ int TCPConnection::server_send(int index)
     syserror(SEND_ERROR);
     return ERR;
   }
+  answers[index].clear();
   return 0;
 }
 

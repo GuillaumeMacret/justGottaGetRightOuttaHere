@@ -61,8 +61,8 @@ std::string Game::doActionPlayer(int playerID)
     }
 
     //TODO check if tile [posX, posY] correspond to p->getRole()
-    res += "{\"xPos\": " + posX;
-    res += ",\"yPos\": " + posY;
+    res += "{\"xPos\": " + std::to_string(posX);
+    res += ",\"yPos\": " + std::to_string(posY);
     res += ",\"value\": " + std::to_string(_grid[posX][posY].blockValue);
     res += "}";
 
@@ -206,7 +206,7 @@ void Game::readButtonOn(RSJresource layerResource) {
     std::stringstream ss;
     ss << layerString;
     std::string tmp;
-    int value, i = 0, j = 0, lockIndex = 0;
+    int value, i = 0, j = 0;
     while(!ss.eof()) {
         ss >> tmp;
         if(std::stringstream(tmp) >> value && value) {
@@ -229,7 +229,7 @@ void Game::readButtonOff(RSJresource layerResource) {
     std::stringstream ss;
     ss << layerString;
     std::string tmp;
-    int value, i = 0, j = 0, lockIndex = 0;
+    int value, i = 0, j = 0;
     while(!ss.eof()) {
         ss >> tmp;
         if(std::stringstream(tmp) >> value && value) {
@@ -318,9 +318,9 @@ std::string Game::getMapToJSON()
             if(j) mapJSON += ',';
             mapJSON += std::to_string(_grid[i][j].backgroundValue);
             if(_grid[i][j].blockValue) {
-                objectsJSON += "{xPos:" + j;
-                objectsJSON += ",yPos:" + i;
-                objectsJSON += ",value:" + std::to_string(_grid[i][j].blockValue);
+                objectsJSON += "{\"xPos\":" + std::to_string(j);
+                objectsJSON += ",\"yPos\":" + std::to_string(i);
+                objectsJSON += ",\"value\":" + std::to_string(_grid[i][j].blockValue);
                 objectsJSON += '}';
             }
         }
@@ -337,8 +337,8 @@ std::string Game::getPlayersToJSON()
     size_t i = 0;
     for (Player *p : _players)
     {
-        playersJSON += "{\"xPos\":" + p->getPosX();
-        playersJSON += ",\"yPos\":" + p->getPosY();
+        playersJSON += "{\"xPos\":" + std::to_string(p->getPosX());
+        playersJSON += ",\"yPos\":" + std::to_string(p->getPosY());
         playersJSON += "}";
         if (i != _players.size() - 1)
             playersJSON += ',';

@@ -27,6 +27,7 @@ public:
     int getIndex();
     void setIndex(int index);
     class Game *getGame();
+    void setGame(Game *g);
     int getInGameID();
     void setInGameID(int inGameID);
     bool isConnected();

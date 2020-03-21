@@ -54,9 +54,12 @@ public class GameView extends View {
 
         messageHandler = new GameMessageHandler(gameModel);
 
-        client = new TCPClient();
-        Thread clientThread = new Thread(client);
-        clientThread.start();
+        client = TCPClient.getInstance();
+        if(!client.TCPClientRunning){
+            Thread clientThread = new Thread(client);
+            clientThread.start();
+        }
+
         while(!client.setMessageHandler(messageHandler)){}
 
         //FIXME remove this (testing purpose)

@@ -96,16 +96,15 @@ public class GameMessageHandler implements MessageHandler {
                 }
             }
 
-            /*Loading Objects TODO*/
+            /*Loading Objects*/
 
-            int objectsLayer[][] = new int[0][0];
+            model.objectLayer = new int[model.sizeX][model.sizeY];
 
             map = jsonObject.getJSONArray("Objects");
             for(int i = 0; i < map.length(); ++i){
                 JSONObject object = map.getJSONObject(i);
-                //FIXME -> change 1 to object id
                 Log.e("INFO","adding object in : "+object.getInt("xPos")+"  "+object.getInt("yPos"));
-                model.objectLayer[object.getInt("xPos")][object.getInt("yPos")] = 1;
+                model.objectLayer[object.getInt("xPos")][object.getInt("yPos")] = object.getInt("value");
             }
 
             model.loadLevel(blocksLayer);

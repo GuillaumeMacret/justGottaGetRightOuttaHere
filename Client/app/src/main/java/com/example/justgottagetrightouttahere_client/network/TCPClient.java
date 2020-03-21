@@ -12,12 +12,18 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class TCPClient implements Runnable{
+    /**Singleton**/
+    private static TCPClient INSTANCE = new TCPClient();
+    public static TCPClient getInstance(){return INSTANCE;}
+
     /**Socket to bind to the server**/
-    Socket clientSocket;
+    static Socket clientSocket;
     /**The thread that will listen for incoming messages**/
     Thread listeningThread;
+    /**Boolean value indicating if listening thread is running**/
+    public boolean TCPClientRunning = false;
 
-    ClientReceiver receiver = null;
+    static ClientReceiver receiver = null;
 
     /**
      *
@@ -33,6 +39,7 @@ public class TCPClient implements Runnable{
         if(clientSocket != null){
             Log.e("INFO","Socket open, starting listening thread");
             startListeningThread(null);
+            TCPClientRunning = true;
         }else{
             Log.e("ERROR", "Could not connect to server");
         }
@@ -58,7 +65,10 @@ public class TCPClient implements Runnable{
      * Sends the given string over the socket
      * @param s
      */
-    public void send(String s){
+    public static void send(String s) throws Exception{
+        if(clientSocket == null){
+            throw new Exception("Socket not open can't send message");
+        }
         PrintWriter printWriter = null;
         try {
             printWriter = new PrintWriter(clientSocket.getOutputStream(),true);
@@ -101,7 +111,7 @@ public class TCPClient implements Runnable{
         TCPClient client = new TCPClient();
         client.startListeningThread(new GameMessageHandler(null));
 
-        client.send("a");
+        //client.send("a");
 
         /*W8 before closing*/
         try {

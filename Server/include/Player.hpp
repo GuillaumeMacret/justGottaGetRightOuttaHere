@@ -13,6 +13,7 @@ class Player
     int _inGameID;
     bool _connected;
     std::string _lastDirection;
+    int _lastCollisionType;
 
 public:
     Player();
@@ -26,6 +27,8 @@ public:
     void setRole(int role);
     int getIndex();
     void setIndex(int index);
+    int getLastCollisionType();
+    void setLastCollisionType(int type);
     class Game *getGame();
     void setGame(Game *g);
     int getInGameID();

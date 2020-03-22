@@ -215,16 +215,18 @@ void Server::requestStartGame(int userIndex)
 void Server::requestMove(int userIndex, std::string moveDir)
 {
     Game *g = getGameFromPlayer(userIndex);
+    std::string changes = "";
     if (g != nullptr)
     {
-        g->movePlayer(_players[userIndex]->getInGameID(), moveDir);
+        changes = g->movePlayer(_players[userIndex]->getInGameID(), moveDir);
     }
 
     std::string answer;
     answer = "{\"Action\":\"" ACTION_MOVE "\", \"PosX\":" + std::to_string(_players[userIndex]->getPosX());
     answer += ", \"PosY\":" + std::to_string(_players[userIndex]->getPosY());
     answer += ", \"Player\":" + std::to_string(_players[userIndex]->getInGameID());
-    answer += "}\n";
+    answer += ", \"Changes\":[" + changes;
+    answer += "]}\n";
 
     broadcastGame(g, answer);
 }

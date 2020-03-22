@@ -1,7 +1,7 @@
 #include "Player.hpp"
 #include "Game.hpp"
 
-Player::Player() : _posX(0), _posY(0), _role(0), _index(0), _connected(true) {}
+Player::Player() : _posX(0), _posY(0), _role(0), _index(0), _connected(true), _lastCollisionType(0) {}
 
 Player::Player(int index, Game *game) : _posX(0), _posY(0), _role(0), _index(index), _game(game), _connected(true), _lastDirection("down") {}
 
@@ -22,6 +22,10 @@ void Player::setRole(int role) { _role = role; }
 int Player::getIndex() { return _index; }
 
 void Player::setIndex(int index) { _index = index; }
+
+int Player::getLastCollisionType() { return _lastCollisionType; }
+
+void Player::setLastCollisionType(int type) { _lastCollisionType = type; }
 
 Game *Player::getGame() { return _game; }
 

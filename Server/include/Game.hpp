@@ -3,8 +3,18 @@
 
 //#define NB_PLAYERS 4
 
+#define EMPTY 0
 #define KEY 6
 #define BUTTON 71
+#define MOVABLE 2
+#define BREAKABLE 12
+#define WATER 72
+#define BRIDGE 28
+
+#define C_NOTHING 0
+#define C_WALKABLE 1
+#define C_BLOCK 2
+#define C_WATER 3
 
 #include <string>
 #include <vector>
@@ -23,14 +33,19 @@ struct Point {
     int posY;
 };
 
+struct OnOffBlock {
+    Point p;
+    int value;
+};
+
 class Game
 {
 private:
     //Player *_players[NB_PLAYERS];
     std::vector<Player *> _players;
     Tile **_grid;
-    std::vector<Point> _onBlocks;
-    std::vector<Point> _offBlocks;
+    std::vector<OnOffBlock> _onBlocks;
+    std::vector<OnOffBlock> _offBlocks;
     Point _lockPosition[4];
     bool _buttonState;
     int _width;
@@ -48,13 +63,20 @@ private:
     void readButtonOff(RSJresource layerResource);
     void readCollision(RSJresource layerResource);
 
+    std::string tileToJSON(int posX, int posY, int value);
+
+    std::string checkPush(std::string dir, int posX, int posY);
+    std::string checkCreate(int posX, int posY);
+    std::string checkActivate(int posX, int posY);
+    std::string checkBreak(int posX, int posY);
+
 public:
-    enum class Roles
+    enum Roles
     {
-        PUSH,
-        CREATE,
-        ACTIVATE,
-        BREAK
+        PUSH = 0,
+        CREATE = 1,
+        ACTIVATE = 2,
+        BREAK = 3
     };
 
     Game(int gameID);
@@ -62,8 +84,8 @@ public:
     /* Function called by the server when a player asks to move
         * @playerID: ID of the requesting player
         * @direction: up, down, left or right
-        * Returns the player with its new position. */
-    Player *movePlayer(int playerID, std::string direction);
+        * Returns the blocks changed after the moe (keys or lock) */
+    std::string movePlayer(int playerID, std::string direction);
     std::string doActionPlayer(int playerID);
 
     bool addPlayer(Player *p);

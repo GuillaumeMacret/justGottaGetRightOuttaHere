@@ -8,9 +8,10 @@
 
 Game::Game(int gameID) : _buttonState(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0) {}
 
-Player *Game::movePlayer(int playerID, std::string direction)
+std::string Game::movePlayer(int playerID, std::string direction)
 {
     int posX = _players[playerID]->getPosX(), posY = _players[playerID]->getPosY();
+    std::string changes = "";
     if (direction == "up")
     {
         --posY;
@@ -30,12 +31,134 @@ Player *Game::movePlayer(int playerID, std::string direction)
 
     if (posX >= 0 && posX < _width && posY >= 0 && posY < _height)
     {
-        //TO-DO: check if _grid[posY][posX] is walkable
-        _players[playerID]->setPos(posX, posY);
+        if(_grid[posX][posY].collisionValue < C_BLOCK) {
+            Player *p = _players[playerID];
+            _grid[p->getPosY()][p->getPosX()].collisionValue = p->getLastCollisionType();
+            p->setPos(posX, posY);
+            //TO DO: check key + player pos = walkable
+            if(_grid[p->getPosY()][p->getPosX()].blockValue == KEY) {
+                _grid[p->getPosY()][p->getPosX()].blockValue = EMPTY;
+                _grid[p->getPosY()][p->getPosX()].collisionValue = C_NOTHING;
+                p->setLastCollisionType(C_NOTHING);
+                changes += tileToJSON(p->getPosX(), p->getPosY(), EMPTY);
+                --_nbKeys;
+                if(!_nbKeys) {
+                    //change lock to empty
+                    int i = 0;
+                    for(Point point : _lockPosition) {
+                        if(i) changes += ',';
+                        _grid[point.posY][point.posX].blockValue += 2;
+                        _grid[point.posY][point.posX].collisionValue = C_NOTHING;
+                        changes += tileToJSON(p->getPosX(), p->getPosY(), _grid[point.posY][point.posX].blockValue + 2);
+                        ++i;
+                    }
+                }
+            }
+            p->setLastCollisionType(_grid[p->getPosY()][p->getPosX()].collisionValue);
+        }
         _players[playerID]->setLastDirection(direction);
     }
 
-    return _players[playerID];
+    return changes;
+}
+
+std::string Game::tileToJSON(int posX, int posY, int value) {
+    std::string res = "{\"xPos\": " + std::to_string(posX);
+    res += ",\"yPos\": " + std::to_string(posY);
+    res += ",\"value\": " + std::to_string(EMPTY);
+    res += "}";
+    return res;
+}
+
+std::string Game::checkPush(std::string dir, int posX, int posY) {
+    std::string res="";
+    int pushX = posX, pushY = posY;
+    if(_grid[posY][posX].blockValue == MOVABLE) {
+        if (dir == "up")
+        {
+            --pushY;
+        }
+        else if (dir == "down")
+        {
+            ++pushY;
+        }
+        else if (dir == "left")
+        {
+            --pushX;
+        }
+        else if (dir == "right")
+        {
+            ++pushX;
+        }
+
+        if (pushX >= 0 && pushX < _width && pushY >= 0 && pushY < _height && _grid[pushY][pushX].collisionValue == C_NOTHING) {
+            _grid[posY][posX].blockValue = EMPTY;
+            _grid[posY][posX].collisionValue = C_NOTHING;
+            _grid[pushY][pushX].blockValue = MOVABLE;
+            _grid[pushY][pushX].collisionValue = C_BLOCK;
+            res += tileToJSON(posX,posY,EMPTY);
+            res += ',';
+            res += tileToJSON(pushX, pushY, MOVABLE);
+        }
+    }
+
+    return res;
+}
+
+std::string Game::checkCreate(int posX, int posY) {
+    std::string res="";
+    if(_grid[posY][posX].blockValue == WATER) {
+        _grid[posY][posX].blockValue = BRIDGE;
+        _grid[posY][posX].collisionValue = C_NOTHING;
+        res += tileToJSON(posX, posY, BRIDGE);
+    }
+    return res;
+}
+
+std::string Game::checkActivate(int posX, int posY) {
+    std::string res="";
+
+    if(_grid[posY][posX].blockValue == BUTTON) {
+        int i = 0;
+        if(_buttonState) {
+            for(OnOffBlock ofb : _onBlocks) {
+                if(i) res += ',';
+                _grid[ofb.p.posY][ofb.p.posX].blockValue = ofb.value;
+                res += tileToJSON(ofb.p.posX, ofb.p.posY, ofb.value);
+                ++i;
+            }
+            for(OnOffBlock ofb : _offBlocks) {
+                res += ',';
+                _grid[ofb.p.posY][ofb.p.posX].blockValue = EMPTY;
+                res += tileToJSON(ofb.p.posX, ofb.p.posY, EMPTY);
+            }
+        } else {
+            for(OnOffBlock ofb : _onBlocks) {
+                if(i) res +=',';
+                _grid[ofb.p.posY][ofb.p.posX].blockValue = EMPTY;
+                res += tileToJSON(ofb.p.posX, ofb.p.posY, EMPTY);
+                ++i;
+            }
+            for(OnOffBlock ofb : _offBlocks) {
+                res += ',';
+                _grid[ofb.p.posY][ofb.p.posX].blockValue = ofb.value;
+                res += tileToJSON(ofb.p.posX, ofb.p.posY, ofb.value);
+            }
+        }
+        _buttonState = !_buttonState;
+    }
+
+    return res;
+}
+
+std::string Game::checkBreak(int posX, int posY) {
+    std::string res="";
+    if(_grid[posY][posX].blockValue == BREAKABLE) {
+        _grid[posY][posX].blockValue = EMPTY;
+        _grid[posY][posX].collisionValue = C_NOTHING;
+        res += tileToJSON(posX, posY, EMPTY);
+    }
+    return res;
 }
 
 std::string Game::doActionPlayer(int playerID)
@@ -43,28 +166,41 @@ std::string Game::doActionPlayer(int playerID)
     std::string res = "[";
     Player *p = _players[playerID];
     int posX = p->getPosX(), posY = p->getPosY();
-    if (p->getLastDirection() == "up")
+    std::string dir = p->getLastDirection();
+    if (dir == "up")
     {
         --posY;
     }
-    else if (p->getLastDirection() == "down")
+    else if (dir == "down")
     {
         ++posY;
     }
-    else if (p->getLastDirection() == "left")
+    else if (dir == "left")
     {
         --posX;
     }
-    else if (p->getLastDirection() == "right")
+    else if (dir == "right")
     {
         ++posX;
     }
 
     //TODO check if tile [posX, posY] correspond to p->getRole()
-    res += "{\"xPos\": " + std::to_string(posX);
-    res += ",\"yPos\": " + std::to_string(posY);
-    res += ",\"value\": " + std::to_string(_grid[posX][posY].blockValue);
-    res += "}";
+    if (posX >= 0 && posX < _width && posY >= 0 && posY < _height) {
+        switch(p->getRole()) {
+            case PUSH:
+                res += checkPush(dir, posX, posY);
+                break;
+            case CREATE:
+                res += checkCreate(posX, posY);
+                break;
+            case ACTIVATE:
+                res += checkActivate(posX, posY);
+                break;
+            case BREAK:
+                res += checkBreak(posX, posY);
+                break;
+        }
+    }
 
     res += "]";
     return res;
@@ -142,7 +278,7 @@ void Game::readBackground(RSJresource layerResource) {
     int value, i = 0, j = 0;
     while(!ss.eof()) {
         ss >> tmp;
-        if(std::stringstream(tmp) >> value) _grid[j][i] = Tile {value,0,0};
+        if(std::stringstream(tmp) >> value) _grid[j][i] = Tile {value,EMPTY,C_NOTHING};
         tmp="";
         ++i;
         if(i % _width == 0) {
@@ -210,8 +346,10 @@ void Game::readButtonOn(RSJresource layerResource) {
     while(!ss.eof()) {
         ss >> tmp;
         if(std::stringstream(tmp) >> value && value) {
-            if(value != BUTTON)_onBlocks.push_back(Point{i,j});
-            _grid[j][i].blockValue = value;
+            if(value != BUTTON) {
+                Point p = Point{i,j};
+                _onBlocks.push_back(OnOffBlock{p,value});
+            } else _grid[j][i].blockValue = value;
         }
         tmp="";
         ++i;
@@ -233,7 +371,10 @@ void Game::readButtonOff(RSJresource layerResource) {
     while(!ss.eof()) {
         ss >> tmp;
         if(std::stringstream(tmp) >> value && value) {
-            if(value != BUTTON) _offBlocks.push_back(Point{i,j});
+            if(value != BUTTON) {
+                Point p = Point{i,j};
+                _offBlocks.push_back(OnOffBlock{p,value});
+            }
             _grid[j][i].blockValue = value;
         }
         tmp="";

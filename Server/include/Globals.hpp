@@ -14,7 +14,7 @@
 #define MAX_CONNECTION_ERROR "Maximum connection reached"
 
 /* Client actions */
-#define ACTION_CREATE_GAME "createGame"
+#define ACTION_CREATE_GAME "createdGame"
 #define ACTION_JOIN_GAME "joinGame"
 #define ACTION_START_GAME "startGame"
 #define ACTION_MOVE "move"

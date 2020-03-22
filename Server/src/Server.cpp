@@ -7,6 +7,8 @@
 #include <iostream>
 #include <thread>
 #include <string>
+#include <dirent.h>
+#include <string.h>
 
 Server::Server()
 {
@@ -130,9 +132,29 @@ void Server::requestCreateGame(int userIndex)
     _players[userIndex]->setGame(g);
     g->addPlayer(_players[userIndex]);
     _games.push_back(g);
-    //TODO {"MapList": ["level1", "level2", ...]}\n
 
-    std::string answer = "{\"Action\":\"" ACTION_CREATE_GAME "\"}\n";
+    std::string answer = "{\"Action\":\"" ACTION_CREATE_GAME "\"},";
+    answer += "\"GameId\":" + std::to_string(g->getGameID()) + ',';
+    answer += "\"MapList\":[";
+
+    DIR *mapDir;
+    struct dirent *map;
+    std::string mapName;
+    if((mapDir = opendir("./maps"))) {
+        int i = 0;
+        while((map = readdir(mapDir))){
+            if(strcmp(map->d_name, ".") != 0 && strcmp(map->d_name, "..") != 0 ) {
+                if(i) answer += ',';
+                mapName = map->d_name;
+                mapName = mapName.substr(0,mapName.find(".json"));
+                answer += "\"" + mapName + "\"";
+                ++i;
+            }
+        }
+        closedir(mapDir);
+    }
+
+    answer += "]}\n";
 
     TCPConn.answers[userIndex] = answer;
 }

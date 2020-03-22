@@ -2,6 +2,7 @@ package com.example.justgottagetrightouttahere_client.model;
 
 import android.util.Log;
 
+import com.example.justgottagetrightouttahere_client.Fragments.GameboardFragment;
 import com.example.justgottagetrightouttahere_client.network.MessageHandler;
 
 import org.json.JSONArray;
@@ -21,7 +22,6 @@ public class GameMessageHandler implements MessageHandler {
 
     /**
      * Handles the message in the game board context
-     * TODO
      * @param s
      */
     @Override
@@ -33,10 +33,10 @@ public class GameMessageHandler implements MessageHandler {
 
             switch (jsonObject.getString("Action")){
                 case "move":
-                    movePlayerAction(jsonObject);
+                    movePlayer(jsonObject);
                     break;
                 case "action":
-                    playerActionAction(jsonObject);
+                    updateMap(jsonObject);
                     break;
                 case "loadLevel":
                     loadLevel(jsonObject);
@@ -49,19 +49,20 @@ public class GameMessageHandler implements MessageHandler {
         }
     }
 
-    void movePlayerAction(JSONObject jsonObject){
+    void movePlayer(JSONObject jsonObject){
         try {
             int playerId = jsonObject.getInt("Player");
             int posX = jsonObject.getInt("PosX");
             int posY = jsonObject.getInt("PosY");
-
             model.movePlayer(playerId,posX,posY);
+
+            updateMap(jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    void playerActionAction(JSONObject jsonObject){
+    void updateMap(JSONObject jsonObject){
         List<Tile> tilesToChange = new ArrayList<>();
         try {
             JSONArray jsonTilesArray = jsonObject.getJSONArray("Changes");
@@ -80,6 +81,9 @@ public class GameMessageHandler implements MessageHandler {
         try {
             int arrayHeight, arrayWidth;
             int blocksLayer[][] = new int[0][0];
+
+            model.levelName = jsonObject.getString("Name");
+            model.startTime = System.currentTimeMillis();
 
             /*Loading blocks*/
             JSONArray map = jsonObject.getJSONArray("Blocks");

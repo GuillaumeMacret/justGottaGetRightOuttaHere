@@ -18,6 +18,7 @@ public class GameActivity extends AppCompatActivity {
         //setContentView(new GameView(this));
         setContentView(R.layout.game_activity);
 
+
     }
 
     private float x1,x2,y1,y2;
@@ -35,20 +36,20 @@ public class GameActivity extends AppCompatActivity {
                 y2 =event.getY();
                 float deltaX = x2 - x1, deltaY = y2 - y1;
                 if(deltaX > MIN_SWIPE_DISTANCE){
-                    String message = MessageTemplates.createMoveActionMessage("right");
+                    String message = MessageTemplates.createMoveMessage("right");
                     TCPClient.getInstance().sendThreaded(message);
                 }else if(deltaX < -MIN_SWIPE_DISTANCE) {
-                    String message = MessageTemplates.createMoveActionMessage("left");
+                    String message = MessageTemplates.createMoveMessage("left");
                     TCPClient.getInstance().sendThreaded(message);
                 }else if(deltaY > MIN_SWIPE_DISTANCE){
-                    String message = MessageTemplates.createMoveActionMessage("down");
+                    String message = MessageTemplates.createMoveMessage("down");
                     TCPClient.getInstance().sendThreaded(message);
                 }else if(deltaY < MIN_SWIPE_DISTANCE) {
-                    String message = MessageTemplates.createMoveActionMessage("up");
+                    String message = MessageTemplates.createMoveMessage("up");
                     TCPClient.getInstance().sendThreaded(message);
                 }else{
-                    //Screen tap
-                    Toast.makeText(this,"ScreenTap",Toast.LENGTH_SHORT).show();
+                    String message = MessageTemplates.createActionMessage();
+                    TCPClient.getInstance().sendThreaded(message);
                 }
                 break;
             default:

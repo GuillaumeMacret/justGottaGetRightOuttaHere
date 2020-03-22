@@ -13,11 +13,16 @@ import java.net.Socket;
 
 public class TCPClient implements Runnable{
     /**Singleton**/
-    private static TCPClient INSTANCE = new TCPClient();
-    public static TCPClient getInstance(){return INSTANCE;}
+    private static TCPClient INSTANCE = null;
+    public static TCPClient getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new TCPClient();
+        }
+        return INSTANCE;
+    }
 
     /**Socket to bind to the server**/
-    static Socket clientSocket;
+    Socket clientSocket;
     /**The thread that will listen for incoming messages**/
     Thread listeningThread;
     /**Boolean value indicating if listening thread is running**/
@@ -52,7 +57,7 @@ public class TCPClient implements Runnable{
      */
     public boolean setMessageHandler(MessageHandler messageHandler){
         if(receiver==null){
-            Log.e("ERROR","Can't set Handler because receiver is null");
+            //Log.e("ERROR","Can't set Handler because receiver is null");
             return false;
         }
         receiver.setMessageHandler(messageHandler);

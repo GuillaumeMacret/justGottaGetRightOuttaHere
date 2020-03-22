@@ -10,14 +10,18 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.justgottagetrightouttahere_client.Fragments.GameboardFragment;
+import com.example.justgottagetrightouttahere_client.R;
 import com.example.justgottagetrightouttahere_client.model.GameMessageHandler;
 import com.example.justgottagetrightouttahere_client.model.GameModel;
 import com.example.justgottagetrightouttahere_client.model.Player;
 import com.example.justgottagetrightouttahere_client.model.ResourcesMaps;
 import com.example.justgottagetrightouttahere_client.network.TCPClient;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_SIZE_X;
@@ -69,22 +73,6 @@ public class GameView extends View {
         gameModel.players.add(new Player(0,1,2,2));
         gameModel.players.add(new Player(1,1,3,3));
         gameModel.objectLayer[3][3] = 1;
-        /*
-        try {
-            JSONObject jsonObject = new JSONObject("{\"Action\":\"TestAction\"}");
-            Log.e("INFO","Action : " + jsonObject.getString("Action"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-            //{Action:"move",PosX:[val],PosY:[val],Player:[id]}
-        }*/
-    }
-    public void send(String s){
-        if(client != null){
-            Log.e("DEBUG","sendmessage : "+s);
-            //client.send(s);
-        }else{
-            Log.e("ERROR","Not connected to a game");
-        }
     }
 
     /**
@@ -105,10 +93,14 @@ public class GameView extends View {
      * **/
     @Override
     public void draw(Canvas canvas){
+
         //FIXME find a clever way to ask for a refresh
 
+        String headerString = gameModel.levelName + " " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis() - gameModel.startTime);
+        GameboardFragment.gameboardHeader.setText(headerString);
+
         super.draw(canvas);
-        canvas.drawColor(Color.RED);
+
         if(!renderTileSizeCalculated){
             calculateTileSize();
         }

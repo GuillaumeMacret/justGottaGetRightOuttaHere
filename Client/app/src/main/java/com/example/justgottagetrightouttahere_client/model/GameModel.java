@@ -2,8 +2,10 @@ package com.example.justgottagetrightouttahere_client.model;
 
 import android.util.Log;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 /**
  * Class representing the game board and its players
@@ -14,6 +16,8 @@ public class GameModel {
     public int [][] blocksLayer;
     public int [][] objectLayer;
     public List<Player> players;
+    public String levelName = "No name";
+    public long startTime = System.currentTimeMillis();
 
     /**
      * Creates the game with its matrix according to size given in parameter

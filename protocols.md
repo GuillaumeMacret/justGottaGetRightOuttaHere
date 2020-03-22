@@ -140,7 +140,8 @@ Responses from server
     "Action":"move",
     "PosX":[val],
     "PosY":[val],
-    "Player":[id]
+    "Player":[id],
+    "Changes":[{xPos:[val],yPos:[val],value:[val]},{xPos:[val],yPos:[val],value:[val]}]
 }
 ```
 

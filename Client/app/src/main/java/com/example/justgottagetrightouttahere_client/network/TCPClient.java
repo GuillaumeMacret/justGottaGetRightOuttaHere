@@ -65,7 +65,7 @@ public class TCPClient implements Runnable{
      * Sends the given string over the socket
      * @param s
      */
-    public static void send(String s) throws Exception{
+    protected void send(String s) throws Exception{
         if(clientSocket == null){
             throw new Exception("Socket not open can't send message");
         }
@@ -78,6 +78,11 @@ public class TCPClient implements Runnable{
         System.err.println("[CLI] Client sending "+s);
         printWriter.println(s);
         printWriter.flush();
+    }
+
+    public static void sendThreaded(String s){
+        Thread t = new Thread(new ThreadAndSend(s));
+        t.start();
     }
 
     /**
@@ -130,6 +135,23 @@ public class TCPClient implements Runnable{
          */
     }
 
+}
+
+class ThreadAndSend implements Runnable{
+    private String message2Send;
+
+    public ThreadAndSend(String message2Send) {
+        this.message2Send = message2Send;
+    }
+
+    @Override
+    public void run() {
+        try {
+            TCPClient.getInstance().send(message2Send);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 class ClientReceiver implements Runnable{

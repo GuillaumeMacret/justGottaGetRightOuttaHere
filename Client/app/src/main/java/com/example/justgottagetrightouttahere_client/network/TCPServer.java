@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 public class TCPServer implements Runnable{
     ServerSocket serverSocket = null;
-
+    ServerReceiver receiver = null;
     /**
      * TCP server for tests
      */
@@ -39,6 +39,8 @@ public class TCPServer implements Runnable{
             e.printStackTrace();
         }
         System.err.println("[SRV] Client connected!");
+        Thread t = new Thread(new ServerReceiver(socket));
+        t.start();
 
         for(;;){
             Scanner myObj = new Scanner(System.in);  // Create a Scanner object
@@ -65,5 +67,41 @@ public class TCPServer implements Runnable{
     public static void main(String[] args) {
         TCPServer server = new TCPServer();
         server.run();
+    }
+}
+
+class ServerReceiver implements Runnable{
+    Socket socket;
+
+    public ServerReceiver(Socket socket) {
+        this.socket = socket;
+    }
+
+    /**
+     * Listen to the socket given when building the object
+     * And calls the message handler when a message is received (if null does nothing)
+     */
+    @Override
+    public void run() {
+        BufferedReader reader = null;
+        StringBuffer stringBuffer = new StringBuffer();
+
+        try {
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        System.err.println("[CLI] Server thread listening ...");
+
+        for(;;){
+            try {
+                stringBuffer = new StringBuffer();
+                stringBuffer.append(reader.readLine());
+                System.err.println("[SRV] Received : " + stringBuffer.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
+import com.example.justgottagetrightouttahere_client.Constants.MessageTemplates;
 import com.example.justgottagetrightouttahere_client.R;
+import com.example.justgottagetrightouttahere_client.network.TCPClient;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -33,14 +35,17 @@ public class GameActivity extends AppCompatActivity {
                 y2 =event.getY();
                 float deltaX = x2 - x1, deltaY = y2 - y1;
                 if(deltaX > MIN_SWIPE_DISTANCE){
-                    Toast.makeText(this,"left2right swipe",Toast.LENGTH_SHORT).show();
-                    findViewById(R.id.gameBoardFragment);
+                    String message = MessageTemplates.createMoveActionMessage("right");
+                    TCPClient.getInstance().sendThreaded(message);
                 }else if(deltaX < -MIN_SWIPE_DISTANCE) {
-                    Toast.makeText(this,"right2left swipe",Toast.LENGTH_SHORT).show();
+                    String message = MessageTemplates.createMoveActionMessage("left");
+                    TCPClient.getInstance().sendThreaded(message);
                 }else if(deltaY > MIN_SWIPE_DISTANCE){
-                    Toast.makeText(this,"top2bot swipe",Toast.LENGTH_SHORT).show();
+                    String message = MessageTemplates.createMoveActionMessage("down");
+                    TCPClient.getInstance().sendThreaded(message);
                 }else if(deltaY < MIN_SWIPE_DISTANCE) {
-                    Toast.makeText(this,"bot2top swipe",Toast.LENGTH_SHORT).show();
+                    String message = MessageTemplates.createMoveActionMessage("up");
+                    TCPClient.getInstance().sendThreaded(message);
                 }else{
                     //Screen tap
                     Toast.makeText(this,"ScreenTap",Toast.LENGTH_SHORT).show();

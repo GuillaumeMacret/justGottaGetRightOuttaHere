@@ -33,17 +33,20 @@ public class GameView extends View {
     GameMessageHandler messageHandler;
     /**The size of a tile in pixels, adapted to screen size**/
     int renderTileSize = DEFAULT_TILE_SIZE;
+    int tilesTopOffset = 0;
     boolean renderTileSizeCalculated = false;
     TCPClient client = null;
 
     public void calculateTileSize(){
-        //TODO FIXME
         int height = getMeasuredHeight();
         int width = getRootView().getWidth();
         int renderTileSize_X = width / gameModel.sizeX;
         int renderTileSize_Y = height/ gameModel.sizeY;
 
         renderTileSize = renderTileSize_X < renderTileSize_Y ? renderTileSize_X:renderTileSize_Y;
+
+        tilesTopOffset = (height - (renderTileSize*gameModel.sizeX)) / 2;
+
         //System.err.println(renderTileSize);
     }
 
@@ -108,7 +111,6 @@ public class GameView extends View {
         drawBlocks(canvas,gameModel.blocksLayer,gameModel.sizeX, gameModel.sizeY);
         drawPlayers(canvas,gameModel.players);
         drawObjects(canvas,gameModel.objectLayer,gameModel.sizeX, gameModel.sizeY);
-        //gameModel.setRedrawDone();
         invalidate();
 
     }
@@ -118,7 +120,7 @@ public class GameView extends View {
             for(int j = 0; j < sizeY;++j){
                 if(objects[i][j] != 0){
                     int spriteId = ResourcesMaps.objectsSpritesMap.get(objects[i][j]);
-                    drawImage(canvas,i*renderTileSize,j*renderTileSize,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize, spriteId);
+                    drawImage(canvas,i*renderTileSize,j*renderTileSize + tilesTopOffset,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize + tilesTopOffset, spriteId);
                 }
             }
         }
@@ -133,7 +135,7 @@ public class GameView extends View {
             //System.err.println("Drawing player "+p.id);
 
             int playerSpriteId = ResourcesMaps.playerSpritesMap.get(p.roleId);
-            drawImage(canvas,p.posX*renderTileSize, p.posY*renderTileSize,p.posX*renderTileSize+renderTileSize,p.posY*renderTileSize+renderTileSize,playerSpriteId);
+            drawImage(canvas,p.posX*renderTileSize, p.posY*renderTileSize + tilesTopOffset,p.posX*renderTileSize+renderTileSize,p.posY*renderTileSize+renderTileSize + tilesTopOffset,playerSpriteId);
         }
     }
 
@@ -145,7 +147,7 @@ public class GameView extends View {
         for(int i = 0; i < sizeX;++i){
             for(int j = 0; j < sizeY;++j){
                 int tileSpriteId = ResourcesMaps.blocksSpritesMap.get(matrix[i][j]);
-                drawImage(canvas,i*renderTileSize,j*renderTileSize,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize, tileSpriteId);
+                drawImage(canvas,i*renderTileSize,j*renderTileSize + tilesTopOffset,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize+tilesTopOffset, tileSpriteId);
             }
         }
     }

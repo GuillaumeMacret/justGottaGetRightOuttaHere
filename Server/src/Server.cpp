@@ -69,11 +69,11 @@ void Server::requestGamesList(int userIndex)
         for (; i < _games.size() - 1; ++i)
         {
             answer += "{\"id\":" + std::to_string(_games[i]->getGameID());
-            answer += ", \"nbPlayers\":" + std::to_string(_games[i]->getPlayers().size());
+            answer += ", \"nbPlayers\":" + std::to_string(_games[i]->getNbConnectedPlayers());
             answer += "},";
         }
         answer += "{\"id\":" + std::to_string(_games[i]->getGameID());
-        answer += ", \"nbPlayers\":" + std::to_string(_games[i]->getPlayers().size());
+        answer += ", \"nbPlayers\":" + std::to_string(_games[i]->getNbConnectedPlayers());
         answer += '}';
     }
     answer += "]}\n";
@@ -259,7 +259,10 @@ void Server::requestLeaveGame(int userIndex)
         std::string answer;
         answer = "{\"Action\":\"" ACTION_LEAVE_GAME "\", \"Player\":" + std::to_string(_players[userIndex]->getInGameID());
         answer += "}\n";
+
+        //Need broadcast + answer because we are no longer in the game
         broadcastGame(g, answer);
+        TCPConn.answers[userIndex] = answer;
     }
 }
 

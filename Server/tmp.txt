@@ -1,0 +1,9 @@
+:"createGame"
+
+:"gameList"
+
+:"joinGame",:1
+
+:"changeMap",:"name"
+
+:"leaveGame"

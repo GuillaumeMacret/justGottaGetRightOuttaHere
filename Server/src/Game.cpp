@@ -236,6 +236,7 @@ bool Game::addPlayer(Player *p)
 {
     if (_players.size() < 4)
     {
+        p->setGame(this);
         p->setInGameID(_players.size());
         _players.push_back(p);
         return true;
@@ -245,6 +246,7 @@ bool Game::addPlayer(Player *p)
         if (!it->isConnected())
         {
             it->setIndex(p->getIndex());
+            it->setGame(this);
             p = it;
             return true;
         }
@@ -565,6 +567,17 @@ std::string Game::getPlayersToJSON()
 }
 
 std::vector<Player *> Game::getPlayers() { return _players; }
+
+int Game::getNbConnectedPlayers()
+{
+    int count = 0;
+    for (auto it : _players)
+    {
+        if (it->isConnected())
+            ++count;
+    }
+    return count;
+}
 
 Game::~Game()
 {

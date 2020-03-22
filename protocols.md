@@ -181,7 +181,11 @@ Response from server : load level (see "Ask Start game" response)
 
 ### Quit game
 
-TODO
+```json
+{
+    "Action":"leaveGame"
+}
+```
 
 Response from server (broadcast)
 ```json

@@ -103,6 +103,7 @@ public:
     std::string getMapToJSON();
     std::string getPlayersToJSON();
     std::vector<Player *> getPlayers();
+    int getNbConnectedPlayers();
 
     ~Game();
 };

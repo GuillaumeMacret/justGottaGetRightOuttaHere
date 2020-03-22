@@ -22,18 +22,21 @@
 class Player;
 class RSJresource;
 
-struct Tile {
+struct Tile
+{
     int backgroundValue;
     int blockValue;
     int collisionValue; //0: nothing, 1: walkable, 2: block, 3: water
 };
 
-struct Point {
+struct Point
+{
     int posX;
     int posY;
 };
 
-struct OnOffBlock {
+struct OnOffBlock
+{
     Point p;
     int value;
 };
@@ -79,7 +82,7 @@ public:
         BREAK = 3
     };
 
-    Game(int gameID);
+    Game(int gameID, std::string selectedMap = "map");
 
     /* Function called by the server when a player asks to move
         * @playerID: ID of the requesting player

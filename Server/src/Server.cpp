@@ -27,7 +27,7 @@ void Server::runPlayer(int index)
         std::cout << req << std::endl;
         // std::this_thread::sleep_for(std::chrono::seconds(3));
 
-        if (Parser::getInstance().getAction(req, *this, index) != 0)
+        if (req == "" || Parser::getInstance().getAction(req, *this, index) != 0)
         {
             TCPConn.answers[index] = "Error";
         }
@@ -131,6 +131,7 @@ void Server::requestCreateGame(int userIndex)
     g->addPlayer(_players[userIndex]);
     _games.push_back(g);
     //TODO {"MapList": ["level1", "level2", ...]}\n
+
     std::string answer = "{\"Action\":\"" ACTION_CREATE_GAME "\"}\n";
 
     TCPConn.answers[userIndex] = answer;
@@ -145,7 +146,7 @@ void Server::requestJoinGame(int userIndex, int gameID)
     {
         if (g->addPlayer(_players[userIndex]))
         {
-            answer = "{\"Action\":\"" ACTION_JOINED_GAME ", \"GameId\":" + std::to_string(gameID);
+            answer = "{\"Action\":\"" ACTION_JOINED_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
             answer += ", \"Players\":[";
             int i = 0;
             for (Player *p : g->getPlayers())
@@ -164,13 +165,13 @@ void Server::requestJoinGame(int userIndex, int gameID)
         }
         else
         {
-            answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME ", \"GameId\":" + gameID;
+            answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME "\", \"GameId\":" + gameID;
             answer += "\"MoreInfo\":\"" ERROR_GAME_FULL "\"";
         }
     }
     else
     {
-        answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME ", \"GameId\":" + gameID;
+        answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME "\", \"GameId\":" + gameID;
         answer += "\"MoreInfo\":\"" ERROR_GAME_DOES_NOT_EXIST "\"";
     }
     answer += "}\n";

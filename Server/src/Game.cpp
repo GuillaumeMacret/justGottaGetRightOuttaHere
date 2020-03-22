@@ -6,7 +6,7 @@
 #include <sstream>
 #include "RSJParser.tcc"
 
-Game::Game(int gameID) : _buttonState(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0) {}
+Game::Game(int gameID, std::string selectedMap) : _buttonState(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
 
 std::string Game::movePlayer(int playerID, std::string direction)
 {
@@ -31,22 +31,27 @@ std::string Game::movePlayer(int playerID, std::string direction)
 
     if (posX >= 0 && posX < _width && posY >= 0 && posY < _height)
     {
-        if(_grid[posX][posY].collisionValue < C_BLOCK) {
+        if (_grid[posX][posY].collisionValue < C_BLOCK)
+        {
             Player *p = _players[playerID];
             _grid[p->getPosY()][p->getPosX()].collisionValue = p->getLastCollisionType();
             p->setPos(posX, posY);
             //TO DO: check key + player pos = walkable
-            if(_grid[p->getPosY()][p->getPosX()].blockValue == KEY) {
+            if (_grid[p->getPosY()][p->getPosX()].blockValue == KEY)
+            {
                 _grid[p->getPosY()][p->getPosX()].blockValue = EMPTY;
                 _grid[p->getPosY()][p->getPosX()].collisionValue = C_NOTHING;
                 p->setLastCollisionType(C_NOTHING);
                 changes += tileToJSON(p->getPosX(), p->getPosY(), EMPTY);
                 --_nbKeys;
-                if(!_nbKeys) {
+                if (!_nbKeys)
+                {
                     //change lock to empty
                     int i = 0;
-                    for(Point point : _lockPosition) {
-                        if(i) changes += ',';
+                    for (Point point : _lockPosition)
+                    {
+                        if (i)
+                            changes += ',';
                         _grid[point.posY][point.posX].blockValue += 2;
                         _grid[point.posY][point.posX].collisionValue = C_NOTHING;
                         changes += tileToJSON(p->getPosX(), p->getPosY(), _grid[point.posY][point.posX].blockValue + 2);
@@ -62,7 +67,8 @@ std::string Game::movePlayer(int playerID, std::string direction)
     return changes;
 }
 
-std::string Game::tileToJSON(int posX, int posY, int value) {
+std::string Game::tileToJSON(int posX, int posY, int value)
+{
     std::string res = "{\"xPos\": " + std::to_string(posX);
     res += ",\"yPos\": " + std::to_string(posY);
     res += ",\"value\": " + std::to_string(EMPTY);
@@ -70,10 +76,12 @@ std::string Game::tileToJSON(int posX, int posY, int value) {
     return res;
 }
 
-std::string Game::checkPush(std::string dir, int posX, int posY) {
-    std::string res="";
+std::string Game::checkPush(std::string dir, int posX, int posY)
+{
+    std::string res = "";
     int pushX = posX, pushY = posY;
-    if(_grid[posY][posX].blockValue == MOVABLE) {
+    if (_grid[posY][posX].blockValue == MOVABLE)
+    {
         if (dir == "up")
         {
             --pushY;
@@ -91,12 +99,13 @@ std::string Game::checkPush(std::string dir, int posX, int posY) {
             ++pushX;
         }
 
-        if (pushX >= 0 && pushX < _width && pushY >= 0 && pushY < _height && _grid[pushY][pushX].collisionValue == C_NOTHING) {
+        if (pushX >= 0 && pushX < _width && pushY >= 0 && pushY < _height && _grid[pushY][pushX].collisionValue == C_NOTHING)
+        {
             _grid[posY][posX].blockValue = EMPTY;
             _grid[posY][posX].collisionValue = C_NOTHING;
             _grid[pushY][pushX].blockValue = MOVABLE;
             _grid[pushY][pushX].collisionValue = C_BLOCK;
-            res += tileToJSON(posX,posY,EMPTY);
+            res += tileToJSON(posX, posY, EMPTY);
             res += ',';
             res += tileToJSON(pushX, pushY, MOVABLE);
         }
@@ -105,9 +114,11 @@ std::string Game::checkPush(std::string dir, int posX, int posY) {
     return res;
 }
 
-std::string Game::checkCreate(int posX, int posY) {
-    std::string res="";
-    if(_grid[posY][posX].blockValue == WATER) {
+std::string Game::checkCreate(int posX, int posY)
+{
+    std::string res = "";
+    if (_grid[posY][posX].blockValue == WATER)
+    {
         _grid[posY][posX].blockValue = BRIDGE;
         _grid[posY][posX].collisionValue = C_NOTHING;
         res += tileToJSON(posX, posY, BRIDGE);
@@ -115,31 +126,42 @@ std::string Game::checkCreate(int posX, int posY) {
     return res;
 }
 
-std::string Game::checkActivate(int posX, int posY) {
-    std::string res="";
+std::string Game::checkActivate(int posX, int posY)
+{
+    std::string res = "";
 
-    if(_grid[posY][posX].blockValue == BUTTON) {
+    if (_grid[posY][posX].blockValue == BUTTON)
+    {
         int i = 0;
-        if(_buttonState) {
-            for(OnOffBlock ofb : _onBlocks) {
-                if(i) res += ',';
+        if (_buttonState)
+        {
+            for (OnOffBlock ofb : _onBlocks)
+            {
+                if (i)
+                    res += ',';
                 _grid[ofb.p.posY][ofb.p.posX].blockValue = ofb.value;
                 res += tileToJSON(ofb.p.posX, ofb.p.posY, ofb.value);
                 ++i;
             }
-            for(OnOffBlock ofb : _offBlocks) {
+            for (OnOffBlock ofb : _offBlocks)
+            {
                 res += ',';
                 _grid[ofb.p.posY][ofb.p.posX].blockValue = EMPTY;
                 res += tileToJSON(ofb.p.posX, ofb.p.posY, EMPTY);
             }
-        } else {
-            for(OnOffBlock ofb : _onBlocks) {
-                if(i) res +=',';
+        }
+        else
+        {
+            for (OnOffBlock ofb : _onBlocks)
+            {
+                if (i)
+                    res += ',';
                 _grid[ofb.p.posY][ofb.p.posX].blockValue = EMPTY;
                 res += tileToJSON(ofb.p.posX, ofb.p.posY, EMPTY);
                 ++i;
             }
-            for(OnOffBlock ofb : _offBlocks) {
+            for (OnOffBlock ofb : _offBlocks)
+            {
                 res += ',';
                 _grid[ofb.p.posY][ofb.p.posX].blockValue = ofb.value;
                 res += tileToJSON(ofb.p.posX, ofb.p.posY, ofb.value);
@@ -151,9 +173,11 @@ std::string Game::checkActivate(int posX, int posY) {
     return res;
 }
 
-std::string Game::checkBreak(int posX, int posY) {
-    std::string res="";
-    if(_grid[posY][posX].blockValue == BREAKABLE) {
+std::string Game::checkBreak(int posX, int posY)
+{
+    std::string res = "";
+    if (_grid[posY][posX].blockValue == BREAKABLE)
+    {
         _grid[posY][posX].blockValue = EMPTY;
         _grid[posY][posX].collisionValue = C_NOTHING;
         res += tileToJSON(posX, posY, EMPTY);
@@ -185,20 +209,22 @@ std::string Game::doActionPlayer(int playerID)
     }
 
     //TODO check if tile [posX, posY] correspond to p->getRole()
-    if (posX >= 0 && posX < _width && posY >= 0 && posY < _height) {
-        switch(p->getRole()) {
-            case PUSH:
-                res += checkPush(dir, posX, posY);
-                break;
-            case CREATE:
-                res += checkCreate(posX, posY);
-                break;
-            case ACTIVATE:
-                res += checkActivate(posX, posY);
-                break;
-            case BREAK:
-                res += checkBreak(posX, posY);
-                break;
+    if (posX >= 0 && posX < _width && posY >= 0 && posY < _height)
+    {
+        switch (p->getRole())
+        {
+        case PUSH:
+            res += checkPush(dir, posX, posY);
+            break;
+        case CREATE:
+            res += checkCreate(posX, posY);
+            break;
+        case ACTIVATE:
+            res += checkActivate(posX, posY);
+            break;
+        case BREAK:
+            res += checkBreak(posX, posY);
+            break;
         }
     }
 
@@ -268,179 +294,225 @@ int Game::getGameID() { return _gameID; }
 
 std::string Game::getMapName() { return _selectedMap; }
 
-void Game::readBackground(RSJresource layerResource) {
+void Game::readBackground(RSJresource layerResource)
+{
     std::string layerString = layerResource["data"].as<std::string>();
-    layerString = layerString.substr(1,layerString.length()-2);
-    
+    layerString = layerString.substr(1, layerString.length() - 2);
+
     std::stringstream ss;
     ss << layerString;
     std::string tmp;
     int value, i = 0, j = 0;
-    while(!ss.eof()) {
+    while (!ss.eof())
+    {
         ss >> tmp;
-        if(std::stringstream(tmp) >> value) _grid[j][i] = Tile {value,EMPTY,C_NOTHING};
-        tmp="";
+        if (std::stringstream(tmp) >> value)
+            _grid[j][i] = Tile{value, EMPTY, C_NOTHING};
+        tmp = "";
         ++i;
-        if(i % _width == 0) {
+        if (i % _width == 0)
+        {
             ++j;
             i = 0;
         }
     }
 }
 
-void Game::readBlocks(RSJresource layerResource) {
+void Game::readBlocks(RSJresource layerResource)
+{
     std::string layerString = layerResource["data"].as<std::string>();
-    layerString = layerString.substr(1,layerString.length()-2);
-    
+    layerString = layerString.substr(1, layerString.length() - 2);
+
     std::stringstream ss;
     ss << layerString;
     std::string tmp;
     int value, i = 0, j = 0;
-    while(!ss.eof()) {
+    while (!ss.eof())
+    {
         ss >> tmp;
-        if(std::stringstream(tmp) >> value && value) _grid[j][i].blockValue = value;
-        tmp="";
+        if (std::stringstream(tmp) >> value && value)
+            _grid[j][i].blockValue = value;
+        tmp = "";
         ++i;
-        if(i % _width == 0) {
+        if (i % _width == 0)
+        {
             ++j;
             i = 0;
         }
     }
 }
 
-void Game::readKey(RSJresource layerResource) {
+void Game::readKey(RSJresource layerResource)
+{
     std::string layerString = layerResource["data"].as<std::string>();
-    layerString = layerString.substr(1,layerString.length()-2);
-    
+    layerString = layerString.substr(1, layerString.length() - 2);
+
     std::stringstream ss;
     ss << layerString;
     std::string tmp;
     int value, i = 0, j = 0, lockIndex = 0;
-    while(!ss.eof()) {
+    while (!ss.eof())
+    {
         ss >> tmp;
-        if(std::stringstream(tmp) >> value && value) {
-            if(value == KEY) {
+        if (std::stringstream(tmp) >> value && value)
+        {
+            if (value == KEY)
+            {
                 ++_nbKeys;
-            } else {
-                _lockPosition[lockIndex++] = Point{i,j};
+            }
+            else
+            {
+                _lockPosition[lockIndex++] = Point{i, j};
             }
             _grid[j][i].blockValue = value;
         }
-        tmp="";
+        tmp = "";
         ++i;
-        if(i % _width == 0) {
+        if (i % _width == 0)
+        {
             ++j;
             i = 0;
         }
     }
 }
 
-void Game::readButtonOn(RSJresource layerResource) {
+void Game::readButtonOn(RSJresource layerResource)
+{
     std::string layerString = layerResource["data"].as<std::string>();
-    layerString = layerString.substr(1,layerString.length()-2);
-    
+    layerString = layerString.substr(1, layerString.length() - 2);
+
     std::stringstream ss;
     ss << layerString;
     std::string tmp;
     int value, i = 0, j = 0;
-    while(!ss.eof()) {
+    while (!ss.eof())
+    {
         ss >> tmp;
-        if(std::stringstream(tmp) >> value && value) {
-            if(value != BUTTON) {
-                Point p = Point{i,j};
-                _onBlocks.push_back(OnOffBlock{p,value});
-            } else _grid[j][i].blockValue = value;
+        if (std::stringstream(tmp) >> value && value)
+        {
+            if (value != BUTTON)
+            {
+                Point p = Point{i, j};
+                _onBlocks.push_back(OnOffBlock{p, value});
+            }
+            else
+                _grid[j][i].blockValue = value;
         }
-        tmp="";
+        tmp = "";
         ++i;
-        if(i % _width == 0) {
+        if (i % _width == 0)
+        {
             ++j;
             i = 0;
         }
     }
 }
 
-void Game::readButtonOff(RSJresource layerResource) {
+void Game::readButtonOff(RSJresource layerResource)
+{
     std::string layerString = layerResource["data"].as<std::string>();
-    layerString = layerString.substr(1,layerString.length()-2);
-    
+    layerString = layerString.substr(1, layerString.length() - 2);
+
     std::stringstream ss;
     ss << layerString;
     std::string tmp;
     int value, i = 0, j = 0;
-    while(!ss.eof()) {
+    while (!ss.eof())
+    {
         ss >> tmp;
-        if(std::stringstream(tmp) >> value && value) {
-            if(value != BUTTON) {
-                Point p = Point{i,j};
-                _offBlocks.push_back(OnOffBlock{p,value});
+        if (std::stringstream(tmp) >> value && value)
+        {
+            if (value != BUTTON)
+            {
+                Point p = Point{i, j};
+                _offBlocks.push_back(OnOffBlock{p, value});
             }
             _grid[j][i].blockValue = value;
         }
-        tmp="";
+        tmp = "";
         ++i;
-        if(i % _width == 0) {
+        if (i % _width == 0)
+        {
             ++j;
             i = 0;
         }
     }
 }
 
-void Game::readCollision(RSJresource layerResource) {
+void Game::readCollision(RSJresource layerResource)
+{
     std::string layerString = layerResource["data"].as<std::string>();
-    layerString = layerString.substr(1,layerString.length()-2);
-    
+    layerString = layerString.substr(1, layerString.length() - 2);
+
     std::stringstream ss;
     ss << layerString;
     std::string tmp;
     int value, i = 0, j = 0;
-    while(!ss.eof()) {
+    while (!ss.eof())
+    {
         ss >> tmp;
-        if(std::stringstream(tmp) >> value) _grid[j][i].collisionValue = value;
-        tmp="";
+        if (std::stringstream(tmp) >> value)
+            _grid[j][i].collisionValue = value;
+        tmp = "";
         ++i;
-        if(i % _width == 0) {
+        if (i % _width == 0)
+        {
             ++j;
             i = 0;
         }
     }
 }
 
-void Game::readMap() {
+void Game::readMap()
+{
     std::ifstream f("maps/" + _selectedMap + ".json");
-    if(f.good()) {
+    if (f.good())
+    {
         std::string levelString = "";
-        for(std::string line; std::getline (f,line);){
+        for (std::string line; std::getline(f, line);)
+        {
             levelString += line;
         }
         RSJresource json_file_resource(levelString);
 
         _width = json_file_resource["width"].as<int>();
         _height = json_file_resource["height"].as<int>();
-        
+
         _grid = new Tile *[_height];
-        for(int i = 0; i < _height; ++i) {
+        for (int i = 0; i < _height; ++i)
+        {
             _grid[i] = new Tile[_width];
         }
 
-        for(auto it = json_file_resource["layers"].as_array().begin();it!=json_file_resource["layers"].as_array().end(); ++it){
+        for (auto it = json_file_resource["layers"].as_array().begin(); it != json_file_resource["layers"].as_array().end(); ++it)
+        {
             RSJresource layerResource = it->as<RSJresource>();
-            
-            if(layerResource["name"].as<std::string>() == "Sol"){
+
+            if (layerResource["name"].as<std::string>() == "Sol")
+            {
                 readBackground(layerResource);
-            } else if(layerResource["name"].as<std::string>() == "Collision"){
+            }
+            else if (layerResource["name"].as<std::string>() == "Collision")
+            {
                 readCollision(layerResource);
-            } else if(layerResource["name"].as<std::string>() == "Cle"){
+            }
+            else if (layerResource["name"].as<std::string>() == "Cle")
+            {
                 readKey(layerResource);
-            } else if(layerResource["name"].as<std::string>() == "Interrupteur 1"){
+            }
+            else if (layerResource["name"].as<std::string>() == "Interrupteur 1")
+            {
                 readButtonOn(layerResource);
-            } else if(layerResource["name"].as<std::string>() == "Interrupteur 2"){
+            }
+            else if (layerResource["name"].as<std::string>() == "Interrupteur 2")
+            {
                 readButtonOff(layerResource);
-            } else {
+            }
+            else
+            {
                 readBlocks(layerResource);
             }
         }
-
     }
 }
 
@@ -452,13 +524,16 @@ std::string Game::getMapToJSON()
     std::string objectsJSON = "],\"Objects\":[";
     for (int i = 0; i < _height; ++i)
     {
-        if(i) mapJSON += ',';
+        if (i)
+            mapJSON += ',';
         mapJSON += '[';
         for (int j = 0; j < _width; ++j)
-        {   
-            if(j) mapJSON += ',';
+        {
+            if (j)
+                mapJSON += ',';
             mapJSON += std::to_string(_grid[i][j].backgroundValue);
-            if(_grid[i][j].blockValue) {
+            if (_grid[i][j].blockValue)
+            {
                 objectsJSON += "{\"xPos\":" + std::to_string(j);
                 objectsJSON += ",\"yPos\":" + std::to_string(i);
                 objectsJSON += ",\"value\":" + std::to_string(_grid[i][j].blockValue);

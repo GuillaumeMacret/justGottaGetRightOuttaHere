@@ -20,7 +20,6 @@ public:
     Player(int index, class Game *game = nullptr);
 
     int getPosX();
-    void setPosY(int posX);
     int getPosY();
     void setPos(int posX, int posY);
     int getRole();

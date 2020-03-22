@@ -65,6 +65,7 @@ private:
     void readButtonOn(RSJresource layerResource);
     void readButtonOff(RSJresource layerResource);
     void readCollision(RSJresource layerResource);
+    void readPlayersStartPos(RSJresource layerResource);
 
     std::string tileToJSON(int posX, int posY, int value);
 

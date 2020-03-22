@@ -71,7 +71,7 @@ std::string Game::tileToJSON(int posX, int posY, int value)
 {
     std::string res = "{\"xPos\": " + std::to_string(posX);
     res += ",\"yPos\": " + std::to_string(posY);
-    res += ",\"value\": " + std::to_string(EMPTY);
+    res += ",\"value\": " + std::to_string(value);
     res += "}";
     return res;
 }
@@ -465,6 +465,30 @@ void Game::readCollision(RSJresource layerResource)
     }
 }
 
+void Game::readPlayersStartPos(RSJresource layerResource)
+{
+    std::string layerString = layerResource["data"].as<std::string>();
+    layerString = layerString.substr(1, layerString.length() - 2);
+
+    std::stringstream ss;
+    ss << layerString;
+    std::string tmp;
+    int value, i = 0, j = 0;
+    while (!ss.eof())
+    {
+        ss >> tmp;
+        if (std::stringstream(tmp) >> value && value != 0 && value - 1 < (int) _players.size())
+            _players[value - 1]->setPos(i, j);
+        tmp = "";
+        ++i;
+        if (i % _width == 0)
+        {
+            ++j;
+            i = 0;
+        }
+    }
+}
+
 void Game::readMap()
 {
     std::ifstream f("maps/" + _selectedMap + ".json");
@@ -510,6 +534,10 @@ void Game::readMap()
             {
                 readButtonOff(layerResource);
             }
+            else if (layerResource["name"].as<std::string>() == "Joueur")
+            {
+                readPlayersStartPos(layerResource);
+            }
             else
             {
                 readBlocks(layerResource);
@@ -523,7 +551,7 @@ std::string Game::getMapToJSON()
     readMap();
 
     std::string mapJSON = "\"Blocks\":[";
-    std::string objectsJSON = "],\"Objects\":[";
+    std::string objectsJSON = "\"Objects\":[";
     for (int i = 0; i < _height; ++i)
     {
         if (i)
@@ -536,16 +564,14 @@ std::string Game::getMapToJSON()
             mapJSON += std::to_string(_grid[i][j].backgroundValue);
             if (_grid[i][j].blockValue)
             {
-                objectsJSON += "{\"xPos\":" + std::to_string(j);
-                objectsJSON += ",\"yPos\":" + std::to_string(i);
-                objectsJSON += ",\"value\":" + std::to_string(_grid[i][j].blockValue);
-                objectsJSON += '}';
+                objectsJSON += tileToJSON(j,i,_grid[i][j].blockValue);
             }
         }
         mapJSON += ']';
     }
-    //mapJSON += objectsJSON;
-    mapJSON += ']';
+    mapJSON += "],";
+    objectsJSON += "],";
+    mapJSON += objectsJSON;
     return mapJSON;
 }
 

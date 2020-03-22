@@ -184,7 +184,7 @@ void Server::requestStartGame(int userIndex)
     std::string answer;
 
     Game *g = getGameFromPlayer(userIndex);
-    if (g != nullptr)
+    if (g != nullptr && g->getPlayers().size() == 4)
     {
         std::vector<Player *> players = g->getPlayers();
         bool available = true;
@@ -199,7 +199,7 @@ void Server::requestStartGame(int userIndex)
                 }
             }
         }
-        if (available)
+        if (available && g->getMapName() != "")
         {
             answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", \"Level\":";
             answer += g->getMapToJSON() + ',';

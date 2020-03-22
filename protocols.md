@@ -109,6 +109,7 @@ Responses from server
 ```JSON
 {
   "Action":"loadLevel",
+  "Name":[name],
   "Blocks":[[1,0,4,3,1,1,1,..],[...]],
   "Objects":[{xPos:[val],yPos:[val],value:[val]},...],
   "Players":[{xPos:0,yPos:0},{xPos:0,yPos:0},{xPos:0,yPos:0},{xPos:0,yPos:0}]

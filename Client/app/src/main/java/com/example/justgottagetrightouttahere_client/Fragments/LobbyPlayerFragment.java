@@ -17,18 +17,20 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.justgottagetrightouttahere_client.Activities.GameActivity;
+import com.example.justgottagetrightouttahere_client.Constants.MessageTemplates;
 import com.example.justgottagetrightouttahere_client.R;
 import com.example.justgottagetrightouttahere_client.Views.GameView;
 import com.example.justgottagetrightouttahere_client.model.Player;
+import com.example.justgottagetrightouttahere_client.network.TCPClient;
 
 public class LobbyPlayerFragment extends Fragment {
     public Player player;
     public boolean isMyPlayer = true;
-    protected int currentCharacter = 0;
     private Bundle bundle;
     private ImageView playerImage;
     private TextView playerIDTextView;
     private TextView abilityTextView;
+    private Button switchCharacterButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle){
@@ -41,9 +43,9 @@ public class LobbyPlayerFragment extends Fragment {
         playerIDTextView = (TextView) view.findViewById(R.id.player_id_text_view);
         abilityTextView = (TextView) view.findViewById(R.id.player_ability_text_view);
 
-        Button switchCharacter = (Button) view.findViewById(R.id.switch_character_button);
+        switchCharacterButton = (Button) view.findViewById(R.id.switch_character_button);
 
-        switchCharacter.setOnClickListener(new View.OnClickListener() {
+        switchCharacterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switchToNextCharacter();
@@ -52,16 +54,20 @@ public class LobbyPlayerFragment extends Fragment {
     }
 
     public void switchToNextCharacter() {
-        //TODO: Check if the fragment is the fragment of the user, sent a message to the server when switching
-        if(isMyPlayer) {
-            // Set next character number
-            currentCharacter = (currentCharacter + 1) % 4;
-            updatePlayerImageAndText();
-        }
+        // Set next character number
+        player.roleId = (player.roleId + 1) % 4;
+        String message = MessageTemplates.createChangeRoleMessage(player.roleId);
+        TCPClient.sendThreaded(message);
+    }
+
+    public void updatePlayerImageAndText(Player player) {
+        this.player = player;
+        updatePlayerImageAndText();
     }
 
     public void updatePlayerImageAndText() {
-        switch (currentCharacter) {
+        playerIDTextView.setText(String.valueOf(player.id));
+        switch (player.roleId) {
             case 0:
                 playerImage.setImageResource(R.drawable.player0_idle);
                 abilityTextView.setText(R.string.ability_player0);
@@ -81,11 +87,15 @@ public class LobbyPlayerFragment extends Fragment {
         }
     }
 
+    public void removeChangeCharacterButton() {
+        ((ViewGroup)switchCharacterButton.getParent()).removeView(switchCharacterButton);
+    }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save UI state changes
-        outState.putInt("currentCharacter", currentCharacter);
+        outState.putInt("currentCharacter", player.roleId);
     }
 
     @Override
@@ -93,7 +103,7 @@ public class LobbyPlayerFragment extends Fragment {
         super.onViewStateRestored(savedInstanceState);
         // Restore UI state changes
         if(savedInstanceState != null) {
-            currentCharacter = savedInstanceState.getInt("currentCharacter");
+            player.roleId = savedInstanceState.getInt("currentCharacter");
             updatePlayerImageAndText();
         }
     }

@@ -75,7 +75,7 @@ int TCPConnection::server_accept()
     syserror(ACCEPT_ERROR);
     return ERR;
   }
-  std::cout << "New connection count : " << nbConnection +1 << std::endl;
+  std::cout << "New connection count : " << nbConnection + 1 << std::endl;
   return nbConnection++;
 }
 
@@ -85,12 +85,14 @@ read incoming message from the tcp server
 std::string TCPConnection::server_receive(int index)
 {
   char buf[BUFFER_SIZE];
-  if ((recv(new_fd[index], buf, BUFFER_SIZE, 0)) == ERR)
+  int len = 0;
+  if ((len = recv(new_fd[index], buf, BUFFER_SIZE, 0)) == ERR)
   {
     //close(fd);
-    syserror(RECEIVE_ERROR);
+    fatalsyserror(RECEIVE_ERROR);
     return "";
   }
+  buf[len] = '\0';
   return std::move(std::string(buf));
 }
 

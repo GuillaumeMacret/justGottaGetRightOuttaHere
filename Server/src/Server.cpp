@@ -27,7 +27,7 @@ void Server::runPlayer(int index)
     for (;;)
     {
         req = TCPConn.server_receive(index);
-        std::cout << req << std::endl;
+        std::cout << "receive -" << req << "- from user : " << index << std::endl;
         // std::this_thread::sleep_for(std::chrono::seconds(3));
 
         if (req == "" || Parser::getInstance().getAction(req, *this, index) != 0)
@@ -89,7 +89,6 @@ void Server::requestChangeRole(int userIndex, int roleID)
     Game *g = getGameFromPlayer(userIndex);
     if (g != nullptr)
     {
-        std::cout << "roleID : " << roleID << std::endl;
         _players[userIndex]->setRole(roleID);
         std::string answer = "{\"Action\":\"" ACTION_CHANGE_ROLE "\", ";
         answer += "\"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
@@ -102,7 +101,7 @@ void Server::requestChangeRole(int userIndex, int roleID)
 void Server::requestChangeMap(int userIndex, std::string mapName)
 {
     Game *g = getGameFromPlayer(userIndex);
-    std::string answer = "{\"Action\":\"" ACTION_CHANGE_MAP "\", ";
+    std::string answer = "{\"Action\":\"" ACTION_CHANGED_MAP "\", ";
     if (g != nullptr)
     {
         g->changeMap(mapName);

@@ -11,3 +11,7 @@
 :"leaveGame"
 
 :"startGame"
+
+:"move",:"up"
+
+:"action"

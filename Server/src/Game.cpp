@@ -533,11 +533,11 @@ void Game::readMap()
             {
                 readKey(layerResource);
             }
-            else if (layerResource["name"].as<std::string>() == "Interrupteur 1")
+            else if (layerResource["name"].as<std::string>() == "Interrupteur 2")
             {
                 readButtonOn(layerResource);
             }
-            else if (layerResource["name"].as<std::string>() == "Interrupteur 2")
+            else if (layerResource["name"].as<std::string>() == "Interrupteur 1")
             {
                 readButtonOff(layerResource);
             }

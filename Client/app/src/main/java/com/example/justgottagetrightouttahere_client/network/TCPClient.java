@@ -12,12 +12,23 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class TCPClient implements Runnable{
+    /**Singleton**/
+    private static TCPClient INSTANCE = null;
+    public static TCPClient getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new TCPClient();
+        }
+        return INSTANCE;
+    }
+
     /**Socket to bind to the server**/
     Socket clientSocket;
     /**The thread that will listen for incoming messages**/
     Thread listeningThread;
+    /**Boolean value indicating if listening thread is running**/
+    public boolean TCPClientRunning = false;
 
-    ClientReceiver receiver = null;
+    static ClientReceiver receiver = null;
 
     /**
      *
@@ -33,6 +44,7 @@ public class TCPClient implements Runnable{
         if(clientSocket != null){
             Log.e("INFO","Socket open, starting listening thread");
             startListeningThread(null);
+            TCPClientRunning = true;
         }else{
             Log.e("ERROR", "Could not connect to server");
         }
@@ -45,10 +57,12 @@ public class TCPClient implements Runnable{
      */
     public boolean setMessageHandler(MessageHandler messageHandler){
         if(receiver==null){
-            Log.e("ERROR","Can't set Handler because receiver is null");
+            //Log.e("ERROR","Can't set Handler because receiver is null");
             return false;
         }
         receiver.setMessageHandler(messageHandler);
+
+        Log.e("INFO","Handler was set with "+messageHandler.getClass());
         return true;
     }
 
@@ -56,7 +70,10 @@ public class TCPClient implements Runnable{
      * Sends the given string over the socket
      * @param s
      */
-    public void send(String s){
+    protected void send(String s) throws Exception{
+        if(clientSocket == null){
+            throw new Exception("Socket not open can't send message");
+        }
         PrintWriter printWriter = null;
         try {
             printWriter = new PrintWriter(clientSocket.getOutputStream(),true);
@@ -66,6 +83,11 @@ public class TCPClient implements Runnable{
         System.err.println("[CLI] Client sending "+s);
         printWriter.println(s);
         printWriter.flush();
+    }
+
+    public static void sendThreaded(String s){
+        Thread t = new Thread(new ThreadAndSend(s));
+        t.start();
     }
 
     /**
@@ -99,7 +121,7 @@ public class TCPClient implements Runnable{
         TCPClient client = new TCPClient();
         client.startListeningThread(new GameMessageHandler(null));
 
-        client.send("a");
+        //client.send("a");
 
         /*W8 before closing*/
         try {
@@ -118,6 +140,23 @@ public class TCPClient implements Runnable{
          */
     }
 
+}
+
+class ThreadAndSend implements Runnable{
+    private String message2Send;
+
+    public ThreadAndSend(String message2Send) {
+        this.message2Send = message2Send;
+    }
+
+    @Override
+    public void run() {
+        try {
+            TCPClient.getInstance().send(message2Send);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 class ClientReceiver implements Runnable{

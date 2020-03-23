@@ -2,6 +2,7 @@ package com.example.justgottagetrightouttahere_client.model;
 
 import android.util.Log;
 
+import com.example.justgottagetrightouttahere_client.Fragments.GameboardFragment;
 import com.example.justgottagetrightouttahere_client.network.MessageHandler;
 
 import org.json.JSONArray;
@@ -21,22 +22,24 @@ public class GameMessageHandler implements MessageHandler {
 
     /**
      * Handles the message in the game board context
-     * TODO
      * @param s
      */
     @Override
     public void handle(String s){
-        System.err.println("Handling message < "+s+" > TODO");
+        System.err.println("Handling message < "+s+" >");
         try {
             JSONObject jsonObject = new JSONObject(s);
             Log.e("INFO","Action : "+jsonObject.getString("Action"));
 
             switch (jsonObject.getString("Action")){
                 case "move":
-                    movePlayerAction(jsonObject);
+                    movePlayer(jsonObject);
                     break;
                 case "action":
-                    playerActionAction(jsonObject);
+                    updateMap(jsonObject);
+                    break;
+                case "loadLevel":
+                    loadLevel(jsonObject);
                     break;
                 default:
                     Log.e("ERROR","Game handler can't handle action "+jsonObject.getString("Action"));
@@ -46,19 +49,20 @@ public class GameMessageHandler implements MessageHandler {
         }
     }
 
-    void movePlayerAction(JSONObject jsonObject){
+    void movePlayer(JSONObject jsonObject){
         try {
             int playerId = jsonObject.getInt("Player");
             int posX = jsonObject.getInt("PosX");
             int posY = jsonObject.getInt("PosY");
-
             model.movePlayer(playerId,posX,posY);
+
+            updateMap(jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    void playerActionAction(JSONObject jsonObject){
+    void updateMap(JSONObject jsonObject){
         List<Tile> tilesToChange = new ArrayList<>();
         try {
             JSONArray jsonTilesArray = jsonObject.getJSONArray("Changes");
@@ -70,6 +74,54 @@ public class GameMessageHandler implements MessageHandler {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        model.updateTiles(tilesToChange);
+        model.updateBlocksLayer(tilesToChange);
+    }
+
+    void loadLevel(JSONObject jsonObject){
+        try {
+            int arrayHeight, arrayWidth;
+            int blocksLayer[][] = new int[0][0];
+
+            model.levelName = jsonObject.getString("Name");
+            model.startTime = System.currentTimeMillis();
+
+            /*Loading blocks*/
+            JSONArray map = jsonObject.getJSONArray("Blocks");
+            arrayHeight = map.length();
+            for(int i = 0; i < arrayHeight; ++i){
+                JSONArray line = map.getJSONArray(i);
+                arrayWidth = line.length();
+                if(i == 0){
+                    blocksLayer = new int[arrayWidth][arrayHeight];
+                }
+
+                for(int j = 0; j < arrayWidth; ++j){
+                    blocksLayer[j][i] = line.getInt(j);
+                }
+            }
+
+            /*Loading Objects*/
+
+            model.objectLayer = new int[model.sizeX][model.sizeY];
+
+            map = jsonObject.getJSONArray("Objects");
+            for(int i = 0; i < map.length(); ++i){
+                JSONObject object = map.getJSONObject(i);
+                Log.e("INFO","adding object in : "+object.getInt("xPos")+"  "+object.getInt("yPos"));
+                model.objectLayer[object.getInt("xPos")][object.getInt("yPos")] = object.getInt("value");
+            }
+
+            model.loadLevel(blocksLayer);
+
+            /*Loading players*/
+            map = jsonObject.getJSONArray("Players");
+            for(int i = 0; i < map.length(); ++i){
+                JSONObject JsonPlayers = map.getJSONObject(i);
+                model.players.get(i).posX = JsonPlayers.getInt("xPos");
+                model.players.get(i).posY = JsonPlayers.getInt("yPos");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

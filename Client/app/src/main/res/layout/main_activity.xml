@@ -7,9 +7,37 @@
     android:layout_height="match_parent"
     tools:context=".Activities.MainActivity" >
 
+    <ImageView
+        android:id="@+id/game_background_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="center"
+        app:srcCompat="@drawable/start_screen_background" />
+
+    <TextView
+        android:id="@+id/game_title_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="45sp"
+        android:textStyle="bold"
+        android:textColor="#111"
+        android:fontFamily="casual"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
+        android:layout_marginTop="35dp"
+        android:text="Just Gotta Get Right Outta Here" />
+
     <Button
         android:id="@+id/playButton"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Play" />
+        android:layout_marginBottom="35dp"
+        android:paddingHorizontal="25dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:background="@android:color/transparent"
+        android:fontFamily="casual"
+        android:textColor="#111"
+        android:gravity="bottom|center_horizontal"
+        android:text="Play"
+        android:textSize="50sp" />
 </FrameLayout>

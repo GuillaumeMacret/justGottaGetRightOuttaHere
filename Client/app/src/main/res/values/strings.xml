@@ -4,4 +4,10 @@
     <string name="title_activity_game">GameActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="ability_player0">Ability: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
+    <string name="ability_player1">Ability: Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</string>
+    <string name="ability_player2">Ability: Neque porro quisquam est.</string>
+    <string name="ability_player3">Ability: Excepteur sint occaecat cupidatat non proident.</string>
+
 </resources>

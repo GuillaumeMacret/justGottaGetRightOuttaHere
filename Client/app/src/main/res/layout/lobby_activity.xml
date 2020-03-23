@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/FrameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:src="@drawable/lobby_background" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:background="@color/black_overlay"
+            android:layout_height="wrap_content">
+            <TextView
+                android:padding="5dp"
+                android:textStyle="bold"
+                android:textColor="#fff"
+                android:textSize="17sp"
+                android:id="@+id/game_id_label_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Game ID: " />
+            <TextView
+                android:padding="5dp"
+                android:textStyle="bold"
+                android:textColor="#fff"
+                android:textSize="17sp"
+                android:id="@+id/game_id_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="aaa" />
+        </LinearLayout>
+
+        <fragment
+            android:id="@+id/player1_fragment"
+            android:name="com.example.justgottagetrightouttahere_client.Fragments.LobbyPlayerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="3dp" />
+
+        <fragment
+            android:id="@+id/player2_fragment"
+            android:name="com.example.justgottagetrightouttahere_client.Fragments.LobbyPlayerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="3dp" />
+
+        <fragment
+            android:id="@+id/player3_fragment"
+            android:name="com.example.justgottagetrightouttahere_client.Fragments.LobbyPlayerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="3dp" />
+
+        <fragment
+            android:id="@+id/player4_fragment"
+            android:name="com.example.justgottagetrightouttahere_client.Fragments.LobbyPlayerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="3dp" />
+
+        <Button
+            android:id="@+id/start_game_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/LimeGreen"
+            android:layout_margin="5dp"
+            android:text="Start the game" />
+    </LinearLayout>
+</FrameLayout>

@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.View;
 
 import com.example.justgottagetrightouttahere_client.Fragments.GameboardFragment;
@@ -15,12 +16,17 @@ import com.example.justgottagetrightouttahere_client.model.Player;
 import com.example.justgottagetrightouttahere_client.Constants.ResourcesMaps;
 import com.example.justgottagetrightouttahere_client.network.TCPClient;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_SIZE_X;
 import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_SIZE_Y;
 import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_TILE_SIZE;
+import static com.example.justgottagetrightouttahere_client.Constants.Constants.levelToLoad;
+import static com.example.justgottagetrightouttahere_client.Constants.Constants.startNetwork;
 
 public class GameView extends View {
     GameModel gameModel;
@@ -33,13 +39,13 @@ public class GameView extends View {
 
     public void calculateTileSize(){
         int height = getMeasuredHeight();
-        int width = getRootView().getWidth();
+        int width = getMeasuredWidth();
         int renderTileSize_X = width / gameModel.sizeX;
         int renderTileSize_Y = height/ gameModel.sizeY;
 
         renderTileSize = renderTileSize_X < renderTileSize_Y ? renderTileSize_X:renderTileSize_Y;
 
-        tilesTopOffset = (height - (renderTileSize*gameModel.sizeX)) / 2;
+        tilesTopOffset = (height - (renderTileSize*gameModel.sizeY)) / 2;
 
         //System.err.println(renderTileSize);
     }
@@ -55,13 +61,22 @@ public class GameView extends View {
 
         messageHandler = new GameMessageHandler(gameModel);
 
-        client = TCPClient.getInstance();
-        if(!client.TCPClientRunning){
-            Thread clientThread = new Thread(client);
-            clientThread.start();
-        }
+        if(startNetwork){
+            client = TCPClient.getInstance();
+            if(!client.TCPClientRunning){
+                Thread clientThread = new Thread(client);
+                clientThread.start();
+            }
 
-        while(!client.setMessageHandler(messageHandler)){}
+            while(!client.setMessageHandler(messageHandler)){}
+        }else{
+            try {
+                messageHandler.loadLevel(new JSONObject(levelToLoad));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
 
         /*
         //FIXME remove this (testing purpose)
@@ -116,7 +131,9 @@ public class GameView extends View {
         for(int i = 0; i < sizeX;++i){
             for(int j = 0; j < sizeY;++j){
                 if(objects[i][j] != 0){
-                    int spriteId = ResourcesMaps.blocksSpritesMap.get(objects[i][j]);
+                    //Log.e("INFO","Loading object sprite "+objects[i][j]);
+                    /*-1 because tile id in tiled starts with at 1 but we are not monsters so we start at 0*/
+                    int spriteId = ResourcesMaps.blocksSpritesMap.get(objects[i][j]-1);
                     drawImage(canvas,i*renderTileSize,j*renderTileSize + tilesTopOffset,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize + tilesTopOffset, spriteId);
                 }
             }
@@ -130,7 +147,6 @@ public class GameView extends View {
     void drawPlayers(Canvas canvas, List<Player> players){
         for(Player p : players){
             //System.err.println("Drawing player "+p.id);
-
             int playerSpriteId = ResourcesMaps.playerSpritesMap.get(p.roleId);
             drawImage(canvas,p.posX*renderTileSize, p.posY*renderTileSize + tilesTopOffset,p.posX*renderTileSize+renderTileSize,p.posY*renderTileSize+renderTileSize + tilesTopOffset,playerSpriteId);
         }
@@ -143,8 +159,11 @@ public class GameView extends View {
     void drawBlocks(Canvas canvas, int matrix[][], int sizeX, int sizeY){
         for(int i = 0; i < sizeX;++i){
             for(int j = 0; j < sizeY;++j){
-                int tileSpriteId = ResourcesMaps.blocksSpritesMap.get(matrix[i][j]);
-                drawImage(canvas,i*renderTileSize,j*renderTileSize + tilesTopOffset,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize+tilesTopOffset, tileSpriteId);
+                if(matrix[i][j] != 0){
+                    /*-1 because tile id in tiled starts with at 1 but we are not monsters so we start at 0*/
+                    int tileSpriteId = ResourcesMaps.blocksSpritesMap.get(matrix[i][j]-1);
+                    drawImage(canvas,i*renderTileSize,j*renderTileSize + tilesTopOffset,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize+tilesTopOffset, tileSpriteId);
+                }
             }
         }
     }

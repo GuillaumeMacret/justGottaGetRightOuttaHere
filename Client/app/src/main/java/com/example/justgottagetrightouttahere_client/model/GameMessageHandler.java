@@ -259,7 +259,7 @@ public class GameMessageHandler implements MessageHandler {
         model.updateBlocksLayer(tilesToChange);
     }
 
-    void loadLevel(JSONObject jsonObject){
+    public void loadLevel(JSONObject jsonObject){
         try {
             int arrayHeight, arrayWidth;
             int blocksLayer[][] = new int[0][0];
@@ -275,6 +275,8 @@ public class GameMessageHandler implements MessageHandler {
                 arrayWidth = line.length();
                 if(i == 0){
                     blocksLayer = new int[arrayWidth][arrayHeight];
+                    model.sizeX = arrayWidth;
+                    model.sizeY = arrayHeight;
                 }
 
                 for(int j = 0; j < arrayWidth; ++j){
@@ -289,18 +291,26 @@ public class GameMessageHandler implements MessageHandler {
             map = jsonObject.getJSONArray("Objects");
             for(int i = 0; i < map.length(); ++i){
                 JSONObject object = map.getJSONObject(i);
-                Log.e("INFO","adding object in : "+object.getInt("xPos")+"  "+object.getInt("yPos"));
-                model.objectLayer[object.getInt("xPos")][object.getInt("yPos")] = object.getInt("value");
+                if(object.getInt("xPos") < model.sizeX && object.getInt("yPos") < model.sizeY){
+                    //Log.e("INFO","adding object in : "+object.getInt("xPos")+"  "+object.getInt("yPos"));
+                    model.objectLayer[object.getInt("xPos")][object.getInt("yPos")] = object.getInt("value");
+                }else{
+                    Log.e("ERROR","Can't add object in : "+object.getInt("xPos")+"  "+object.getInt("yPos")+" OUT OF BOUNDS");
+                }
             }
 
             model.loadLevel(blocksLayer);
 
             /*Loading players*/
+            model.players = new ArrayList<>();
             map = jsonObject.getJSONArray("Players");
             for(int i = 0; i < map.length(); ++i){
                 JSONObject JsonPlayers = map.getJSONObject(i);
+                model.players.add(new Player());
                 model.players.get(i).posX = JsonPlayers.getInt("xPos");
                 model.players.get(i).posY = JsonPlayers.getInt("yPos");
+                model.players.get(i).id = i;
+                model.players.get(i).roleId = i;
             }
         } catch (JSONException e) {
             e.printStackTrace();

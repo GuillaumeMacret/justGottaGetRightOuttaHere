@@ -16,12 +16,17 @@ import com.example.justgottagetrightouttahere_client.model.Player;
 import com.example.justgottagetrightouttahere_client.Constants.ResourcesMaps;
 import com.example.justgottagetrightouttahere_client.network.TCPClient;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_SIZE_X;
 import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_SIZE_Y;
 import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_TILE_SIZE;
+import static com.example.justgottagetrightouttahere_client.Constants.Constants.levelToLoad;
+import static com.example.justgottagetrightouttahere_client.Constants.Constants.startNetwork;
 
 public class GameView extends View {
     GameModel gameModel;
@@ -34,13 +39,13 @@ public class GameView extends View {
 
     public void calculateTileSize(){
         int height = getMeasuredHeight();
-        int width = getRootView().getWidth();
+        int width = getMeasuredWidth();
         int renderTileSize_X = width / gameModel.sizeX;
         int renderTileSize_Y = height/ gameModel.sizeY;
 
         renderTileSize = renderTileSize_X < renderTileSize_Y ? renderTileSize_X:renderTileSize_Y;
 
-        tilesTopOffset = (height - (renderTileSize*gameModel.sizeX)) / 2;
+        tilesTopOffset = (height - (renderTileSize*gameModel.sizeY)) / 2;
 
         //System.err.println(renderTileSize);
     }
@@ -56,13 +61,22 @@ public class GameView extends View {
 
         messageHandler = new GameMessageHandler(gameModel);
 
-        client = TCPClient.getInstance();
-        if(!client.TCPClientRunning){
-            Thread clientThread = new Thread(client);
-            clientThread.start();
-        }
+        if(startNetwork){
+            client = TCPClient.getInstance();
+            if(!client.TCPClientRunning){
+                Thread clientThread = new Thread(client);
+                clientThread.start();
+            }
 
-        while(!client.setMessageHandler(messageHandler)){}
+            while(!client.setMessageHandler(messageHandler)){}
+        }else{
+            try {
+                messageHandler.loadLevel(new JSONObject(levelToLoad));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
 
         /*
         //FIXME remove this (testing purpose)

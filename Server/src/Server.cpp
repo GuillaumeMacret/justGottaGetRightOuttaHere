@@ -180,7 +180,7 @@ void Server::requestJoinGame(int userIndex, int gameID)
         if (g->addPlayer(_players[userIndex]))
         {
             answer = "{\"Action\":\"" ACTION_JOINED_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
-            answer += ", \"Players\":[";
+            answer += ", \"PlayersRoles\":[";
             int i = 0;
             for (Player *p : g->getPlayers())
             {

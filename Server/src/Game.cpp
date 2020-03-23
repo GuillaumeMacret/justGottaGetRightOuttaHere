@@ -10,60 +10,80 @@ Game::Game(int gameID, std::string selectedMap) : _buttonState(false), _nbPlayer
 
 std::string Game::movePlayer(int playerID, std::string direction)
 {
-    int posX = _players[playerID]->getPosX(), posY = _players[playerID]->getPosY();
+    int newPosX = _players[playerID]->getPosX(), newPosY = _players[playerID]->getPosY();
+    int posX = newPosX, posY = newPosY;
     std::string changes = "";
     if (direction == "up")
     {
-        --posY;
+        --newPosY;
     }
     else if (direction == "down")
     {
-        ++posY;
+        ++newPosY;
     }
     else if (direction == "left")
     {
-        --posX;
+        --newPosX;
     }
     else if (direction == "right")
     {
-        ++posX;
+        ++newPosX;
     }
 
-    if (posX >= 0 && posX < _width && posY >= 0 && posY < _height)
+    if (newPosX >= 0 && newPosX < _width && newPosY >= 0 && newPosY < _height)
     {
-        if (_grid[posX][posY].collisionValue < C_BLOCK)
+        if (_grid[newPosX][newPosY].collisionValue < C_BLOCK && posX != newPosX && posY != newPosY)
         {
             Player *p = _players[playerID];
-            _grid[p->getPosY()][p->getPosX()].collisionValue = p->getLastCollisionType();
-            p->setPos(posX, posY);
-            //TO DO: check key + player pos = walkable
-            if (_grid[p->getPosY()][p->getPosX()].blockValue == KEY)
+            _grid[posY][posX].collisionValue = p->getLastCollisionType();
+
+            //Player moved and stands on a stairway
+            if(_grid[newPosY][newPosX].blockValue == STAIRWAY)
             {
-                _grid[p->getPosY()][p->getPosX()].blockValue = EMPTY;
-                _grid[p->getPosY()][p->getPosX()].collisionValue = C_NOTHING;
-                p->setLastCollisionType(C_NOTHING);
-                changes += tileToJSON(p->getPosX(), p->getPosY(), EMPTY);
-                --_nbKeys;
-                if (!_nbKeys)
+                int index = 0;
+                for(Block sw : _stairways)
                 {
-                    //change lock to empty
-                    int i = 0;
-                    for (Point point : _lockPosition)
+                    ++i;
+                    if(sw.p.posX == newPosX && sw.p.posY == newPosY)
                     {
-                        if (i)
-                            changes += ',';
-                        _grid[point.posY][point.posX].blockValue += 2;
-                        _grid[point.posY][point.posX].collisionValue = C_NOTHING;
-                        changes += tileToJSON(p->getPosX(), p->getPosY(), _grid[point.posY][point.posX].blockValue + 2);
-                        ++i;
+                        break;
+                    }
+                }
+                Block b = _stairways[i%_stairways.size()];
+                p->setPos(b.p.posX, b.p.posY);
+            }
+            else
+            {
+                p->setPos(newPosX, newPosY);
+
+                //Player stands on a key
+                if (_grid[newPosY][newPosX].blockValue == KEY)
+                {
+                    _grid[newPosY][newPosX].blockValue = EMPTY;
+                    _grid[newPosY][newPosX].collisionValue = C_NOTHING;
+                    p->setLastCollisionType(C_NOTHING);
+                    changes += tileToJSON(posX, posY, EMPTY);
+                    --_nbKeys;
+                    if (!_nbKeys)
+                    {
+                        //change lock to empty
+                        int i = 0;
+                        for (Point point : _lockPosition)
+                        {
+                            if (i)
+                                changes += ',';
+                            _grid[point.posY][point.posX].blockValue += 2;
+                            _grid[point.posY][point.posX].collisionValue = C_NOTHING;
+                            changes += tileToJSON(newPosX, newPosY, _grid[point.posY][point.posX].blockValue + 2);
+                            ++i;
+                        }
                     }
                 }
             }
-            p->setLastCollisionType(_grid[p->getPosY()][p->getPosX()].collisionValue);
+            p->setLastCollisionType(_grid[newPosY][newPosX].collisionValue);
         }
-        _players[playerID]->setLastDirection(direction);
     }
-
+    _players[playerID]->setLastDirection(direction);
     return changes;
 }
 
@@ -135,7 +155,7 @@ std::string Game::checkActivate(int posX, int posY)
         int i = 0;
         if (_buttonState)
         {
-            for (OnOffBlock ofb : _onBlocks)
+            for (Block ofb : _onBlocks)
             {
                 if (i)
                     res += ',';
@@ -143,7 +163,7 @@ std::string Game::checkActivate(int posX, int posY)
                 res += tileToJSON(ofb.p.posX, ofb.p.posY, ofb.value);
                 ++i;
             }
-            for (OnOffBlock ofb : _offBlocks)
+            for (Block ofb : _offBlocks)
             {
                 res += ',';
                 _grid[ofb.p.posY][ofb.p.posX].blockValue = EMPTY;
@@ -152,7 +172,7 @@ std::string Game::checkActivate(int posX, int posY)
         }
         else
         {
-            for (OnOffBlock ofb : _onBlocks)
+            for (Block ofb : _onBlocks)
             {
                 if (i)
                     res += ',';
@@ -160,7 +180,7 @@ std::string Game::checkActivate(int posX, int posY)
                 res += tileToJSON(ofb.p.posX, ofb.p.posY, EMPTY);
                 ++i;
             }
-            for (OnOffBlock ofb : _offBlocks)
+            for (Block ofb : _offBlocks)
             {
                 res += ',';
                 _grid[ofb.p.posY][ofb.p.posX].blockValue = ofb.value;
@@ -208,7 +228,6 @@ std::string Game::doActionPlayer(int playerID)
         ++posX;
     }
 
-    //TODO check if tile [posX, posY] correspond to p->getRole()
     if (posX >= 0 && posX < _width && posY >= 0 && posY < _height)
     {
         switch (p->getRole())
@@ -316,7 +335,13 @@ void Game::readBackground(RSJresource layerResource)
     {
         ss >> tmp;
         if (std::stringstream(tmp) >> value)
+        {
             _grid[j][i] = Tile{value, EMPTY, C_NOTHING};
+            if(value == STAIRWAY)
+            {
+                _stairways.push_back(Block{Point{i, j}, value};
+            }
+        }
         tmp = "";
         ++i;
         if (i % _width == 0)
@@ -402,7 +427,7 @@ void Game::readButtonOn(RSJresource layerResource)
             if (value != BUTTON)
             {
                 Point p = Point{i, j};
-                _onBlocks.push_back(OnOffBlock{p, value});
+                _onBlocks.push_back(Block{p, value});
             }
             else
                 _grid[j][i].blockValue = value;
@@ -434,7 +459,7 @@ void Game::readButtonOff(RSJresource layerResource)
             if (value != BUTTON)
             {
                 Point p = Point{i, j};
-                _offBlocks.push_back(OnOffBlock{p, value});
+                _offBlocks.push_back(Block{p, value});
             }
             _grid[j][i].blockValue = value;
         }

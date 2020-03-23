@@ -10,6 +10,7 @@
 #define BREAKABLE 12
 #define WATER 72
 #define BRIDGE 28
+#define STAIRWAY 29
 
 #define C_NOTHING 0
 #define C_WALKABLE 1
@@ -35,7 +36,7 @@ struct Point
     int posY;
 };
 
-struct OnOffBlock
+struct Block
 {
     Point p;
     int value;
@@ -47,8 +48,9 @@ private:
     //Player *_players[NB_PLAYERS];
     std::vector<Player *> _players;
     Tile **_grid;
-    std::vector<OnOffBlock> _onBlocks;
-    std::vector<OnOffBlock> _offBlocks;
+    std::vector<Block> _onBlocks;
+    std::vector<Block> _offBlocks;
+    std::vector<Block> _stairways;
     Point _lockPosition[4];
     bool _buttonState;
     int _width;

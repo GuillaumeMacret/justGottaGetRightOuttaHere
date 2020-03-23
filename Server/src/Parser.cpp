@@ -26,6 +26,28 @@ std::string Parser::readArg(std::string &req)
     return s;
 }
 
+int Parser::readInt(std::string &req)
+{
+    std::string s;
+    size_t pos = req.find(':');
+    if (pos != std::string::npos)
+    {
+        req = req.substr(pos + 1);
+        pos = 0;
+        for (char c : req)
+        {
+            if (!isdigit(c))
+            {
+                req = req.substr(pos + 1);
+                break;
+            }
+            s += c;
+            ++pos;
+        }
+    }
+    return std::stoi(s);
+}
+
 int Parser::requestGamesList(std::string &req, Server &server, int userIndex)
 {
     server.requestGamesList(userIndex);
@@ -35,14 +57,17 @@ int Parser::requestGamesList(std::string &req, Server &server, int userIndex)
 int Parser::requestChangeRole(std::string &req, Server &server, int userIndex)
 {
     int roleID;
-    std::string res = readArg(req);
-    if (res != "")
+    try
     {
-        roleID = atoi(res.c_str());
+        roleID = readInt(req);
         server.requestChangeRole(userIndex, roleID);
-        return 0;
     }
-    return 1;
+    catch (std::exception const &e)
+    {
+        return 1;
+    }
+
+    return 0;
 }
 
 int Parser::requestChangeMap(std::string &req, Server &server, int userIndex)
@@ -71,14 +96,17 @@ int Parser::requestCreateGame(std::string &req, Server &server, int userIndex)
 int Parser::requestJoinGame(std::string &req, Server &server, int userIndex)
 {
     int gameID;
-    std::string res = readArg(req);
-    if (res != "")
+    try
     {
-        gameID = atoi(res.c_str());
+        gameID = readInt(req);
         server.requestJoinGame(userIndex, gameID);
-        return 0;
     }
-    return 1;
+    catch (std::exception const &e)
+    {
+        return 1;
+    }
+
+    return 0;
 }
 
 int Parser::requestStartGame(std::string &req, Server &server, int userIndex)
@@ -113,7 +141,7 @@ int Parser::requestLeaveGame(std::string &req, Server &server, int userIndex)
 int Parser::getAction(std::string &req, Server &server, int userIndex)
 {
     std::string s = readArg(req);
-    
+
     int res = 1;
     if (s != "")
     {

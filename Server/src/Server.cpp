@@ -23,9 +23,10 @@ Server::~Server()
 
 void Server::runPlayer(int index)
 {
+    std::string req;
     for (;;)
     {
-        std::string req = TCPConn.server_receive(index);
+        req = TCPConn.server_receive(index);
         std::cout << req << std::endl;
         // std::this_thread::sleep_for(std::chrono::seconds(3));
 
@@ -39,6 +40,7 @@ void Server::runPlayer(int index)
             removePlayerFromGame(index);
             return;
         }
+        req.clear();
     }
 }
 
@@ -87,6 +89,8 @@ void Server::requestChangeRole(int userIndex, int roleID)
     Game *g = getGameFromPlayer(userIndex);
     if (g != nullptr)
     {
+        std::cout << "roleID : " << roleID << std::endl;
+        _players[userIndex]->setRole(roleID);
         std::string answer = "{\"Action\":\"" ACTION_CHANGE_ROLE "\", ";
         answer += "\"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
         answer += ", \"RoleId\":" + std::to_string(roleID);
@@ -128,25 +132,29 @@ void Server::requestAction(int userIndex)
 
 void Server::requestCreateGame(int userIndex)
 {
-    Game *g = new Game(_games.size() + 1);
+    Game *g = new Game(_games.size());
     _players[userIndex]->setGame(g);
     g->addPlayer(_players[userIndex]);
     _games.push_back(g);
 
-    std::string answer = "{\"Action\":\"" ACTION_CREATE_GAME "\"},";
+    std::string answer = "{\"Action\":\"" ACTION_CREATED_GAME "\",";
     answer += "\"GameId\":" + std::to_string(g->getGameID()) + ',';
     answer += "\"MapList\":[";
 
     DIR *mapDir;
     struct dirent *map;
     std::string mapName;
-    if((mapDir = opendir("./maps"))) {
+    if ((mapDir = opendir("./maps")))
+    {
         int i = 0;
-        while((map = readdir(mapDir))){
-            if(strcmp(map->d_name, ".") != 0 && strcmp(map->d_name, "..") != 0 ) {
-                if(i) answer += ',';
+        while ((map = readdir(mapDir)))
+        {
+            if (strcmp(map->d_name, ".") != 0 && strcmp(map->d_name, "..") != 0)
+            {
+                if (i)
+                    answer += ',';
                 mapName = map->d_name;
-                mapName = mapName.substr(0,mapName.find(".json"));
+                mapName = mapName.substr(0, mapName.find(".json"));
                 answer += "\"" + mapName + "\"";
                 ++i;
             }
@@ -162,8 +170,11 @@ void Server::requestCreateGame(int userIndex)
 void Server::requestJoinGame(int userIndex, int gameID)
 {
     std::string answer;
-
-    Game *g = _games[gameID];
+    Game *g = nullptr;
+    if (gameID < MAX_CONNECTION_TCP && gameID >= 0)
+    {
+        g = _games[gameID];
+    }
     if (g != nullptr)
     {
         if (g->addPlayer(_players[userIndex]))
@@ -187,14 +198,14 @@ void Server::requestJoinGame(int userIndex, int gameID)
         }
         else
         {
-            answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME "\", \"GameId\":" + gameID;
-            answer += "\"MoreInfo\":\"" ERROR_GAME_FULL "\"";
+            answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME "\", \"GameId\":" + std::to_string(gameID);
+            answer += ", \"MoreInfo\":\"" ERROR_GAME_FULL "\"";
         }
     }
     else
     {
-        answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME "\", \"GameId\":" + gameID;
-        answer += "\"MoreInfo\":\"" ERROR_GAME_DOES_NOT_EXIST "\"";
+        answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME "\", \"GameId\":" + std::to_string(gameID);
+        answer += ", \"MoreInfo\":\"" ERROR_GAME_DOES_NOT_EXIST "\"";
     }
     answer += "}\n";
     TCPConn.answers[userIndex] = answer;
@@ -206,7 +217,7 @@ void Server::requestStartGame(int userIndex)
     std::string answer;
 
     Game *g = getGameFromPlayer(userIndex);
-    if (g != nullptr && g->getPlayers().size() == 4)
+    if (g != nullptr && g->getNbConnectedPlayers() == 4)
     {
         std::vector<Player *> players = g->getPlayers();
         bool available = true;
@@ -230,7 +241,14 @@ void Server::requestStartGame(int userIndex)
         }
         else
         {
+            answer = "{\"Action\":\"" ACTION_CANT_START_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
+            answer += ", \"MoreInfo\":\"" ERROR_DUPLICATE_ROLE "\"}\n";
         }
+    }
+    else
+    {
+        answer = "{\"Action\":\"" ACTION_CANT_START_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
+        answer += ", \"MoreInfo\":\"" ERROR_NOT_ENOUGH_PLAYERS "\"}\n";
     }
     broadcastGame(g, answer);
 }

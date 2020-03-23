@@ -2,8 +2,12 @@
 
 :"gameList"
 
-:"joinGame",:1
+:"joinGame",:0
 
 :"changeMap",:"name"
 
+:"roleChange",:1
+
 :"leaveGame"
+
+:"startGame"

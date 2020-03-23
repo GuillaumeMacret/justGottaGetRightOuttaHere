@@ -37,19 +37,19 @@ std::string Game::movePlayer(int playerID, std::string direction)
             Player *p = _players[playerID];
             _grid[posY][posX].collisionValue = p->getLastCollisionType();
 
-            //Player moved and stands on a stairway
+            //Player moved and now stands on a stairway
             if(_grid[newPosY][newPosX].blockValue == STAIRWAY)
             {
                 int index = 0;
                 for(Block sw : _stairways)
                 {
-                    ++i;
+                    ++index;
                     if(sw.p.posX == newPosX && sw.p.posY == newPosY)
                     {
                         break;
                     }
                 }
-                Block b = _stairways[i%_stairways.size()];
+                Block b = _stairways[index%_stairways.size()];
                 p->setPos(b.p.posX, b.p.posY);
             }
             else
@@ -339,7 +339,7 @@ void Game::readBackground(RSJresource layerResource)
             _grid[j][i] = Tile{value, EMPTY, C_NOTHING};
             if(value == STAIRWAY)
             {
-                _stairways.push_back(Block{Point{i, j}, value};
+                _stairways.push_back(Block{Point{i, j}, value});
             }
         }
         tmp = "";

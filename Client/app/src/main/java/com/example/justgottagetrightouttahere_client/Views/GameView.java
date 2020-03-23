@@ -4,21 +4,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.justgottagetrightouttahere_client.Fragments.GameboardFragment;
-import com.example.justgottagetrightouttahere_client.R;
 import com.example.justgottagetrightouttahere_client.model.GameMessageHandler;
 import com.example.justgottagetrightouttahere_client.model.GameModel;
 import com.example.justgottagetrightouttahere_client.model.Player;
-import com.example.justgottagetrightouttahere_client.model.ResourcesMaps;
+import com.example.justgottagetrightouttahere_client.Constants.ResourcesMaps;
 import com.example.justgottagetrightouttahere_client.network.TCPClient;
 
 import java.text.SimpleDateFormat;
@@ -69,6 +63,7 @@ public class GameView extends View {
 
         while(!client.setMessageHandler(messageHandler)){}
 
+        /*
         //FIXME remove this (testing purpose)
         gameModel.players.add(new Player(0,0,0,0));
         gameModel.movePlayer(0,2,2);
@@ -76,6 +71,8 @@ public class GameView extends View {
         gameModel.players.add(new Player(0,1,2,2));
         gameModel.players.add(new Player(1,1,3,3));
         gameModel.objectLayer[3][3] = 1;
+
+         */
     }
 
     /**
@@ -119,7 +116,7 @@ public class GameView extends View {
         for(int i = 0; i < sizeX;++i){
             for(int j = 0; j < sizeY;++j){
                 if(objects[i][j] != 0){
-                    int spriteId = ResourcesMaps.objectsSpritesMap.get(objects[i][j]);
+                    int spriteId = ResourcesMaps.blocksSpritesMap.get(objects[i][j]);
                     drawImage(canvas,i*renderTileSize,j*renderTileSize + tilesTopOffset,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize + tilesTopOffset, spriteId);
                 }
             }

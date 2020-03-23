@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -12,58 +13,96 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.justgottagetrightouttahere_client.Adapters.GameInfoAdapter;
+import com.example.justgottagetrightouttahere_client.Constants.MessageTemplates;
 import com.example.justgottagetrightouttahere_client.R;
 import com.example.justgottagetrightouttahere_client.model.GameInfo;
+import com.example.justgottagetrightouttahere_client.model.GameMessageHandler;
+import com.example.justgottagetrightouttahere_client.network.TCPClient;
 
 import java.util.ArrayList;
 
 public class GameListActivity extends AppCompatActivity {
 
     ListView gameListView;
+    Button createGameButton;
     ArrayList<GameInfo> gameList;
+    GameMessageHandler messageHandler;
+    TCPClient client;
 
-    private GameInfoAdapter gameInfoAdapter;
+    GameInfoAdapter gameInfoAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_list_activity);
 
+        // Initialize elements
         gameListView = (ListView)findViewById(R.id.game_listview);
         gameList = new ArrayList<>();
-
-        gameList.add(new GameInfo("dfa5g", 2));
-        gameList.add(new GameInfo("fzlkf", 4));
-        gameList.add(new GameInfo("rgjkslkjg", 1));
-        gameList.add(new GameInfo("sdlksj", 3));
-        gameList.add(new GameInfo("sldgjks", 2));
-        gameList.add(new GameInfo("dfa5g", 2));
-        gameList.add(new GameInfo("fzlkf", 4));
-        gameList.add(new GameInfo("rgjkslkjg", 1));
-        gameList.add(new GameInfo("sdlksj", 3));
-        gameList.add(new GameInfo("sldgjks", 2));
 
         gameInfoAdapter = new GameInfoAdapter(gameList, getApplicationContext());
         gameListView.setAdapter(gameInfoAdapter);
 
+        // Receive game list
+        messageHandler = new GameMessageHandler(null);
+        messageHandler.gameList = gameList;
+        messageHandler.gameListActivity = this;
+
+        client = TCPClient.getInstance();
+        if(!client.TCPClientRunning){
+            Thread clientThread = new Thread(client);
+            clientThread.start();
+        }
+        while(!client.setMessageHandler(messageHandler)) {}
+        /////////
+
+        // Click action for games
         gameListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //TODO: Send a message to the server saying you want to join a game, the server will answer a "joinedGame" or "cantJoinGame" message
-                if(true)/*Le message est OK)*/ {
-                    Intent intent = new Intent(getApplicationContext(), LobbyActivity.class);
-                    intent.putExtra("gameId", gameList.get(position).id);
-                    intent.putExtra("nbPlayers", gameList.get(position).nbPlayers);
-                    //TODO: Put extra for each player intent.putExtra("playerID...",playerID)...
-                    startActivity(intent);
-                }
-                else {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Message d'erreur", Toast.LENGTH_SHORT);
-                    toast.show();
-                }
+                messageHandler.tryingToJoinGame = true;
+                String message = MessageTemplates.createJoinGameMessage(gameList.get(position).id);
+                TCPClient.sendThreaded(message);
+            }
+        });
+
+        // Click action for creating game
+        createGameButton = (Button)findViewById(R.id.create_game_button);
+        createGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String message = MessageTemplates.createGameMessage();
+                TCPClient.sendThreaded(message);
             }
         });
     }
 
+    public GameInfoAdapter getGameInfoAdapter() {
+        return gameInfoAdapter;
+    }
+
+    public void gameCreated(int gameId, String[] maps) {
+        Intent intent = new Intent(getApplicationContext(), LobbyActivity.class);
+        intent.putExtra("created", true);
+        intent.putExtra("gameId", gameId);
+        intent.putExtra("nbPlayers", 0);
+        intent.putExtra("maps", maps);
+        startActivity(intent);
+    }
+
+    public void joinGame(int gameId, int nbPlayers, int[] roles, String map) {
+        Intent intent = new Intent(getApplicationContext(), LobbyActivity.class);
+        intent.putExtra("created", false);
+        intent.putExtra("gameId", gameId);
+        intent.putExtra("nbPlayers", nbPlayers);
+        intent.putExtra("roles", roles);
+        intent.putExtra("map", map);
+        startActivity(intent);
+    }
+
+    public void cantJoinGame(String errorMessage) {
+        Toast toast = Toast.makeText(getApplicationContext(), "Could not join game: " + errorMessage, Toast.LENGTH_SHORT);
+        toast.show();
+    }
 
 }

@@ -3,7 +3,7 @@ package com.example.justgottagetrightouttahere_client.model;
 public class Player {
     public int posX, posY, id, roleId;
 
-    Player(){
+    public Player(){
         posX = posY = id = roleId = 0;
     }
 
@@ -11,7 +11,7 @@ public class Player {
      * @param id
      * @param roleId
      */
-    Player(int id, int roleId){
+    public Player(int id, int roleId){
         this.id = id;
         this.roleId = roleId;
         posX = posY = 0;

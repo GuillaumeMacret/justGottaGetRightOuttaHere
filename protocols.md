@@ -7,11 +7,11 @@
 {
     "Action":"gameList",
     "Games":[
-        "Game":{
+        {
             "id":[gameId],
             "nbPlayers":[0|1|2|3|4],
         },
-        "Game":{
+        {
             ...
         }
     ]
@@ -27,6 +27,8 @@
 Response from server :
 ```JSON
 {
+    "Action": "createdGame",
+    "GameId": [id],
     "MapList": ["level1", "level2", ...]
 }
 ```
@@ -44,7 +46,7 @@ Responses to join a game (server)
 {
   "Action":"joinedGame",
   "GameId":[id],
-  "Players":[id, id, ...],
+  "PlayersRoles":[id, id, ...],
   "PlayerId": id,
   "Map": "name"
 }

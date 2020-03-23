@@ -9,4 +9,14 @@ public class MessageTemplates {
     public static String createActionMessage(){
         return "{\"Action\":\"action\"}";
     }
+
+    public static String createGameMessage() { return "{\"Action\":\"createGame\"}"; }
+
+    public static String createJoinGameMessage(int gameId) { return "{\"Action\":\"joinGame\",\"GameId\":"+ gameId +"}"; }
+
+    public static String createChangeMapMessage(String map) { return "{\"Action\":\"changeMap\",\"Map\":\""+ map +"\"}"; }
+
+    public static String createChangeRoleMessage(int role) { return "{\"Action\":\"roleChange\",\"RoleId\":\""+ role +"\"}"; }
+
+    public static String createStartGameMessage() { return "{\"Action\":\"startGame\"}"; }
 }

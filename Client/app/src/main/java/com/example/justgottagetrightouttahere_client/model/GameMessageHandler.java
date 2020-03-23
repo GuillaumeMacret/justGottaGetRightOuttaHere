@@ -2,6 +2,9 @@ package com.example.justgottagetrightouttahere_client.model;
 
 import android.util.Log;
 
+import com.example.justgottagetrightouttahere_client.Activities.GameListActivity;
+import com.example.justgottagetrightouttahere_client.Activities.LobbyActivity;
+import com.example.justgottagetrightouttahere_client.Adapters.GameInfoAdapter;
 import com.example.justgottagetrightouttahere_client.Fragments.GameboardFragment;
 import com.example.justgottagetrightouttahere_client.network.MessageHandler;
 
@@ -16,10 +19,17 @@ public class GameMessageHandler implements MessageHandler {
 
     GameModel model;
 
+    // For GameListActivity
+    public ArrayList<GameInfo> gameList;
+    public GameListActivity gameListActivity;
+    public boolean tryingToJoinGame = false;
+
+    // For LobbyActivity
+    public LobbyActivity lobbyActivity;
+
     public GameMessageHandler(GameModel model){
         this.model = model;
     }
-
     /**
      * Handles the message in the game board context
      * @param s
@@ -32,6 +42,30 @@ public class GameMessageHandler implements MessageHandler {
             Log.e("INFO","Action : "+jsonObject.getString("Action"));
 
             switch (jsonObject.getString("Action")){
+                case "gameList":
+                    loadGameList(jsonObject);
+                    break;
+                case "createdGame":
+                    createGame(jsonObject);
+                    break;
+                case "joinedGame":
+                    joinGame(jsonObject);
+                    break;
+                case "cantJoinGame":
+                    cantJoinGame(jsonObject);
+                    break;
+                case "changedMap":
+                    changedMap(jsonObject);
+                    break;
+                case "roleChange":
+                    roleChange(jsonObject);
+                    break;
+                case "cantChangeRole":
+                    //TODO
+                    break;
+                case "cantStartGame":
+                    cantStartGame(jsonObject);
+                    break;
                 case "move":
                     movePlayer(jsonObject);
                     break;
@@ -45,6 +79,154 @@ public class GameMessageHandler implements MessageHandler {
                     Log.e("ERROR","Game handler can't handle action "+jsonObject.getString("Action"));
             }
         } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void loadGameList(JSONObject jsonObject) {
+        try {
+            if(gameList == null)
+                gameList = new ArrayList<>();
+            JSONArray jsonGamesArray = jsonObject.getJSONArray("Games");
+            int arrayLength = jsonGamesArray.length();
+            for(int i = 0; i < arrayLength; ++i){
+                JSONObject jsonGame = jsonGamesArray.getJSONObject(i);
+                gameList.add(new GameInfo(jsonGame.getInt("id"), jsonGame.getInt("nbPlayers")));
+            }
+            if(gameListActivity != null) {
+                gameListActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        gameListActivity.getGameInfoAdapter().notifyDataSetChanged();
+                    }
+                });
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void createGame(JSONObject jsonObject) {
+        try {
+            final int gameId = jsonObject.getInt("GameId");
+            JSONArray jsonMaps = jsonObject.getJSONArray("MapList");
+            final String[] maps = new String[jsonMaps.length()];
+            for(int i = 0; i < maps.length; ++i) {
+                maps[i] = jsonMaps.getString(i);
+            }
+            if(gameListActivity != null) {
+                gameListActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        gameListActivity.gameCreated(gameId, maps);
+                    }
+                });
+            }
+        }
+        catch(JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void joinGame(JSONObject jsonObject) {
+        try {
+            final int gameId = jsonObject.getInt("GameId");
+            final int playerId = jsonObject.getInt("PlayerId");
+            JSONArray jsonRoles = jsonObject.getJSONArray("PlayersRoles");
+            final int nbPlayers = jsonRoles.length();
+            final int[] playerRoles = new int[nbPlayers];
+            for(int i = 0; i < nbPlayers; ++i)
+                playerRoles[i] = jsonRoles.getInt(i);
+            final String map = jsonObject.getString("Map");
+            if(tryingToJoinGame && gameListActivity != null) {
+                gameListActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        gameListActivity.joinGame(gameId, nbPlayers, playerRoles, map);
+                    }
+                });
+                tryingToJoinGame = false;
+            }
+            else if(lobbyActivity != null) {
+                lobbyActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        lobbyActivity.playerJoined(playerId);
+                    }
+                });
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void cantJoinGame(JSONObject jsonObject) {
+        try {
+            final String errorMessage = jsonObject.getString("MoreInfo");
+            if(gameListActivity != null) {
+                gameListActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        gameListActivity.cantJoinGame(errorMessage);
+                    }
+                });
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void changedMap(JSONObject jsonObject) {
+        try {
+            final String newMap = jsonObject.getString("Map");
+            if(lobbyActivity != null) {
+                lobbyActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        lobbyActivity.mapChange(newMap);
+                    }
+                });
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void roleChange(JSONObject jsonObject) {
+        try {
+            final int playerId = jsonObject.getInt("PlayerId");
+            final int role = jsonObject.getInt("RoleId");
+            if(lobbyActivity != null) {
+                lobbyActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        lobbyActivity.changeCharacter(playerId, role);
+                    }
+                });
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void cantStartGame(JSONObject jsonObject) {
+        try {
+            final String errorMessage = jsonObject.getString("MoreInfo");
+            if(lobbyActivity != null) {
+                lobbyActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        lobbyActivity.cantStartGame(errorMessage);
+                    }
+                });
+            }
+        }
+        catch (JSONException e) {
             e.printStackTrace();
         }
     }

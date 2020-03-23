@@ -77,7 +77,7 @@ public class GameMessageHandler implements MessageHandler {
         model.updateBlocksLayer(tilesToChange);
     }
 
-    void loadLevel(JSONObject jsonObject){
+    public void loadLevel(JSONObject jsonObject){
         try {
             int arrayHeight, arrayWidth;
             int blocksLayer[][] = new int[0][0];
@@ -127,6 +127,8 @@ public class GameMessageHandler implements MessageHandler {
                 model.players.add(new Player());
                 model.players.get(i).posX = JsonPlayers.getInt("xPos");
                 model.players.get(i).posY = JsonPlayers.getInt("yPos");
+                model.players.get(i).id = i;
+                model.players.get(i).roleId = i;
             }
         } catch (JSONException e) {
             e.printStackTrace();

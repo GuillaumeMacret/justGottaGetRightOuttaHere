@@ -186,7 +186,7 @@ void Server::requestJoinGame(int userIndex, int gameID)
             {
                 if (i)
                     answer += ", ";
-                answer += std::to_string(p->getInGameID());
+                answer += std::to_string(p->getRole());
                 ++i;
             }
             answer += "], \"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
@@ -234,10 +234,10 @@ void Server::requestStartGame(int userIndex)
         }
         if (available && g->getMapName() != "")
         {
-            answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", \"Level\":";
-            answer += g->getMapToJSON() + ',';
+            answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", ";
+            answer += g->getMapToJSON();
             answer += g->getPlayersToJSON();
-            answer += "\n";
+            answer += "}\n";
         }
         else
         {

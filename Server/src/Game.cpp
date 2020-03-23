@@ -238,6 +238,13 @@ bool Game::addPlayer(Player *p)
     {
         p->setGame(this);
         p->setInGameID(_players.size());
+        int role = 0;
+        for (auto it : _players)
+        {
+            if (role == it->getRole())
+                ++role;
+        }
+        p->setRole(role);
         _players.push_back(p);
         return true;
     }
@@ -477,7 +484,7 @@ void Game::readPlayersStartPos(RSJresource layerResource)
     while (!ss.eof())
     {
         ss >> tmp;
-        if (std::stringstream(tmp) >> value && value != 0 && value - 1 < (int) _players.size())
+        if (std::stringstream(tmp) >> value && value != 0 && value - 1 < (int)_players.size())
             _players[value - 1]->setPos(i, j);
         tmp = "";
         ++i;
@@ -550,7 +557,8 @@ std::string Game::getMapToJSON()
 {
     readMap();
 
-    std::string mapJSON = "\"Blocks\":[";
+    std::string mapJSON = "\"Name\":\"" + _selectedMap;
+    mapJSON += "\", \"Blocks\":[";
     std::string objectsJSON = "\"Objects\":[";
     for (int i = 0; i < _height; ++i)
     {
@@ -564,7 +572,8 @@ std::string Game::getMapToJSON()
             mapJSON += std::to_string(_grid[i][j].backgroundValue);
             if (_grid[i][j].blockValue)
             {
-                objectsJSON += tileToJSON(j,i,_grid[i][j].blockValue);
+                objectsJSON += tileToJSON(j, i, _grid[i][j].blockValue);
+                objectsJSON += ',';
             }
         }
         mapJSON += ']';

@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.View;
 
 import com.example.justgottagetrightouttahere_client.Fragments.GameboardFragment;
@@ -116,7 +117,9 @@ public class GameView extends View {
         for(int i = 0; i < sizeX;++i){
             for(int j = 0; j < sizeY;++j){
                 if(objects[i][j] != 0){
-                    int spriteId = ResourcesMaps.blocksSpritesMap.get(objects[i][j]);
+                    //Log.e("INFO","Loading object sprite "+objects[i][j]);
+                    /*-1 because tile id in tiled starts with at 1 but we are not monsters so we start at 0*/
+                    int spriteId = ResourcesMaps.blocksSpritesMap.get(objects[i][j]-1);
                     drawImage(canvas,i*renderTileSize,j*renderTileSize + tilesTopOffset,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize + tilesTopOffset, spriteId);
                 }
             }
@@ -130,7 +133,6 @@ public class GameView extends View {
     void drawPlayers(Canvas canvas, List<Player> players){
         for(Player p : players){
             //System.err.println("Drawing player "+p.id);
-
             int playerSpriteId = ResourcesMaps.playerSpritesMap.get(p.roleId);
             drawImage(canvas,p.posX*renderTileSize, p.posY*renderTileSize + tilesTopOffset,p.posX*renderTileSize+renderTileSize,p.posY*renderTileSize+renderTileSize + tilesTopOffset,playerSpriteId);
         }
@@ -143,8 +145,11 @@ public class GameView extends View {
     void drawBlocks(Canvas canvas, int matrix[][], int sizeX, int sizeY){
         for(int i = 0; i < sizeX;++i){
             for(int j = 0; j < sizeY;++j){
-                int tileSpriteId = ResourcesMaps.blocksSpritesMap.get(matrix[i][j]);
-                drawImage(canvas,i*renderTileSize,j*renderTileSize + tilesTopOffset,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize+tilesTopOffset, tileSpriteId);
+                if(matrix[i][j] != 0){
+                    /*-1 because tile id in tiled starts with at 1 but we are not monsters so we start at 0*/
+                    int tileSpriteId = ResourcesMaps.blocksSpritesMap.get(matrix[i][j]-1);
+                    drawImage(canvas,i*renderTileSize,j*renderTileSize + tilesTopOffset,i*renderTileSize+renderTileSize,j*renderTileSize+renderTileSize+tilesTopOffset, tileSpriteId);
+                }
             }
         }
     }

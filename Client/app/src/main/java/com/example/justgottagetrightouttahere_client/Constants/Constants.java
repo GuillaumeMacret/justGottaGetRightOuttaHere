@@ -9,5 +9,6 @@ public interface Constants {
     /* NETWORK */
     int SERVER_PORT = 1789;
     String SERVER_ADDRESS = "10.0.2.2";
+    //String SERVER_ADDRESS = "192.168.1.48";
 
 }

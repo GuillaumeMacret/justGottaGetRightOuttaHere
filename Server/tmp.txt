@@ -1,0 +1,17 @@
+:"createGame"
+
+:"gameList"
+
+:"joinGame",:0
+
+:"changeMap",:"name"
+
+:"roleChange",:1
+
+:"leaveGame"
+
+:"startGame"
+
+:"move",:"up"
+
+:"action"

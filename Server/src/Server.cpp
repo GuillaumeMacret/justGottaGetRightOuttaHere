@@ -6,6 +6,9 @@
 #include "Player.hpp"
 #include <iostream>
 #include <thread>
+#include <string>
+#include <dirent.h>
+#include <string.h>
 
 Server::Server()
 {
@@ -20,22 +23,26 @@ Server::~Server()
 
 void Server::runPlayer(int index)
 {
+    std::string req;
     for (;;)
     {
-        std::string req = TCPConn.server_receive(index);
-        std::cout << req << std::endl;
+        req = TCPConn.server_receive(index);
+        std::cout << "receive -" << req << "- from user : " << index << std::endl;
         // std::this_thread::sleep_for(std::chrono::seconds(3));
 
-        if (Parser::getInstance().getAction(req, *this, index) != 0)
+        if (req == "" || Parser::getInstance().getAction(req, *this, index) != 0)
         {
             TCPConn.answers[index] = "Error";
         }
 
-        if (TCPConn.server_send(index) == ERR)
+        std::cout << "Sending this to player " << _players[index]->getInGameID() << " : " << TCPConn.answers[index] << std::endl;
+
+        if (!TCPConn.answers[index].empty() && TCPConn.server_send(index) == ERR)
         {
             removePlayerFromGame(index);
             return;
         }
+        req.clear();
     }
 }
 
@@ -61,15 +68,21 @@ void Server::run()
 void Server::requestGamesList(int userIndex)
 {
     //just send the list to the dest
-    std::string answer = "{Action:\"" ACTION_GAMES_LIST "\", Games:[";
-
-    for (Game *g : _games)
+    std::string answer = "{\"Action\":\"" ACTION_GAMES_LIST "\", \"Games\":[";
+    if (!_games.empty())
     {
-        answer += "Game:{id:" + g->getGameID();
-        answer += ", nbPlayers:" + g->getPlayers().size();
+        size_t i = 0;
+        for (; i < _games.size() - 1; ++i)
+        {
+            answer += "{\"id\":" + std::to_string(_games[i]->getGameID());
+            answer += ", \"nbPlayers\":" + std::to_string(_games[i]->getNbConnectedPlayers());
+            answer += "},";
+        }
+        answer += "{\"id\":" + std::to_string(_games[i]->getGameID());
+        answer += ", \"nbPlayers\":" + std::to_string(_games[i]->getNbConnectedPlayers());
+        answer += '}';
     }
-
-    answer += "]}\n";
+    answer += "]};\n";
     TCPConn.answers[userIndex] = answer;
 }
 
@@ -78,10 +91,11 @@ void Server::requestChangeRole(int userIndex, int roleID)
     Game *g = getGameFromPlayer(userIndex);
     if (g != nullptr)
     {
-        std::string answer = "{Action:\"" ACTION_CHANGE_ROLE "\", ";
-        answer += "PlayerId:" + _players[userIndex]->getInGameID();
-        answer += ", RoleId:" + roleID;
-        answer += "}\n";
+        _players[userIndex]->setRole(roleID);
+        std::string answer = "{\"Action\":\"" ACTION_CHANGE_ROLE "\", ";
+        answer += "\"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
+        answer += ", \"RoleId\":" + std::to_string(roleID);
+        answer += "};\n";
         broadcastGame(g, answer);
     }
 }
@@ -89,11 +103,11 @@ void Server::requestChangeRole(int userIndex, int roleID)
 void Server::requestChangeMap(int userIndex, std::string mapName)
 {
     Game *g = getGameFromPlayer(userIndex);
-    std::string answer = "{Action:\"" ACTION_CHANGE_MAP "\", ";
+    std::string answer = "{\"Action\":\"" ACTION_CHANGED_MAP "\", ";
     if (g != nullptr)
     {
         g->changeMap(mapName);
-        answer += "Map:\"" + mapName + "\"}\n";
+        answer += "\"Map\":\"" + mapName + "\"};\n";
         broadcastGame(g, answer);
     }
     else
@@ -109,75 +123,116 @@ void Server::requestAction(int userIndex)
 
     if (g != nullptr)
     {
-        g->doActionPlayer(_players[userIndex]->getInGameID());
+        std::string answer;
+        answer = "{\"Action\":\"" ACTION_ACTION "\", \"Changes\":";
+        answer += g->doActionPlayer(_players[userIndex]->getInGameID());
+        answer += "};\n";
+        broadcastGame(g, answer);
     }
-
-    std::string answer;
-    answer = "{Action:\"" ACTION_ACTION "\", Level:";
-    answer += g->getMapToJSON();
-    answer += "}\n";
-    broadcastGame(g, answer);
 }
 
 void Server::requestCreateGame(int userIndex)
 {
-    Game *g = new Game(_games.size() + 1);
-    Player *p = new Player(userIndex, g);
-    g->addPlayer(p);
+    Game *g = new Game(_games.size());
+    _players[userIndex]->setGame(g);
+    g->addPlayer(_players[userIndex]);
     _games.push_back(g);
-    std::string answer = "{Action:\"" ACTION_CREATE_GAME "\"}\n";
+
+    std::string answer = "{\"Action\":\"" ACTION_CREATED_GAME "\",";
+    answer += "\"GameId\":" + std::to_string(g->getGameID()) + ',';
+    answer += "\"MapList\":[";
+
+    DIR *mapDir;
+    struct dirent *map;
+    std::string mapName;
+    if ((mapDir = opendir("./maps")))
+    {
+        int i = 0;
+        while ((map = readdir(mapDir)))
+        {
+            if (strcmp(map->d_name, ".") != 0 && strcmp(map->d_name, "..") != 0)
+            {
+                if (i)
+                    answer += ',';
+                mapName = map->d_name;
+                mapName = mapName.substr(0, mapName.find(".json"));
+                answer += "\"" + mapName + "\"";
+                ++i;
+            }
+        }
+        closedir(mapDir);
+    }
+
+    answer += "]};\n";
+
     TCPConn.answers[userIndex] = answer;
 }
 
 void Server::requestJoinGame(int userIndex, int gameID)
 {
     std::string answer;
-
-    Game *g = getGameFromPlayer(userIndex);
+    Game *g = nullptr;
+    if (gameID < MAX_CONNECTION_TCP && gameID >= 0)
+    {
+        g = _games[gameID];
+    }
     if (g != nullptr)
     {
         if (g->addPlayer(_players[userIndex]))
         {
-            answer = "{Action:\"" ACTION_JOINED_GAME ", GameId:" + gameID;
-            answer += ", Players:[";
-            int i = 0;
-            for (Player *p : g->getPlayers())
+            if (!g->getStarted())
             {
-                if (i)
-                    answer += ", ";
-                answer += p->getIndex();
-                ++i;
-            }
-            answer += "], PlayerId:" + _players[userIndex]->getInGameID();
-            answer += ", Map:\"" + g->getMapName();
-            answer += "\"}\n";
 
-            broadcastGame(g, answer);
-            return;
+                answer = "{\"Action\":\"" ACTION_JOINED_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
+                answer += ", \"PlayersRoles\":[";
+                int i = 0;
+                for (Player *p : g->getPlayers())
+                {
+                    if (i)
+                        answer += ", ";
+                    answer += std::to_string(p->getRole());
+                    ++i;
+                }
+                answer += "], \"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
+                answer += ", \"Map\":\"" + g->getMapName();
+                answer += "\"};\n";
+
+                broadcastGame(g, answer);
+                return;
+            }
+            else
+            {
+                answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", ";
+                answer += g->getMapToJSON();
+                answer += g->getPlayersToJSON();
+                answer += "};\n";
+                TCPConn.answers[userIndex] = answer;
+                return;
+            }
         }
         else
         {
-            answer = "{Action:\"" ACTION_CANT_JOIN_GAME ", GameId:" + gameID;
-            answer += "MoreInfo:\"" ERROR_GAME_FULL "\"";
+            answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME "\", \"GameId\":" + std::to_string(gameID);
+            answer += ", \"MoreInfo\":\"" ERROR_GAME_FULL "\"";
         }
     }
     else
     {
-        answer = "{Action:\"" ACTION_CANT_JOIN_GAME ", GameId:" + gameID;
-        answer += "MoreInfo:\"" ERROR_GAME_DOES_NOT_EXIST "\"";
+        answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME "\", \"GameId\":" + std::to_string(gameID);
+        answer += ", \"MoreInfo\":\"" ERROR_GAME_DOES_NOT_EXIST "\"";
     }
-    answer += "}\n";
+    answer += "};\n";
     TCPConn.answers[userIndex] = answer;
 }
 
 void Server::requestStartGame(int userIndex)
 {
-    //TO DO: init players position and the map using Game::_selectedMap
     std::string answer;
 
     Game *g = getGameFromPlayer(userIndex);
-    if (g != nullptr)
+    if (g != nullptr && g->getNbConnectedPlayers() == 4)
     {
+        //g->resetGame();
         std::vector<Player *> players = g->getPlayers();
         bool available = true;
         for (size_t i = 0; i < players.size() - 1; ++i)
@@ -191,16 +246,24 @@ void Server::requestStartGame(int userIndex)
                 }
             }
         }
-        if (available)
+        if (available && g->getMapName() != "")
         {
-            answer = "{Action:\"" ACTION_LOAD_LEVEL "\", Level:";
-            answer += g->getMapToJSON() + ',';
+            g->setStarted(true);
+            answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", ";
+            answer += g->getMapToJSON();
             answer += g->getPlayersToJSON();
-            answer += "\n";
+            answer += "};\n";
         }
         else
         {
+            answer = "{\"Action\":\"" ACTION_CANT_START_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
+            answer += ", \"MoreInfo\":\"" ERROR_DUPLICATE_ROLE "\"};\n";
         }
+    }
+    else
+    {
+        answer = "{\"Action\":\"" ACTION_CANT_START_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
+        answer += ", \"MoreInfo\":\"" ERROR_NOT_ENOUGH_PLAYERS "\"};\n";
     }
     broadcastGame(g, answer);
 }
@@ -208,17 +271,25 @@ void Server::requestStartGame(int userIndex)
 void Server::requestMove(int userIndex, std::string moveDir)
 {
     Game *g = getGameFromPlayer(userIndex);
+    std::string changes = "";
     if (g != nullptr)
     {
-        g->movePlayer(_players[userIndex]->getInGameID(), moveDir);
+        changes = g->movePlayer(_players[userIndex]->getInGameID(), moveDir);
     }
 
     std::string answer;
-    answer = "{Action:\"" ACTION_MOVE "\", PosX:" + _players[userIndex]->getPosX();
-    answer += ", PosY:" + _players[userIndex]->getPosY();
-    answer += ", Player:" + _players[userIndex]->getInGameID();
-    answer += "}\n";
+    answer = "{\"Action\":\"" ACTION_MOVE "\", \"PosX\":" + std::to_string(_players[userIndex]->getPosX());
+    answer += ", \"PosY\":" + std::to_string(_players[userIndex]->getPosY());
+    answer += ", \"Player\":" + std::to_string(_players[userIndex]->getInGameID());
+    answer += ", \"Changes\":[" + changes;
+    answer += "]};\n";
 
+    broadcastGame(g, answer);
+
+    if (g->getFinished())
+    {
+        answer = "{\"Action\":\"win\"}\n";
+    }
     broadcastGame(g, answer);
 }
 
@@ -232,10 +303,10 @@ void Server::requestNextLevel(int userIndex)
     }
 
     std::string answer;
-    answer = "{Action:\"" ACTION_LOAD_LEVEL "\", Level:";
+    answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", \"Level\":";
     answer += g->getMapToJSON();
     answer += g->getPlayersToJSON();
-    answer += "\n";
+    answer += ";\n";
     broadcastGame(g, answer);
 }
 
@@ -247,9 +318,12 @@ void Server::requestLeaveGame(int userIndex)
     {
         removePlayerFromGame(userIndex);
         std::string answer;
-        answer = "{Action:\"" ACTION_LEAVE_GAME "\", Player:" + _players[userIndex]->getInGameID();
-        answer += "}\n";
+        answer = "{\"Action\":\"" ACTION_LEAVE_GAME "\", \"Player\":" + std::to_string(_players[userIndex]->getInGameID());
+        answer += "};\n";
+
+        //Need broadcast + answer because we are no longer in the game
         broadcastGame(g, answer);
+        TCPConn.answers[userIndex] = answer;
     }
 }
 
@@ -260,6 +334,7 @@ Game *Server::getGameFromPlayer(int userIndex)
 
 void Server::broadcastGame(Game *game, std::string msg)
 {
+    std::cout << "Sending this to all player in game : " << msg << std::endl;
     for (Player *p : game->getPlayers())
     {
         if (p->isConnected() && TCPConn.server_send(p->getIndex(), msg) == ERR)
@@ -282,6 +357,7 @@ void Server::removePlayerFromGame(int index)
                 if ((*it)->getGameID() == g->getGameID())
                 {
                     _games.erase(it);
+                    return;
                 }
             }
         }

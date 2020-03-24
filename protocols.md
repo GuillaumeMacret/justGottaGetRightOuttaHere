@@ -7,11 +7,11 @@
 {
     "Action":"gameList",
     "Games":[
-        {
+        "Game":{
             "id":[gameId],
             "nbPlayers":[0|1|2|3|4],
         },
-        {
+        "Game":{
             ...
         }
     ]
@@ -27,8 +27,6 @@
 Response from server :
 ```JSON
 {
-    "Action": "createdGame",
-    "GameId": [id],
     "MapList": ["level1", "level2", ...]
 }
 ```
@@ -46,7 +44,7 @@ Responses to join a game (server)
 {
   "Action":"joinedGame",
   "GameId":[id],
-  "PlayersRoles":[id, id, ...],
+  "Players":[id, id, ...],
   "PlayerId": id,
   "Map": "name"
 }
@@ -111,7 +109,6 @@ Responses from server
 ```JSON
 {
   "Action":"loadLevel",
-  "Name":[name],
   "Blocks":[[1,0,4,3,1,1,1,..],[...]],
   "Objects":[{xPos:[val],yPos:[val],value:[val]},...],
   "Players":[{xPos:0,yPos:0},{xPos:0,yPos:0},{xPos:0,yPos:0},{xPos:0,yPos:0}]
@@ -143,8 +140,7 @@ Responses from server
     "Action":"move",
     "PosX":[val],
     "PosY":[val],
-    "Player":[id],
-    "Changes":[{xPos:[val],yPos:[val],value:[val]},{xPos:[val],yPos:[val],value:[val]}]
+    "Player":[id]
 }
 ```
 
@@ -185,7 +181,11 @@ Response from server : load level (see "Ask Start game" response)
 
 ### Quit game
 
-TODO
+```json
+{
+    "Action":"leaveGame"
+}
+```
 
 Response from server (broadcast)
 ```json

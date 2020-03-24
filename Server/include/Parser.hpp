@@ -10,6 +10,7 @@ class Parser
 private:
     Parser();
     std::string readArg(std::string &req);
+    int readInt(std::string &req);
 
     /* returns 0 if no error, otherwise 1 */
     int requestGamesList(std::string &req, class Server &server, int userIndex);

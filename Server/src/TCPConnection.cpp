@@ -1,3 +1,4 @@
+#include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string>
@@ -70,9 +71,11 @@ int TCPConnection::server_accept()
            accept(fd, (struct sockaddr *)&cli[nbConnection],
                   &len)) == ERR)
   {
-    close(fd);
-    fatalsyserror(ACCEPT_ERROR);
+    //close(fd);
+    syserror(ACCEPT_ERROR);
+    return ERR;
   }
+  std::cout << "New connection count : " << nbConnection + 1 << std::endl;
   return nbConnection++;
 }
 
@@ -82,11 +85,14 @@ read incoming message from the tcp server
 std::string TCPConnection::server_receive(int index)
 {
   char buf[BUFFER_SIZE];
-  if ((recv(new_fd[index], buf, BUFFER_SIZE, 0)) == ERR)
+  int len = 0;
+  if ((len = recv(new_fd[index], buf, BUFFER_SIZE, 0)) == ERR)
   {
-    close(fd);
-    syserror(RECEIVE_ERROR);
+    //close(fd);
+    fatalsyserror(RECEIVE_ERROR);
+    return "";
   }
+  buf[len] = '\0';
   return std::move(std::string(buf));
 }
 
@@ -97,10 +103,11 @@ int TCPConnection::server_send(int index)
 {
   if (send(new_fd[index], answers[index].c_str(), answers[index].size(), MSG_NOSIGNAL) == ERR)
   {
-    close(fd);
+    //close(fd);
     syserror(SEND_ERROR);
     return ERR;
   }
+  answers[index].clear();
   return 0;
 }
 
@@ -111,7 +118,7 @@ int TCPConnection::server_send(int index, std::string msg)
 {
   if (send(new_fd[index], msg.c_str(), msg.size(), MSG_NOSIGNAL) == ERR)
   {
-    close(fd);
+    //close(fd);
     syserror(SEND_ERROR);
     return ERR;
   }

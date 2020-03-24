@@ -20,19 +20,21 @@
 #define ACTION_MOVE "move"
 #define ACTION_NEXT_LEVEL "nextLevel"
 #define ACTION_LEAVE_GAME "leaveGame"
+#define ACTION_CHANGE_MAP "changeMap"
 
 /* Server actions */
+#define ACTION_CREATED_GAME "createdGame"
 #define ACTION_JOINED_GAME "joinedGame"
 #define ACTION_CANT_JOIN_GAME "cantJoinGame"
 #define ACTION_CANT_CHANGE_ROLE "cantChangeRole"
 #define ACTION_LOAD_LEVEL "loadLevel"
 #define ACTION_CANT_START_GAME "cantStartGame"
 #define ACTION_WIN "win"
+#define ACTION_CHANGED_MAP "changedMap"
 
 /* Client & Server actions */
 #define ACTION_GAMES_LIST "gameList"
 #define ACTION_CHANGE_ROLE "roleChange"
-#define ACTION_CHANGE_MAP "changeMap"
 #define ACTION_ACTION "action"
 
 #define syserror(x) perror(x)

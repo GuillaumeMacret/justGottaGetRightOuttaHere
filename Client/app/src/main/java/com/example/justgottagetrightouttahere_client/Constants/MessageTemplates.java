@@ -18,7 +18,7 @@ public class MessageTemplates {
 
     public static String createChangeMapMessage(String map) { return "{\"Action\":\"changeMap\",\"Map\":\""+ map +"\"}"; }
 
-    public static String createChangeRoleMessage(int playerId, int role) { return "{\"Action\":\"roleChange\",\"PlayerId\":"+ playerId +",\"RoleId\":\""+ role +"\"}"; }
+    public static String createChangeRoleMessage(int playerId, int role) { return "{\"Action\":\"roleChange\",\"RoleId\":"+ role +"}"; }
 
     public static String createStartGameMessage() { return "{\"Action\":\"startGame\"}"; }
 }

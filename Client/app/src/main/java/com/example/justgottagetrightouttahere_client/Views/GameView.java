@@ -121,8 +121,8 @@ public class GameView extends View {
         }
 
         drawBlocks(canvas,gameModel.blocksLayer,gameModel.sizeX, gameModel.sizeY);
-        drawPlayers(canvas,gameModel.players);
         drawObjects(canvas,gameModel.objectLayer,gameModel.sizeX, gameModel.sizeY);
+        drawPlayers(canvas,gameModel.players);
         invalidate();
 
     }

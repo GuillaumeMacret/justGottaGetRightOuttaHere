@@ -72,8 +72,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
                         int i = 0;
                         for (Point point : _lockPosition)
                         {
-                            if (i)
-                                changes += ',';
+                            changes += ',';
                             _grid[point.posY][point.posX].blockValue += 2;
                             _grid[point.posY][point.posX].collisionValue = C_NOTHING;
                             changes += tileToJSON(newPosX, newPosY, _grid[point.posY][point.posX].blockValue + 2);

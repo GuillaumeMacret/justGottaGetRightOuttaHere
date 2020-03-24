@@ -9,7 +9,7 @@
 #define MOVABLE 2
 #define BREAKABLE 12
 #define WATER 72
-#define DOOR 26
+#define DOOR 64
 #define BRIDGE 28
 #define STAIRWAY 29
 
@@ -54,6 +54,7 @@ private:
     std::vector<Block> _stairways;
     Point _lockPosition[4];
     bool _buttonState;
+    bool _finished;
     int _width;
     int _height;
     int _nbPlayers;
@@ -98,11 +99,13 @@ public:
     bool addPlayer(Player *p);
     void disconnectPlayer(int playerIndex);
     bool isPlayerListEmpty();
+    bool getFinished();
     void changeMap(std::string mapName);
     void changeRole(int roleID, int playerID);
     int getGameID();
     void increaseLevel();
     void readMap();
+    void resetGame();
     std::string getMapName();
     std::string getMapToJSON();
     std::string getPlayersToJSON();

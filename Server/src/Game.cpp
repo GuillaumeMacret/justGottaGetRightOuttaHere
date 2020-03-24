@@ -6,7 +6,7 @@
 #include <sstream>
 #include "RSJParser.tcc"
 
-Game::Game(int gameID, std::string selectedMap) : _buttonState(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
+Game::Game(int gameID, std::string selectedMap) : _buttonState(false), _finished(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
 
 std::string Game::movePlayer(int playerID, std::string direction)
 {
@@ -79,6 +79,15 @@ std::string Game::movePlayer(int playerID, std::string direction)
                             ++i;
                         }
                     }
+                } else {
+                    for(Point p : _lockPosition)
+                    {
+                        if(newPosX == p.posX && newPosY == p.posY)
+                        {
+                            _finished = true;
+                            break;
+                        }
+                    }
                 }
             }
             p->setLastCollisionType(_grid[newPosY][newPosX].collisionValue);
@@ -97,6 +106,8 @@ std::string Game::tileToJSON(int posX, int posY, int value)
     res += "}";
     return res;
 }
+
+bool Game::getFinished() { return _finished;}
 
 std::string Game::checkPush(std::string dir, int posX, int posY)
 {
@@ -670,6 +681,18 @@ int Game::getNbConnectedPlayers()
             ++count;
     }
     return count;
+}
+
+void Game::resetGame()
+{
+    _buttonState = false, _finished = false, _nbKeys = 0;
+    for (int i = 0; i < _height; ++i)
+    {
+        if (_grid[i])
+        {
+            delete[] _grid[i];
+        }
+    }
 }
 
 Game::~Game()

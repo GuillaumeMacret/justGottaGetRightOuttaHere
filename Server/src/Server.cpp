@@ -214,12 +214,12 @@ void Server::requestJoinGame(int userIndex, int gameID)
 
 void Server::requestStartGame(int userIndex)
 {
-    //TO DO: init players position and the map using Game::_selectedMap
     std::string answer;
 
     Game *g = getGameFromPlayer(userIndex);
     if (g != nullptr && g->getNbConnectedPlayers() == 4)
     {
+        g->resetGame();
         std::vector<Player *> players = g->getPlayers();
         bool available = true;
         for (size_t i = 0; i < players.size() - 1; ++i)
@@ -270,6 +270,12 @@ void Server::requestMove(int userIndex, std::string moveDir)
     answer += ", \"Changes\":[" + changes;
     answer += "]};\n";
 
+    broadcastGame(g, answer);
+
+    if(g->getFinished())
+    {
+        answer = "{\"Action\":\"win\"}\n";
+    }
     broadcastGame(g, answer);
 }
 

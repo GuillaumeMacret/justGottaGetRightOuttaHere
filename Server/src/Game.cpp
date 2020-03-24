@@ -32,7 +32,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
     std::cout << "LastPos: [" << posX << "," << posY << "] --- NewPos: [" << newPosX << "," << newPosY << "]" << std::endl;
     if (newPosX >= 0 && newPosX < _width && newPosY >= 0 && newPosY < _height)
     {
-        std::cout << "Positions valides"<<std::endl;
+        std::cout << "Positions valides" << std::endl;
         if (_grid[newPosY][newPosX].collisionValue < C_BLOCK && (posX != newPosX || posY != newPosY))
         {
             std::cout << "No collision" << std::endl;
@@ -640,6 +640,7 @@ std::string Game::getPlayersToJSON()
     {
         playersJSON += "{\"xPos\":" + std::to_string(p->getPosX());
         playersJSON += ",\"yPos\":" + std::to_string(p->getPosY());
+        playersJSON += ",\"Role\":" + std::to_string(p->getRole());
         playersJSON += "}";
         if (i != _players.size() - 1)
             playersJSON += ',';

@@ -29,11 +29,13 @@ std::string Game::movePlayer(int playerID, std::string direction)
     {
         ++newPosX;
     }
-
+    std::cout << "LastPos: ["<<posX<<","<<posY<<"] --- NewPos: ["<<newPosX<<","<<newPosY<<"]"<<std::endl;
     if (newPosX >= 0 && newPosX < _width && newPosY >= 0 && newPosY < _height)
     {
+        std::cout << "Positions valides"<<std::endl;
         if (_grid[newPosX][newPosY].collisionValue < C_BLOCK && posX != newPosX && posY != newPosY)
         {
+            std::cout << "No collision"<<std::endl;
             Player *p = _players[playerID];
             _grid[posY][posX].collisionValue = p->getLastCollisionType();
 
@@ -82,6 +84,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
             }
             p->setLastCollisionType(_grid[newPosY][newPosX].collisionValue);
         }
+        std::cout << "Collision value: "<<_grid[newPosX][newPosY].collisionValue<<std::endl;
     }
     _players[playerID]->setLastDirection(direction);
     return changes;

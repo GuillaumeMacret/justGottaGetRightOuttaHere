@@ -77,6 +77,7 @@ public class GameListActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String message = MessageTemplates.createGameMessage();
                 TCPClient.sendThreaded(message);
+                createGameButton.setClickable(false);
             }
         });
 
@@ -117,6 +118,11 @@ public class GameListActivity extends AppCompatActivity {
     public void cantJoinGame(String errorMessage) {
         Toast toast = Toast.makeText(getApplicationContext(), "Could not join game: " + errorMessage, Toast.LENGTH_SHORT);
         toast.show();
+    }
+
+    public void startGameActivity() {
+        Intent intent = new Intent(getApplicationContext(),GameActivity.class);
+        startActivity(intent);
     }
 
 }

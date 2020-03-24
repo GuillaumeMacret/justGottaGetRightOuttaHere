@@ -8,9 +8,12 @@ import android.widget.Toast;
 
 import com.example.justgottagetrightouttahere_client.Constants.MessageTemplates;
 import com.example.justgottagetrightouttahere_client.R;
+import com.example.justgottagetrightouttahere_client.model.GameMessageHandler;
 import com.example.justgottagetrightouttahere_client.network.TCPClient;
 
 public class GameActivity extends AppCompatActivity {
+    GameMessageHandler messageHandler;
+    TCPClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +21,17 @@ public class GameActivity extends AppCompatActivity {
         //setContentView(new GameView(this));
         setContentView(R.layout.game_activity);
 
+        // Receive game list
+        messageHandler = new GameMessageHandler();
+        messageHandler.gameActivity = this;
 
+        client = TCPClient.getInstance();
+        if(!client.TCPClientRunning){
+            Thread clientThread = new Thread(client);
+            clientThread.start();
+        }
+        while(!client.setMessageHandler(messageHandler)) {}
+        /////////
     }
 
     private float x1,x2,y1,y2;

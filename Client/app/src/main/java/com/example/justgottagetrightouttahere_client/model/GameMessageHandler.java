@@ -2,6 +2,7 @@ package com.example.justgottagetrightouttahere_client.model;
 
 import android.util.Log;
 
+import com.example.justgottagetrightouttahere_client.Activities.GameActivity;
 import com.example.justgottagetrightouttahere_client.Activities.GameListActivity;
 import com.example.justgottagetrightouttahere_client.Activities.LobbyActivity;
 import com.example.justgottagetrightouttahere_client.network.MessageHandler;
@@ -24,6 +25,9 @@ public class GameMessageHandler implements MessageHandler {
 
     // For LobbyActivity
     public LobbyActivity lobbyActivity;
+
+    // For GameActivity
+    public GameActivity gameActivity;
 
     public GameMessageHandler(){
         this.model = GameModel.getInstance();
@@ -72,6 +76,9 @@ public class GameMessageHandler implements MessageHandler {
                     break;
                 case "loadLevel":
                     loadLevel(jsonObject);
+                    break;
+                case "win":
+                    winGame(jsonObject);
                     break;
                 default:
                     Log.e("ERROR","Game handler can't handle action "+jsonObject.getString("Action"));
@@ -311,14 +318,30 @@ public class GameMessageHandler implements MessageHandler {
                 model.players.get(i).roleId = JsonPlayers.getInt("Role");
             }
 
-            lobbyActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    lobbyActivity.startGameActivity();
-                }
-            });
+            if(lobbyActivity != null) {
+                lobbyActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        lobbyActivity.startGameActivity();
+                    }
+                });
+            }
+            else if(gameListActivity != null) {
+                gameListActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        gameListActivity.startGameActivity();
+                    }
+                });
+            }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void winGame(JSONObject jsonObject) {
+        if(gameActivity != null) {
+            gameActivity.finish();
         }
     }
 }

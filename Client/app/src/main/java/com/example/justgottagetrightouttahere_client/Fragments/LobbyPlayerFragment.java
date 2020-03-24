@@ -95,7 +95,8 @@ public class LobbyPlayerFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save UI state changes
-        outState.putInt("currentCharacter", player.roleId);
+        if(player != null)
+            outState.putInt("currentCharacter", player.roleId);
     }
 
     @Override

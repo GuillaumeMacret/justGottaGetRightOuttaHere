@@ -87,6 +87,8 @@ public class GameMessageHandler implements MessageHandler {
         try {
             if(gameList == null)
                 gameList = new ArrayList<>();
+            else
+                gameList.clear();
             JSONArray jsonGamesArray = jsonObject.getJSONArray("Games");
             int arrayLength = jsonGamesArray.length();
             for(int i = 0; i < arrayLength; ++i){

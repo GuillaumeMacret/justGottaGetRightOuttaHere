@@ -40,7 +40,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
             _grid[posY][posX].collisionValue = p->getLastCollisionType();
 
             //Player moved and now stands on a stairway
-            if (_grid[newPosY][newPosX].blockValue == STAIRWAY)
+            if (_grid[newPosY][newPosX].backgroundValue == STAIRWAY)
             {
                 int index = 0;
                 for (Block sw : _stairways)

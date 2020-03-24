@@ -75,7 +75,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
                             changes += ',';
                             _grid[point.posY][point.posX].blockValue += 2;
                             _grid[point.posY][point.posX].collisionValue = C_NOTHING;
-                            changes += tileToJSON(point.posX, point.posY, _grid[point.posY][point.posX].blockValue + 2);
+                            changes += tileToJSON(point.posX, point.posY, DOOR);
                             ++i;
                         }
                     }
@@ -516,8 +516,16 @@ void Game::readPlayersStartPos(RSJresource layerResource)
     while (!ss.eof())
     {
         ss >> tmp;
-        if (std::stringstream(tmp) >> value && value != 0 && value - 1 < (int)_players.size())
-            _players[value - 1]->setPos(i, j);
+        if (std::stringstream(tmp) >> value && value != 0 && value - 1 <= BREAK)
+        {
+            for(Player *p : _players)
+            {
+                if(p->getRole() == value - 1)
+                {
+                    p->setPos(i, j);
+                }
+            }
+        }
         tmp = "";
         ++i;
         if (i % _width == 0)

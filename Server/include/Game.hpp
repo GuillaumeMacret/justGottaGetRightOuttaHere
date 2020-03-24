@@ -9,6 +9,7 @@
 #define MOVABLE 2
 #define BREAKABLE 12
 #define WATER 72
+#define DOOR 26
 #define BRIDGE 28
 #define STAIRWAY 29
 

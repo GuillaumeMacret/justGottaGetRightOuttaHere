@@ -638,19 +638,6 @@ std::string Game::getMapToJSON()
             }
             mapJSON += std::to_string(_grid[i][j].backgroundValue);
             objectsJSON += std::to_string(_grid[i][j].blockValue);
-            /*if (_grid[i][j].blockValue)
-            {
-                if (firstObject)
-                {
-                    firstObject = false;
-                }
-                else
-                {
-                    objectsJSON += ',';
-                }
-
-                objectsJSON += tileToJSON(j, i, _grid[i][j].blockValue);
-            }*/
         }
         mapJSON += ']';
         objectsJSON += ']';
@@ -694,14 +681,22 @@ int Game::getNbConnectedPlayers()
 
 void Game::resetGame()
 {
-    _buttonState = false, _finished = false, _started = false, _nbKeys = 0;
-    for (int i = 0; i < _height; ++i)
-    {
-        if (_grid[i])
+    _buttonState = false, _finished = false, _nbKeys = 0;
+    std::cerr<< "begin reset"<<std::endl;
+    if(_grid)
         {
-            delete[] _grid[i];
+        std::cerr<<"start freeing"<<std::endl;
+        for (int i = 0; i < _height; ++i)
+        {
+            if (_grid[i])
+            {
+                std::cerr<<"freeing "<< i<<"th row"<<std::endl;
+                delete[] _grid[i];
+            }
         }
+        delete[] _grid;
     }
+    std::cerr<<"end reset"<<std::endl;
 }
 
 bool Game::getStarted()
@@ -719,11 +714,15 @@ Game::~Game()
     for (Player *p : _players)
         delete p;
 
-    for (int i = 0; i < _height; ++i)
+    if(_grid)
     {
-        if (_grid[i])
+        for (int i = 0; i < _height; ++i)
         {
-            delete[] _grid[i];
+            if (_grid[i])
+            {
+                delete[] _grid[i];
+            }
         }
+        delete[] _grid;
     }
 }

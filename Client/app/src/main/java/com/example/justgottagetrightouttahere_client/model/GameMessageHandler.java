@@ -27,8 +27,8 @@ public class GameMessageHandler implements MessageHandler {
     // For LobbyActivity
     public LobbyActivity lobbyActivity;
 
-    public GameMessageHandler(GameModel model){
-        this.model = model;
+    public GameMessageHandler(){
+        this.model = GameModel.getInstance();
     }
     /**
      * Handles the message in the game board context

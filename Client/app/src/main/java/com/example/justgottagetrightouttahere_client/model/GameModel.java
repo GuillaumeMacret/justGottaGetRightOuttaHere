@@ -2,16 +2,30 @@ package com.example.justgottagetrightouttahere_client.model;
 
 import android.util.Log;
 
+import com.example.justgottagetrightouttahere_client.network.TCPClient;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
+
+import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_SIZE_X;
+import static com.example.justgottagetrightouttahere_client.Constants.Constants.DEFAULT_SIZE_Y;
 
 /**
  * Class representing the game board and its players
  * This is NOT including the lobby
  */
 public class GameModel {
+    /**Singleton**/
+    private static GameModel INSTANCE = null;
+    public static GameModel getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new GameModel(DEFAULT_SIZE_X,DEFAULT_SIZE_Y);
+        }
+        return INSTANCE;
+    }
+
     public int sizeX, sizeY;
     public int [][] blocksLayer;
     public int [][] objectLayer;

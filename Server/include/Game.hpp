@@ -56,6 +56,7 @@ private:
     bool _buttonState;
     bool _finished;
     bool _started;
+    bool _init;
     int _width;
     int _height;
     int _nbPlayers;

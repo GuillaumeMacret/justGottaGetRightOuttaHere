@@ -6,7 +6,7 @@
 #include <sstream>
 #include "RSJParser.tcc"
 
-Game::Game(int gameID, std::string selectedMap) : _buttonState(false), _finished(false), _started(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
+Game::Game(int gameID, std::string selectedMap) : _buttonState(false), _finished(false), _started(false), _init(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
 
 std::string Game::movePlayer(int playerID, std::string direction)
 {
@@ -676,7 +676,7 @@ void Game::resetGame()
 {
     _buttonState = false, _finished = false, _nbKeys = 0;
     std::cerr<< "begin reset"<<std::endl;
-    if(_grid)
+    if(_init && _grid)
         {
         std::cerr<<"start freeing"<<std::endl;
         for (int i = 0; i < _height; ++i)
@@ -689,6 +689,7 @@ void Game::resetGame()
         }
         delete[] _grid;
     }
+    _init = true;
     std::cerr<<"end reset"<<std::endl;
 }
 

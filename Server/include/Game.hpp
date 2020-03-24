@@ -55,6 +55,7 @@ private:
     Point _lockPosition[4];
     bool _buttonState;
     bool _finished;
+    bool _started;
     int _width;
     int _height;
     int _nbPlayers;
@@ -111,6 +112,9 @@ public:
     std::string getPlayersToJSON();
     std::vector<Player *> getPlayers();
     int getNbConnectedPlayers();
+    bool getStarted();
+    void setStarted(bool);
+
 
     ~Game();
 };

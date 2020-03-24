@@ -6,7 +6,7 @@
 #include <sstream>
 #include "RSJParser.tcc"
 
-Game::Game(int gameID, std::string selectedMap) : _buttonState(false), _finished(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
+Game::Game(int gameID, std::string selectedMap) : _buttonState(false), _finished(false), _started(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
 
 std::string Game::movePlayer(int playerID, std::string direction)
 {
@@ -79,10 +79,12 @@ std::string Game::movePlayer(int playerID, std::string direction)
                             ++i;
                         }
                     }
-                } else {
-                    for(Point p : _lockPosition)
+                }
+                else
+                {
+                    for (Point p : _lockPosition)
                     {
-                        if(newPosX == p.posX && newPosY == p.posY)
+                        if (newPosX == p.posX && newPosY == p.posY)
                         {
                             _finished = true;
                             break;
@@ -107,7 +109,7 @@ std::string Game::tileToJSON(int posX, int posY, int value)
     return res;
 }
 
-bool Game::getFinished() { return _finished;}
+bool Game::getFinished() { return _finished; }
 
 std::string Game::checkPush(std::string dir, int posX, int posY)
 {
@@ -529,9 +531,9 @@ void Game::readPlayersStartPos(RSJresource layerResource)
         ss >> tmp;
         if (std::stringstream(tmp) >> value && value != 0 && value - 1 <= BREAK)
         {
-            for(Player *p : _players)
+            for (Player *p : _players)
             {
-                if(p->getRole() == value - 1)
+                if (p->getRole() == value - 1)
                 {
                     p->setPos(i, j);
                 }
@@ -688,6 +690,16 @@ void Game::resetGame()
         delete[] _grid;
     }
     std::cerr<<"end reset"<<std::endl;
+}
+
+bool Game::getStarted()
+{
+    return _started;
+}
+
+void Game::setStarted(bool started)
+{
+    _started = started;
 }
 
 Game::~Game()

@@ -180,22 +180,35 @@ void Server::requestJoinGame(int userIndex, int gameID)
     {
         if (g->addPlayer(_players[userIndex]))
         {
-            answer = "{\"Action\":\"" ACTION_JOINED_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
-            answer += ", \"PlayersRoles\":[";
-            int i = 0;
-            for (Player *p : g->getPlayers())
+            if (!g->getStarted())
             {
-                if (i)
-                    answer += ", ";
-                answer += std::to_string(p->getRole());
-                ++i;
-            }
-            answer += "], \"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
-            answer += ", \"Map\":\"" + g->getMapName();
-            answer += "\"};\n";
 
-            broadcastGame(g, answer);
-            return;
+                answer = "{\"Action\":\"" ACTION_JOINED_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
+                answer += ", \"PlayersRoles\":[";
+                int i = 0;
+                for (Player *p : g->getPlayers())
+                {
+                    if (i)
+                        answer += ", ";
+                    answer += std::to_string(p->getRole());
+                    ++i;
+                }
+                answer += "], \"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
+                answer += ", \"Map\":\"" + g->getMapName();
+                answer += "\"};\n";
+
+                broadcastGame(g, answer);
+                return;
+            }
+            else
+            {
+                answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", ";
+                answer += g->getMapToJSON();
+                answer += g->getPlayersToJSON();
+                answer += "};\n";
+                TCPConn.answers[userIndex] = answer;
+                return;
+            }
         }
         else
         {
@@ -235,6 +248,7 @@ void Server::requestStartGame(int userIndex)
         }
         if (available && g->getMapName() != "")
         {
+            g->setStarted(true);
             answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", ";
             answer += g->getMapToJSON();
             answer += g->getPlayersToJSON();
@@ -272,7 +286,7 @@ void Server::requestMove(int userIndex, std::string moveDir)
 
     broadcastGame(g, answer);
 
-    if(g->getFinished())
+    if (g->getFinished())
     {
         answer = "{\"Action\":\"win\"}\n";
     }

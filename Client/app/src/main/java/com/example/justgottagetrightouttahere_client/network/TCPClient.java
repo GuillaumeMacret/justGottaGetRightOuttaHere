@@ -190,10 +190,12 @@ class ClientReceiver implements Runnable{
             try {
                 stringBuffer.append(reader.readLine());
                 System.err.println("[CLI] Received : " + stringBuffer.toString());
-                if(stringBuffer.charAt(stringBuffer.length()-1) == '\n'){
+                if(stringBuffer.charAt(stringBuffer.length()-2) == ';'){
                     if(handler != null)handler.handle(stringBuffer.toString());
                     else System.err.println("[CLI][WARN] Handler is null! Skipping handling");
                     stringBuffer = new StringBuffer();
+                }else{
+                    System.err.println("Last char is " + stringBuffer.charAt(stringBuffer.length()-2) + " waiting for the end of the message");
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -64,7 +64,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
                     _grid[newPosY][newPosX].blockValue = EMPTY;
                     _grid[newPosY][newPosX].collisionValue = C_NOTHING;
                     p->setLastCollisionType(C_NOTHING);
-                    changes += tileToJSON(posX, posY, EMPTY);
+                    changes += tileToJSON(newPosX, newPosY, EMPTY);
                     --_nbKeys;
                     if (!_nbKeys)
                     {
@@ -163,6 +163,7 @@ std::string Game::checkActivate(int posX, int posY)
                 if (i)
                     res += ',';
                 _grid[ofb.p.posY][ofb.p.posX].blockValue = ofb.value;
+                _grid[ofb.p.posY][ofb.p.posX].collisionValue = C_BLOCK;
                 res += tileToJSON(ofb.p.posX, ofb.p.posY, ofb.value);
                 ++i;
             }
@@ -170,6 +171,7 @@ std::string Game::checkActivate(int posX, int posY)
             {
                 res += ',';
                 _grid[ofb.p.posY][ofb.p.posX].blockValue = EMPTY;
+                _grid[ofb.p.posY][ofb.p.posX].collisionValue = C_NOTHING;
                 res += tileToJSON(ofb.p.posX, ofb.p.posY, EMPTY);
             }
         }
@@ -180,6 +182,7 @@ std::string Game::checkActivate(int posX, int posY)
                 if (i)
                     res += ',';
                 _grid[ofb.p.posY][ofb.p.posX].blockValue = EMPTY;
+                _grid[ofb.p.posY][ofb.p.posX].collisionValue = C_NOTHING;
                 res += tileToJSON(ofb.p.posX, ofb.p.posY, EMPTY);
                 ++i;
             }
@@ -187,6 +190,7 @@ std::string Game::checkActivate(int posX, int posY)
             {
                 res += ',';
                 _grid[ofb.p.posY][ofb.p.posX].blockValue = ofb.value;
+                _grid[ofb.p.posY][ofb.p.posX].collisionValue = C_BLOCK;
                 res += tileToJSON(ofb.p.posX, ofb.p.posY, ofb.value);
             }
         }

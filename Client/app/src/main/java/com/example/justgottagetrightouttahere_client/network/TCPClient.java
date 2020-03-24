@@ -184,14 +184,17 @@ class ClientReceiver implements Runnable{
             System.exit(1);
         }
         System.err.println("[CLI] Client thread listening ...");
+        stringBuffer = new StringBuffer();
 
         for(;;){
             try {
-                stringBuffer = new StringBuffer();
                 stringBuffer.append(reader.readLine());
                 System.err.println("[CLI] Received : " + stringBuffer.toString());
-                if(handler != null)handler.handle(stringBuffer.toString());
-                else System.err.println("[CLI][WARN] Handler is null! Skipping handling");
+                if(stringBuffer.charAt(stringBuffer.length()-1) == '\n'){
+                    if(handler != null)handler.handle(stringBuffer.toString());
+                    else System.err.println("[CLI][WARN] Handler is null! Skipping handling");
+                    stringBuffer = new StringBuffer();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -308,7 +308,7 @@ public class GameMessageHandler implements MessageHandler {
                 model.players.get(i).posX = JsonPlayers.getInt("xPos");
                 model.players.get(i).posY = JsonPlayers.getInt("yPos");
                 model.players.get(i).id = i;
-                model.players.get(i).roleId = i;
+                model.players.get(i).roleId = JsonPlayers.getInt("Role");
             }
 
             lobbyActivity.runOnUiThread(new Runnable() {

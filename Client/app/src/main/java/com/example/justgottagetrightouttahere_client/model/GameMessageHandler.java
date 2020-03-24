@@ -150,7 +150,7 @@ public class GameMessageHandler implements MessageHandler {
                 gameListActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        gameListActivity.joinGame(gameId, nbPlayers, playerRoles, map);
+                        gameListActivity.joinGame(gameId, playerId, nbPlayers, playerRoles, map);
                     }
                 });
                 tryingToJoinGame = false;

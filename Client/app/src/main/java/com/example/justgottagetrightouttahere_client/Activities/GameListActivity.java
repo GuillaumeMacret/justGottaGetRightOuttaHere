@@ -105,10 +105,11 @@ public class GameListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void joinGame(int gameId, int nbPlayers, int[] roles, String map) {
+    public void joinGame(int gameId, int playerId, int nbPlayers, int[] roles, String map) {
         Intent intent = new Intent(getApplicationContext(), LobbyActivity.class);
         intent.putExtra("created", false);
         intent.putExtra("gameId", gameId);
+        intent.putExtra("playerId", playerId);
         intent.putExtra("nbPlayers", nbPlayers);
         intent.putExtra("roles", roles);
         intent.putExtra("map", map);

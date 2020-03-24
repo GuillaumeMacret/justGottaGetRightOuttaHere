@@ -97,6 +97,7 @@ public class LobbyActivity extends AppCompatActivity {
         else {
             int[] roles = intent.getIntArrayExtra("roles");
             String map = intent.getStringExtra("map");
+            int playerId = intent.getIntExtra("playerId", 0);
 
             for(int i = 0; i < currentNbPlayers; ++i) {
                 if(roles != null) {
@@ -105,7 +106,7 @@ public class LobbyActivity extends AppCompatActivity {
                 }
             }
             for(int i = 0; i < 4; ++i) {
-                if(i != currentNbPlayers - 1)
+                if(i != playerId)
                     lobbyPlayerFragments[i].removeChangeCharacterButton();
             }
 
@@ -123,10 +124,8 @@ public class LobbyActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(created) {
-                    String message = MessageTemplates.createStartGameMessage();
-                    TCPClient.sendThreaded(message);
-                }
+                String message = MessageTemplates.createStartGameMessage();
+                TCPClient.sendThreaded(message);
             }
         });
     }

@@ -52,9 +52,9 @@ public class GameModel {
         players.get(playerId).posY = yPos;
     }
 
-    public void updateBlocksLayer(List<Tile>tiles){
+    public void updateObjectLayer(List<Tile>tiles){
         for(Tile t : tiles){
-            blocksLayer[t.posX][t.posY] = t.spriteId;
+            objectLayer[t.posX][t.posY] = t.spriteId;
         }
     }
 

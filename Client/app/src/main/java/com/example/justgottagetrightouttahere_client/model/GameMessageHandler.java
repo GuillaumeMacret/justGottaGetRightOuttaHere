@@ -4,8 +4,6 @@ import android.util.Log;
 
 import com.example.justgottagetrightouttahere_client.Activities.GameListActivity;
 import com.example.justgottagetrightouttahere_client.Activities.LobbyActivity;
-import com.example.justgottagetrightouttahere_client.Adapters.GameInfoAdapter;
-import com.example.justgottagetrightouttahere_client.Fragments.GameboardFragment;
 import com.example.justgottagetrightouttahere_client.network.MessageHandler;
 
 import org.json.JSONArray;
@@ -258,7 +256,7 @@ public class GameMessageHandler implements MessageHandler {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        model.updateBlocksLayer(tilesToChange);
+        model.updateObjectLayer(tilesToChange);
     }
 
     public void loadLevel(JSONObject jsonObject){

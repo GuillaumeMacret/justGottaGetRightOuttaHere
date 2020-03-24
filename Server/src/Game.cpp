@@ -581,21 +581,27 @@ void Game::readMap()
 std::string Game::getMapToJSON()
 {
     readMap();
-    bool firstObject = true;
+    //bool firstObject = true;
     std::string mapJSON = "\"Name\":\"" + _selectedMap;
     mapJSON += "\", \"Blocks\":[";
     std::string objectsJSON = "\"Objects\":[";
     for (int i = 0; i < _height; ++i)
     {
-        if (i)
+        if (i) {
             mapJSON += ',';
+            objectsJSON += ',';
+        }
         mapJSON += '[';
+        objectsJSON += '[';
         for (int j = 0; j < _width; ++j)
         {
-            if (j)
+            if (j) {
                 mapJSON += ',';
+                objectsJSON += ',';
+            }
             mapJSON += std::to_string(_grid[i][j].backgroundValue);
-            if (_grid[i][j].blockValue)
+            mapJSON += std::to_string(_grid[i][j].blockValue);
+            /*if (_grid[i][j].blockValue)
             {
                 if (firstObject)
                 {
@@ -607,9 +613,10 @@ std::string Game::getMapToJSON()
                 }
 
                 objectsJSON += tileToJSON(j, i, _grid[i][j].blockValue);
-            }
+            }*/
         }
         mapJSON += ']';
+        objectsJSON += ']';
     }
     mapJSON += "],";
     objectsJSON += "],";

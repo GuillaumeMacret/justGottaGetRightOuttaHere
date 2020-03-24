@@ -82,7 +82,7 @@ void Server::requestGamesList(int userIndex)
         answer += ", \"nbPlayers\":" + std::to_string(_games[i]->getNbConnectedPlayers());
         answer += '}';
     }
-    answer += "]}\n";
+    answer += "]};\n";
     TCPConn.answers[userIndex] = answer;
 }
 
@@ -95,7 +95,7 @@ void Server::requestChangeRole(int userIndex, int roleID)
         std::string answer = "{\"Action\":\"" ACTION_CHANGE_ROLE "\", ";
         answer += "\"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
         answer += ", \"RoleId\":" + std::to_string(roleID);
-        answer += "}\n";
+        answer += "};\n";
         broadcastGame(g, answer);
     }
 }
@@ -107,7 +107,7 @@ void Server::requestChangeMap(int userIndex, std::string mapName)
     if (g != nullptr)
     {
         g->changeMap(mapName);
-        answer += "\"Map\":\"" + mapName + "\"}\n";
+        answer += "\"Map\":\"" + mapName + "\"};\n";
         broadcastGame(g, answer);
     }
     else
@@ -126,7 +126,7 @@ void Server::requestAction(int userIndex)
         std::string answer;
         answer = "{\"Action\":\"" ACTION_ACTION "\", \"Changes\":";
         answer += g->doActionPlayer(_players[userIndex]->getInGameID());
-        answer += "}\n";
+        answer += "};\n";
         broadcastGame(g, answer);
     }
 }
@@ -163,7 +163,7 @@ void Server::requestCreateGame(int userIndex)
         closedir(mapDir);
     }
 
-    answer += "]}\n";
+    answer += "]};\n";
 
     TCPConn.answers[userIndex] = answer;
 }
@@ -192,7 +192,7 @@ void Server::requestJoinGame(int userIndex, int gameID)
             }
             answer += "], \"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
             answer += ", \"Map\":\"" + g->getMapName();
-            answer += "\"}\n";
+            answer += "\"};\n";
 
             broadcastGame(g, answer);
             return;
@@ -208,7 +208,7 @@ void Server::requestJoinGame(int userIndex, int gameID)
         answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME "\", \"GameId\":" + std::to_string(gameID);
         answer += ", \"MoreInfo\":\"" ERROR_GAME_DOES_NOT_EXIST "\"";
     }
-    answer += "}\n";
+    answer += "};\n";
     TCPConn.answers[userIndex] = answer;
 }
 
@@ -238,18 +238,18 @@ void Server::requestStartGame(int userIndex)
             answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", ";
             answer += g->getMapToJSON();
             answer += g->getPlayersToJSON();
-            answer += "}\n";
+            answer += "};\n";
         }
         else
         {
             answer = "{\"Action\":\"" ACTION_CANT_START_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
-            answer += ", \"MoreInfo\":\"" ERROR_DUPLICATE_ROLE "\"}\n";
+            answer += ", \"MoreInfo\":\"" ERROR_DUPLICATE_ROLE "\"};\n";
         }
     }
     else
     {
         answer = "{\"Action\":\"" ACTION_CANT_START_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
-        answer += ", \"MoreInfo\":\"" ERROR_NOT_ENOUGH_PLAYERS "\"}\n";
+        answer += ", \"MoreInfo\":\"" ERROR_NOT_ENOUGH_PLAYERS "\"};\n";
     }
     broadcastGame(g, answer);
 }
@@ -268,7 +268,7 @@ void Server::requestMove(int userIndex, std::string moveDir)
     answer += ", \"PosY\":" + std::to_string(_players[userIndex]->getPosY());
     answer += ", \"Player\":" + std::to_string(_players[userIndex]->getInGameID());
     answer += ", \"Changes\":[" + changes;
-    answer += "]}\n";
+    answer += "]};\n";
 
     broadcastGame(g, answer);
 }
@@ -286,7 +286,7 @@ void Server::requestNextLevel(int userIndex)
     answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", \"Level\":";
     answer += g->getMapToJSON();
     answer += g->getPlayersToJSON();
-    answer += "\n";
+    answer += ";\n";
     broadcastGame(g, answer);
 }
 
@@ -299,7 +299,7 @@ void Server::requestLeaveGame(int userIndex)
         removePlayerFromGame(userIndex);
         std::string answer;
         answer = "{\"Action\":\"" ACTION_LEAVE_GAME "\", \"Player\":" + std::to_string(_players[userIndex]->getInGameID());
-        answer += "}\n";
+        answer += "};\n";
 
         //Need broadcast + answer because we are no longer in the game
         broadcastGame(g, answer);

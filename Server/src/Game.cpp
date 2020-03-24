@@ -29,27 +29,28 @@ std::string Game::movePlayer(int playerID, std::string direction)
     {
         ++newPosX;
     }
-
+    std::cout << "LastPos: [" << posX << "," << posY << "] --- NewPos: [" << newPosX << "," << newPosY << "]" << std::endl;
     if (newPosX >= 0 && newPosX < _width && newPosY >= 0 && newPosY < _height)
     {
         if (_grid[newPosX][newPosY].collisionValue < C_BLOCK && (posX != newPosX || posY != newPosY))
         {
+            std::cout << "No collision" << std::endl;
             Player *p = _players[playerID];
             _grid[posY][posX].collisionValue = p->getLastCollisionType();
 
             //Player moved and now stands on a stairway
-            if(_grid[newPosY][newPosX].blockValue == STAIRWAY)
+            if (_grid[newPosY][newPosX].blockValue == STAIRWAY)
             {
                 int index = 0;
-                for(Block sw : _stairways)
+                for (Block sw : _stairways)
                 {
                     ++index;
-                    if(sw.p.posX == newPosX && sw.p.posY == newPosY)
+                    if (sw.p.posX == newPosX && sw.p.posY == newPosY)
                     {
                         break;
                     }
                 }
-                Block b = _stairways[index%_stairways.size()];
+                Block b = _stairways[index % _stairways.size()];
                 p->setPos(b.p.posX, b.p.posY);
             }
             else
@@ -82,6 +83,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
             }
             p->setLastCollisionType(_grid[newPosY][newPosX].collisionValue);
         }
+        std::cout << "Collision value: " << _grid[newPosX][newPosY].collisionValue << std::endl;
     }
     _players[playerID]->setLastDirection(direction);
     return changes;
@@ -337,7 +339,7 @@ void Game::readBackground(RSJresource layerResource)
         if (std::stringstream(tmp) >> value)
         {
             _grid[j][i] = Tile{value, EMPTY, C_NOTHING};
-            if(value == STAIRWAY)
+            if (value == STAIRWAY)
             {
                 _stairways.push_back(Block{Point{i, j}, value});
             }
@@ -581,21 +583,29 @@ void Game::readMap()
 std::string Game::getMapToJSON()
 {
     readMap();
-    bool firstObject = true;
+    //bool firstObject = true;
     std::string mapJSON = "\"Name\":\"" + _selectedMap;
     mapJSON += "\", \"Blocks\":[";
     std::string objectsJSON = "\"Objects\":[";
     for (int i = 0; i < _height; ++i)
     {
         if (i)
+        {
             mapJSON += ',';
+            objectsJSON += ',';
+        }
         mapJSON += '[';
+        objectsJSON += '[';
         for (int j = 0; j < _width; ++j)
         {
             if (j)
+            {
                 mapJSON += ',';
+                objectsJSON += ',';
+            }
             mapJSON += std::to_string(_grid[i][j].backgroundValue);
-            if (_grid[i][j].blockValue)
+            objectsJSON += std::to_string(_grid[i][j].blockValue);
+            /*if (_grid[i][j].blockValue)
             {
                 if (firstObject)
                 {
@@ -607,9 +617,10 @@ std::string Game::getMapToJSON()
                 }
 
                 objectsJSON += tileToJSON(j, i, _grid[i][j].blockValue);
-            }
+            }*/
         }
         mapJSON += ']';
+        objectsJSON += ']';
     }
     mapJSON += "],";
     objectsJSON += "],";

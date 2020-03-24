@@ -279,6 +279,7 @@ bool Game::addPlayer(Player *p)
         {
             it->setIndex(p->getIndex());
             it->setGame(this);
+            it->setConnected(true);
             p = it;
             return true;
         }

@@ -22,11 +22,20 @@
         </ListView>
 
         <Button
+            android:id="@+id/refresh_game_list_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:background="@color/LightSkyBlue"
+            android:text="Refresh list" />
+        <Button
             android:id="@+id/create_game_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
             android:layout_margin="5dp"
             android:background="@color/LimeGreen"
             android:text="Create game" />

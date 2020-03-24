@@ -25,6 +25,7 @@ public class GameListActivity extends AppCompatActivity {
 
     ListView gameListView;
     Button createGameButton;
+    Button refreshListButton;
     ArrayList<GameInfo> gameList;
     GameMessageHandler messageHandler;
     TCPClient client;
@@ -75,6 +76,16 @@ public class GameListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String message = MessageTemplates.createGameMessage();
+                TCPClient.sendThreaded(message);
+            }
+        });
+
+        // Click action for refreshing list
+        refreshListButton = (Button)findViewById(R.id.refresh_game_list_button);
+        refreshListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String message = MessageTemplates.createGameListMessage();
                 TCPClient.sendThreaded(message);
             }
         });

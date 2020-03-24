@@ -72,6 +72,9 @@ public class LobbyActivity extends AppCompatActivity {
             TextView mapTextView = (TextView)findViewById(R.id.mapTextView);
             ((ViewGroup)mapTextView.getParent()).removeView(mapTextView);
 
+            for(int i = 1; i < 4; ++i)
+                lobbyPlayerFragments[i].removeChangeCharacterButton();
+
             Spinner mapSpinner = (Spinner)findViewById(R.id.mapSpinner);
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, maps);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -123,8 +126,6 @@ public class LobbyActivity extends AppCompatActivity {
                 if(created) {
                     String message = MessageTemplates.createStartGameMessage();
                     TCPClient.sendThreaded(message);
-                    //Intent intent = new Intent(getApplicationContext(),GameActivity.class);
-                    //startActivity(intent);
                 }
             }
         });
@@ -147,13 +148,18 @@ public class LobbyActivity extends AppCompatActivity {
         toast.show();
     }
 
-    public void playerJoined(int playerId) {
-        lobbyPlayerFragments[playerId].updatePlayerImageAndText(new Player(playerId, 0));
+    public void playerJoined(int playerId, int roleId) {
+        lobbyPlayerFragments[playerId].updatePlayerImageAndText(new Player(playerId, roleId));
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    public void startGameActivity() {
+        Intent intent = new Intent(getApplicationContext(),GameActivity.class);
+        startActivity(intent);
     }
 }

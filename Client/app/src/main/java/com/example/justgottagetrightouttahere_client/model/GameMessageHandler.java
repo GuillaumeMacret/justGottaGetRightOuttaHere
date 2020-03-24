@@ -152,7 +152,7 @@ public class GameMessageHandler implements MessageHandler {
                 lobbyActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        lobbyActivity.playerJoined(playerId);
+                        lobbyActivity.playerJoined(playerId, playerRoles[nbPlayers - 1]);
                     }
                 });
             }
@@ -310,6 +310,13 @@ public class GameMessageHandler implements MessageHandler {
                 model.players.get(i).id = i;
                 model.players.get(i).roleId = i;
             }
+
+            lobbyActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    lobbyActivity.startGameActivity();
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }

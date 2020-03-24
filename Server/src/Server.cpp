@@ -35,6 +35,8 @@ void Server::runPlayer(int index)
             TCPConn.answers[index] = "Error";
         }
 
+        std::cout << "Sending this to player " << _players[index]->getInGameID() << " : " << TCPConn.answers[index] << std::endl;
+
         if (!TCPConn.answers[index].empty() && TCPConn.server_send(index) == ERR)
         {
             removePlayerFromGame(index);
@@ -312,6 +314,7 @@ Game *Server::getGameFromPlayer(int userIndex)
 
 void Server::broadcastGame(Game *game, std::string msg)
 {
+    std::cout << "Sending this to all player in game : " << msg << std::endl;
     for (Player *p : game->getPlayers())
     {
         if (p->isConnected() && TCPConn.server_send(p->getIndex(), msg) == ERR)

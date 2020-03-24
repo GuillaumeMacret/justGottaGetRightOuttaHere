@@ -515,8 +515,16 @@ void Game::readPlayersStartPos(RSJresource layerResource)
     while (!ss.eof())
     {
         ss >> tmp;
-        if (std::stringstream(tmp) >> value && value != 0 && value - 1 < (int)_players.size())
-            _players[value - 1]->setPos(i, j);
+        if (std::stringstream(tmp) >> value && value != 0 && value - 1 <= BREAK)
+        {
+            for(Player *p : _players)
+            {
+                if(p->getRole() == value - 1)
+                {
+                    p->setPos(i, j);
+                }
+            }
+        }
         tmp = "";
         ++i;
         if (i % _width == 0)

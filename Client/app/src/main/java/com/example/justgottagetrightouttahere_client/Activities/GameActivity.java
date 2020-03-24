@@ -44,7 +44,7 @@ public class GameActivity extends AppCompatActivity {
                 }else if(deltaY > MIN_SWIPE_DISTANCE){
                     String message = MessageTemplates.createMoveMessage("down");
                     TCPClient.getInstance().sendThreaded(message);
-                }else if(deltaY < MIN_SWIPE_DISTANCE) {
+                }else if(deltaY < -MIN_SWIPE_DISTANCE) {
                     String message = MessageTemplates.createMoveMessage("up");
                     TCPClient.getInstance().sendThreaded(message);
                 }else{

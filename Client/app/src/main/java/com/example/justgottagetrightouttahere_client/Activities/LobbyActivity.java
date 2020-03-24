@@ -102,11 +102,9 @@ public class LobbyActivity extends AppCompatActivity {
                 }
             }
             for(int i = 0; i < 4; ++i) {
-                if(i != currentNbPlayers)
+                if(i != currentNbPlayers - 1)
                     lobbyPlayerFragments[i].removeChangeCharacterButton();
             }
-            players[currentNbPlayers] = new Player(currentNbPlayers, 0);
-            lobbyPlayerFragments[currentNbPlayers].updatePlayerImageAndText(players[currentNbPlayers]);
 
             Spinner mapSpinner = (Spinner)findViewById(R.id.mapSpinner);
             ((ViewGroup)mapSpinner.getParent()).removeView(mapSpinner);

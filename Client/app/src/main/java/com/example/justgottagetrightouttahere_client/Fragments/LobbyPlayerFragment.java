@@ -56,7 +56,7 @@ public class LobbyPlayerFragment extends Fragment {
     public void switchToNextCharacter() {
         // Set next character number
         player.roleId = (player.roleId + 1) % 4;
-        String message = MessageTemplates.createChangeRoleMessage(player.roleId);
+        String message = MessageTemplates.createChangeRoleMessage(player.id, player.roleId);
         TCPClient.sendThreaded(message);
     }
 

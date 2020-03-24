@@ -56,6 +56,9 @@ public class GameListActivity extends AppCompatActivity {
         while(!client.setMessageHandler(messageHandler)) {}
         /////////
 
+        String message = MessageTemplates.createGameListMessage();
+        TCPClient.sendThreaded(message);
+
         // Click action for games
         gameListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

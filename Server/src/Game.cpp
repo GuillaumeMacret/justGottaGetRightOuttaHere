@@ -600,7 +600,7 @@ std::string Game::getMapToJSON()
                 objectsJSON += ',';
             }
             mapJSON += std::to_string(_grid[i][j].backgroundValue);
-            mapJSON += std::to_string(_grid[i][j].blockValue);
+            objectsJSON += std::to_string(_grid[i][j].blockValue);
             /*if (_grid[i][j].blockValue)
             {
                 if (firstObject)

@@ -32,7 +32,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
 
     if (newPosX >= 0 && newPosX < _width && newPosY >= 0 && newPosY < _height)
     {
-        if (_grid[newPosX][newPosY].collisionValue < C_BLOCK && posX != newPosX && posY != newPosY)
+        if (_grid[newPosX][newPosY].collisionValue < C_BLOCK && (posX != newPosX || posY != newPosY))
         {
             Player *p = _players[playerID];
             _grid[posY][posX].collisionValue = p->getLastCollisionType();

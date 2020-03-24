@@ -44,7 +44,7 @@ public class GameListActivity extends AppCompatActivity {
         gameListView.setAdapter(gameInfoAdapter);
 
         // Receive game list
-        messageHandler = new GameMessageHandler(null);
+        messageHandler = new GameMessageHandler();
         messageHandler.gameList = gameList;
         messageHandler.gameListActivity = this;
 

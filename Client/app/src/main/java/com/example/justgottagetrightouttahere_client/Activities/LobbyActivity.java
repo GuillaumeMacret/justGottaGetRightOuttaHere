@@ -49,7 +49,7 @@ public class LobbyActivity extends AppCompatActivity {
         lobbyPlayerFragments[3] = (LobbyPlayerFragment)this.getSupportFragmentManager().findFragmentById(R.id.player4_fragment);
 
         // Message receiving
-        messageHandler = new GameMessageHandler(null);
+        messageHandler = new GameMessageHandler();
         messageHandler.lobbyActivity = this;
 
         client = TCPClient.getInstance();

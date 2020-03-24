@@ -57,9 +57,9 @@ public class GameView extends View {
     public GameView(Context context) {
         super(context);
         ResourcesMaps.LoadSprites();
-        gameModel = new GameModel(DEFAULT_SIZE_X,DEFAULT_SIZE_Y);
+        gameModel = GameModel.getInstance();
 
-        messageHandler = new GameMessageHandler(gameModel);
+        messageHandler = new GameMessageHandler();
 
         if(startNetwork){
             client = TCPClient.getInstance();

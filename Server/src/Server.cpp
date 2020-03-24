@@ -182,7 +182,6 @@ void Server::requestJoinGame(int userIndex, int gameID)
         {
             if (!g->getStarted())
             {
-
                 answer = "{\"Action\":\"" ACTION_JOINED_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
                 answer += ", \"PlayersRoles\":[";
                 int i = 0;

@@ -293,7 +293,14 @@ bool Game::addPlayer(Player *p)
             it->setIndex(p->getIndex());
             it->setGame(this);
             it->setConnected(true);
-            p = it;
+
+            p->setConnected(true);
+            p->setGame(this);
+            p->setInGameID(it->getInGameID());
+            p->setLastCollisionType(it->getLastCollisionType());
+            p->setLastDirection(it->getLastDirection());
+            p->setPos(it->getPosX(), it->getPosY());
+            p->setRole(it->getRole());
             return true;
         }
     }

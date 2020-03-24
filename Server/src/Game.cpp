@@ -75,7 +75,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
                             changes += ',';
                             _grid[point.posY][point.posX].blockValue += 2;
                             _grid[point.posY][point.posX].collisionValue = C_NOTHING;
-                            changes += tileToJSON(point.posX, point.posY, _grid[point.posY][point.posX].blockValue + 2);
+                            changes += tileToJSON(point.posX, point.posY, DOOR);
                             ++i;
                         }
                     }

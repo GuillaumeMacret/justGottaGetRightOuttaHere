@@ -290,12 +290,10 @@ public class GameMessageHandler implements MessageHandler {
 
             map = jsonObject.getJSONArray("Objects");
             for(int i = 0; i < map.length(); ++i){
-                JSONObject object = map.getJSONObject(i);
-                if(object.getInt("xPos") < model.sizeX && object.getInt("yPos") < model.sizeY){
-                    //Log.e("INFO","adding object in : "+object.getInt("xPos")+"  "+object.getInt("yPos"));
-                    model.objectLayer[object.getInt("xPos")][object.getInt("yPos")] = object.getInt("value");
-                }else{
-                    Log.e("ERROR","Can't add object in : "+object.getInt("xPos")+"  "+object.getInt("yPos")+" OUT OF BOUNDS");
+                JSONArray line = map.getJSONArray(i);
+                arrayWidth = line.length();
+                for(int j = 0; j < arrayWidth; ++j){
+                    model.objectLayer[j][i] = line.getInt(j);
                 }
             }
 

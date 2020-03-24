@@ -11,6 +11,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import static com.example.justgottagetrightouttahere_client.Constants.Constants.BUFFER_CAPACITY;
+
 public class TCPClient implements Runnable{
     /**Singleton**/
     private static TCPClient INSTANCE = null;
@@ -175,7 +177,7 @@ class ClientReceiver implements Runnable{
     @Override
     public void run() {
         BufferedReader reader = null;
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuilder;
 
         try {
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -184,18 +186,18 @@ class ClientReceiver implements Runnable{
             System.exit(1);
         }
         System.err.println("[CLI] Client thread listening ...");
-        stringBuffer = new StringBuffer();
+        stringBuilder = new StringBuilder(BUFFER_CAPACITY);
 
         for(;;){
             try {
-                stringBuffer.append(reader.readLine());
-                System.err.println("[CLI] Received : " + stringBuffer.toString());
-                if(stringBuffer.charAt(stringBuffer.length()-1) == ';'){
-                    if(handler != null)handler.handle(stringBuffer.toString());
+                stringBuilder.append(reader.readLine());
+                System.err.println("[CLI] Received : " + stringBuilder.toString());
+                if(stringBuilder.charAt(stringBuilder.length()-1) == ';'){
+                    if(handler != null)handler.handle(stringBuilder.toString());
                     else System.err.println("[CLI][WARN] Handler is null! Skipping handling");
-                    stringBuffer = new StringBuffer();
+                    stringBuilder = new StringBuilder(BUFFER_CAPACITY);
                 }else{
-                    System.err.println("Last char is " + stringBuffer.charAt(stringBuffer.length()-1) + " waiting for the end of the message");
+                    System.err.println("Last char is " + stringBuilder.charAt(stringBuilder.length()-1) + " waiting for the end of the message");
                 }
             } catch (IOException e) {
                 e.printStackTrace();

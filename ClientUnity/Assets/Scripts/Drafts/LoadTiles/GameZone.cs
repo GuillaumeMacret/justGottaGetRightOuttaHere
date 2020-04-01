@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -22,6 +23,14 @@ public class GameZone : MonoBehaviour
         mat[0] = new int[2] {0,20};
         mat[1] = new int[2] {20,30};
         LoadMatrix(mat);
+
+        //MessageClient cli = MessageClient.GetInstance();
+        //MessageClient.Connect();
+    }
+
+    private void Update()
+    {
+
     }
 
     public void LoadMatrix(int[][] matrix)

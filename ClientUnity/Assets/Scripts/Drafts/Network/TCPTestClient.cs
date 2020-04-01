@@ -6,35 +6,44 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class TCPTestClient : MonoBehaviour
+public class TCPTestClient
 {
-    #region private members 	
-    private TcpClient socketConnection;
-    private Thread clientReceiveThread;
-    #endregion
-    // Use this for initialization 	
-    void Start()
+    private static TCPTestClient INSTANCE;
+    public static TCPTestClient GetInstance()
     {
+        if (INSTANCE == null) INSTANCE = new TCPTestClient();
+        return INSTANCE;
+    }
+
+    #region private members 	
+    private static TcpClient socketConnection;
+    private static Thread clientReceiveThread;
+    private const int BUFFER_SIZE = 50000;
+
+    private const string SERVER_ADRESS = "norcisrasp.ddns.net";
+    private const int SERVER_PORT = 1789;
+    #endregion
+
+    public static bool socketConnected = false;
+
+    public static void ConnectIfNotConnected()
+    {
+        if (socketConnected) return;
         ConnectToTcpServer();
     }
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SendMessage();
-        }
-    }
+
     /// <summary> 	
     /// Setup socket connection. 	
     /// </summary> 	
-    private void ConnectToTcpServer()
+    private static void ConnectToTcpServer()
     {
+        Debug.Log("Trying to connect to " + SERVER_ADRESS + ":" + SERVER_PORT);
         try
         {
             clientReceiveThread = new Thread(new ThreadStart(ListenForData));
             clientReceiveThread.IsBackground = true;
             clientReceiveThread.Start();
+            socketConnected = true;
         }
         catch (Exception e)
         {
@@ -44,12 +53,12 @@ public class TCPTestClient : MonoBehaviour
     /// <summary> 	
     /// Runs in background clientReceiveThread; Listens for incomming data. 	
     /// </summary>     
-    private void ListenForData()
+    private static void ListenForData()
     {
         try
         {
-            socketConnection = new TcpClient("norcisrasp.ddns.net", 1789);
-            Byte[] bytes = new Byte[1024];
+            socketConnection = new TcpClient(SERVER_ADRESS, SERVER_PORT);
+            Byte[] bytes = new Byte[BUFFER_SIZE];
             while (true)
             {
                 // Get a stream object for reading 				
@@ -76,7 +85,7 @@ public class TCPTestClient : MonoBehaviour
     /// <summary> 	
     /// Send message to server using socket connection. 	
     /// </summary> 	
-    private void SendMessage()
+    public static void SendMessage(string clientMessage)
     {
         if (socketConnection == null)
         {
@@ -88,7 +97,6 @@ public class TCPTestClient : MonoBehaviour
             NetworkStream stream = socketConnection.GetStream();
             if (stream.CanWrite)
             {
-                string clientMessage = "This is a message from one of your clients.";
                 // Convert string message to byte array.                 
                 byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(clientMessage);
                 // Write byte array to socketConnection stream.                 

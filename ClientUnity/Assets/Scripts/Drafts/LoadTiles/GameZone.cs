@@ -24,13 +24,15 @@ public class GameZone : MonoBehaviour
         mat[1] = new int[2] {20,30};
         LoadMatrix(mat);
 
-        //MessageClient cli = MessageClient.GetInstance();
-        //MessageClient.Connect();
+        TCPTestClient.ConnectIfNotConnected();
     }
 
     private void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            TCPTestClient.SendMessage("test message");
+        }
     }
 
     public void LoadMatrix(int[][] matrix)

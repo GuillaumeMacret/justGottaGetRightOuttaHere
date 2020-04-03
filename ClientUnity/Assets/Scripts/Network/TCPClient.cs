@@ -6,13 +6,20 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class TCPTestClient
+public class TCPClient
 {
-    private static TCPTestClient INSTANCE;
-    public static TCPTestClient GetInstance()
+    private static TCPClient INSTANCE;
+    public static TCPClient GetInstance()
     {
-        if (INSTANCE == null) INSTANCE = new TCPTestClient();
+        if (INSTANCE == null) INSTANCE = new TCPClient();
         return INSTANCE;
+    }
+
+    public static bool socketConnected = false;
+    public static void ConnectIfNotConnected()
+    {
+        if (socketConnected) return;
+        ConnectToTcpServer();
     }
 
     #region private members 	
@@ -22,14 +29,16 @@ public class TCPTestClient
 
     private const string SERVER_ADRESS = "norcisrasp.ddns.net";
     private const int SERVER_PORT = 1789;
+    static IMessageHandler  m_MessageHandler = null;
     #endregion
 
-    public static bool socketConnected = false;
 
-    public static void ConnectIfNotConnected()
+    /// <summary> 	
+    /// Sets the class that will handle incomming messages
+    /// </summary> 	
+    public static void SetMessageHandler(IMessageHandler handler)
     {
-        if (socketConnected) return;
-        ConnectToTcpServer();
+        m_MessageHandler = handler;
     }
 
     /// <summary> 	
@@ -73,6 +82,10 @@ public class TCPTestClient
                         // Convert byte array to string message. 						
                         string serverMessage = Encoding.ASCII.GetString(incommingData);
                         Debug.Log("server message received as: " + serverMessage);
+                        if(m_MessageHandler != null)
+                        {
+                            m_MessageHandler.Handle(serverMessage.Remove(serverMessage.Length-1));
+                        }
                     }
                 }
             }

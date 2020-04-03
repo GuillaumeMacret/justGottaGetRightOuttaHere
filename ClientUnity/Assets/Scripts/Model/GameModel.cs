@@ -4,7 +4,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class GameZone : MonoBehaviour
+public class GameModel : MonoBehaviour
 {
     private static string m_terrainTilesPath = "Tiles/TerrainTiles/terrain_atlas";
 
@@ -24,15 +24,6 @@ public class GameZone : MonoBehaviour
         mat[1] = new int[2] {20,30};
         LoadMatrix(mat);
 
-        TCPTestClient.ConnectIfNotConnected();
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TCPTestClient.SendMessage("test message");
-        }
     }
 
     public void LoadMatrix(int[][] matrix)

@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IMessageHandler
 {
-    void Handle(string s);
+    void Handle(string JSONString);
 }

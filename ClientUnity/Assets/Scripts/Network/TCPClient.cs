@@ -27,7 +27,7 @@ public class TCPClient
     private static Thread clientReceiveThread;
     private const int BUFFER_SIZE = 50000;
 
-    private const string SERVER_ADRESS = "norcisrasp.ddns.net";
+    private const string SERVER_ADRESS = "localhost";
     private const int SERVER_PORT = 1789;
     static IMessageHandler  m_MessageHandler = null;
     #endregion

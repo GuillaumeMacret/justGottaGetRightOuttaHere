@@ -1,7 +1,5 @@
 package com.example.justgottagetrightouttahere_client.network;
 
-import com.example.justgottagetrightouttahere_client.Constants.Constants;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -20,7 +18,7 @@ public class TCPServer implements Runnable{
      */
     public TCPServer(){
         try {
-            serverSocket = new ServerSocket(Constants.SERVER_PORT);
+            serverSocket = new ServerSocket(1789);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,6 +68,8 @@ public class TCPServer implements Runnable{
     }
 }
 
+//{"Action":"loadLevel","Blocks":[[1,1,1],[2,2,2]],"Bullshit":"Shitbull"}
+
 class ServerReceiver implements Runnable{
     Socket socket;
 
@@ -98,7 +98,7 @@ class ServerReceiver implements Runnable{
             try {
                 stringBuffer = new StringBuffer();
                 stringBuffer.append(reader.readLine());
-                System.err.println("[SRV] Received : " + stringBuffer.toString());
+                if(stringBuffer.toString() !=null)System.err.println("[SRV] Received : " + stringBuffer.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -12,14 +12,18 @@ public class GameBoardMessageHandler : MonoBehaviour, IMessageHandler
         switch (action.Action)
         {
             case "loadLevel":
-                var N = JSON.Parse(JSONString);
-                JSONArray blocks = N["Blocks"].AsArray;
-                model.LoadLevel(blocks.Count,blocks[0].Count,blocks);
+                var loadLevelJson = JSON.Parse(JSONString);
+                JSONArray blocks = loadLevelJson["Blocks"].AsArray;
+                JSONArray players = loadLevelJson["Players"].AsArray;
+                model.LoadLevel(blocks, players);
+                break;
+            case "move":
+                var moveJson = JSON.Parse(JSONString);
+                model.MovePlayer(moveJson["Player"], moveJson["PosX"], moveJson["PosY"]);
                 break;
             default:
                 Debug.LogError("Can't handle this action : " + action.Action);
                 break;
-
         }
     }
 }

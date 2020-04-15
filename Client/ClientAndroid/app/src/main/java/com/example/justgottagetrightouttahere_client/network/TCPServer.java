@@ -68,8 +68,8 @@ public class TCPServer implements Runnable{
     }
 }
 
-//{"Action":"loadLevel","Blocks":[[1,1,1],[2,2,2]],"Bullshit":"Shitbull"}
-
+//{"Action":"loadLevel","Blocks":[[1,1,1],[2,2,2]],"Players":[{"xPos":0,"yPos":0},{"xPos":1,"yPos":1},{"xPos":0,"yPos":23},{"xPos":0,"yPos":21}],"Bullshit":"Shitbull"}
+//{"Action":"Move","PosX":1,"PosY":0,"Player":0}
 class ServerReceiver implements Runnable{
     Socket socket;
 

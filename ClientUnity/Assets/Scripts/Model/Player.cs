@@ -5,12 +5,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public int xPos, yPos, id;
+    public int id;
+    public int speed = 10;
 
     private Animator animator;
 
     //FIXME public for test only
-    public List<Vector2> targetPositions;
+    public List<Vector3> targetPositions;
 
     private void Awake()
     {
@@ -20,13 +21,20 @@ public class Player : MonoBehaviour
     private void MoveTowardsNextDestination()
     {
         Debug.Log("Player " + id + " Moving toward " + targetPositions[0]);
+        float step = speed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, targetPositions[0], step);
+
+        if(transform.position == targetPositions[0])
+        {
+            targetPositions.RemoveAt(0);
+        }
     }
 
     private void Update()
     {
         if(targetPositions.Count > 0)
         {
-            Vector2 direction = new Vector2(transform.position.x, transform.position.y) - targetPositions[0];
+            Vector3 direction = targetPositions[0] - transform.position;
             MoveTowardsNextDestination();
             animator.SetFloat("MoveX", direction.x);
             animator.SetFloat("MoveY", direction.y);
@@ -34,15 +42,8 @@ public class Player : MonoBehaviour
 
     }
 
-    public Player(int xPos, int yPos, int id)
-    {
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.id = id;
-    }
-
     public void AddDestination(int xPos, int yPos)
     {
-        targetPositions.Add(new Vector2(xPos, yPos));
+        targetPositions.Add(new Vector3(xPos, yPos, 0));
     }
 }

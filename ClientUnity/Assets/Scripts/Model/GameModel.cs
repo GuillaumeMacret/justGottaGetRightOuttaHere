@@ -31,6 +31,14 @@ public class GameModel : MonoBehaviour
             Player p = Instantiate(playerPrefab);
             p.transform.position = new Vector3(m_playerToInstantiate[0][0], -m_playerToInstantiate[0][1],0);
             p.id = (int) m_playerToInstantiate[0][2];
+            m_players.Add(p);
+
+            GameObject[] container = GameObject.FindGameObjectsWithTag("PlayersContainer");
+            if (container.Length > 0)
+            {
+                p.transform.SetParent(container[0].transform);
+            }
+
             m_playerToInstantiate.RemoveAt(0);
         }
         //TODO move player sprites

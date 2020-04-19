@@ -38,6 +38,11 @@ public class Player : MonoBehaviour
             MoveTowardsNextDestination();
             animator.SetFloat("MoveX", direction.x);
             animator.SetFloat("MoveY", direction.y);
+            animator.SetBool("Moving", true);
+        }
+        else
+        {
+            animator.SetBool("Moving", false); 
         }
 
     }

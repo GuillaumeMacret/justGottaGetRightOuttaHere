@@ -3,20 +3,49 @@
 
 //#define NB_PLAYERS 4
 
+/******** BACKGROUND ********/
 #define EMPTY 0
-#define KEY 6
-#define BUTTON 71
-#define MOVABLE 2
-#define BREAKABLE 12
-#define WATER 72
-#define DOOR 64
-#define BRIDGE 28
-#define STAIRWAY 29
+#define PIT 67
+#define STAIRWAY 335
+#define LADDER 303
+#define WATER 1098
+#define GHOST_WALLS 671
 
+/******** OBJECTS ********/
+#define KEY 1056
+#define BUTTON 988
+#define MOVABLE 65
+#define MOVABLE_GROUNDED 66
+#define BREAKABLE 41
+#define LOCK_1 645
+#define LOCK_2 646
+#define LOCK_3 653
+#define LOCK_4 654
+#define LILYPAD 60
+#define ENEMY_UP 1107
+#define ENEMY_DOWN 1115
+#define ENEMY_LEFT 1109
+#define ENEMY_RIGHT 1112
+#define SWORD 1061
+#define MONEY 995
+#define BOOK 953
+#define DUMMY 1030
+#define DIADEM 1019
+
+/******** COLLISIONS ********/
 #define C_NOTHING 0
 #define C_WALKABLE 1
 #define C_BLOCK 2
 #define C_WATER 3
+
+/******** LAYERS ********/
+#define GROUND_LAYER "Ground"
+#define COLLISION_LAYER "Collision"
+#define PLAYERS_LAYER "Players"
+#define ON_BUTTON_LAYER "OnButtons"
+#define OFF_BUTTON_LAYER "OffButtons"
+#define KEYS_LAYER "Keys"
+#define OBJECTS_LAYER "Objects"
 
 #include <string>
 #include <vector>
@@ -66,6 +95,9 @@ private:
     /* Position of the 4 tiles representing the lock */
     Point _lockPosition[4];
 
+    /* The dummy placed by the Pumpkin if possible, in order to teleport to it */
+    Point *_dummy;
+
     /* Boolean that is true if On Blocks are displayed, false otherwise */
     bool _buttonState;
 
@@ -100,9 +132,9 @@ private:
      * @layerResource: contains the JSON information of the layer */
     void readBackground(RSJresource layerResource);
 
-    /** Reads the block layer of the selected map, in a JSON format
+    /** Reads the objects layer of the selected map, in a JSON format
      * @layerResource: contains the JSON information of the layer */
-    void readBlocks(RSJresource layerResource);
+    void readObjects(RSJresource layerResource);
     
     /** Reads the key layer of the selected map, in a JSON format and which contains the position
      * of the lock and the keys
@@ -134,31 +166,57 @@ private:
 
     /** Checks if the player that requested the action 'Push' can do this action
      * @dir: the direction the player is facing, used to check the object eventually behind a rock
-     * @posX: the X position of the tile the player is facing
-     * @posY: the Y position of the tile the player is facing
+     * @posX: the X position of the block faced by the player
+     * @posY: the Y position of the block faced by the player
      * Returns the JSON answer to the push action */
     std::string checkPush(std::string dir, int posX, int posY);
 
-    /** Checks if the player that requested the action 'Create' can do this action
-     * @dir: the direction faced by the player
-     * @posX: the X position of the player
-     * @posY: the Y position of the player
+    /** Checks if the player that requested the secondary action 'Jump' can do this action
+     * @dir: the direction the player is facing, used to check the object eventually behind a pit
+     * @posX: the X position of the block faced by the player
+     * @posY: the Y position of the block faced by the player
+     * Returns the JSON answer to the jump action */
+    std::string checkJump(std::string dir, int posX, int posY);
+
+    /** Checks if the player that requested the main action 'PassGhostWall' which doesn't do anything
+     * Returns the JSON answer to the pass ghost wall action */
+    std::string checkPassGhostWall();
+
+    /** Checks if the player that requested the secondary action 'Create' can do this action
+     * @posX: the X position of the block faced by the player
+     * @posY: the Y position of the block faced by the player
      * Returns the JSON answer to the create action */
     std::string checkCreate(int posX, int posY);
 
-    /** Checks if the player that requested the action 'Activate' can do this action
-     * @dir: the direction faced by the player
-     * @posX: the X position of the player
-     * @posY: the Y position of the player
+    /** Checks if the player that requested the main action 'Activate' can do this action
+     * @posX: the X position of the block faced by the player
+     * @posY: the Y position of the block faced by the player
      * Returns the JSON answer to the activate action */
     std::string checkActivate(int posX, int posY);
 
-    /** Checks if the player that requested the action 'Break' can do this action
-     * @dir: the direction faced by the player
-     * @posX: the X position of the player
-     * @posY: the Y position of the player
+    /** Checks if the player that requested the secondary action 'Teleport' can do this action
+     * Returns the JSON answer to the teleport action */
+    std::string checkTeleport();
+
+    /** Checks if the player that requested the main action 'Break' can do this action
+     * @posX: the X position of the block faced by the player
+     * @posY: the Y position of the block faced by the player
      * Returns the JSON answer to the break action */
     std::string checkBreak(int posX, int posY);
+
+    /** Checks if the player that requested the secondary action 'Kill' can do this action
+     * @posX: the X position of the block faced by the player
+     * @posY: the Y position of the block faced by the player
+     * Returns the JSON answer to the kill action */
+    std::string checkKill(int posX, int posY);
+
+    /** Checks if the player that requested the main action 'PassLadder' which doesn't do anything
+     * Returns the JSON answer to the pass ladder action */
+    std::string checkPassLadder();
+
+    /** Checks if the player that requested the main action 'PassEnemy' which doesn't do anything
+     * Returns the JSON answer to the pass enemy action */
+    std::string checkPassEnemy();
 
 public:
     enum Roles
@@ -166,7 +224,8 @@ public:
         PUSH = 0,
         CREATE = 1,
         ACTIVATE = 2,
-        BREAK = 3
+        BREAK = 3,
+        CLIMB = 4
     };
 
     /** Constructor of the game

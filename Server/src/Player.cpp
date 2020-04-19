@@ -1,7 +1,7 @@
 #include "Player.hpp"
 #include "Game.hpp"
 
-Player::Player() : _posX(0), _posY(0), _role(0), _index(0), _connected(true), _lastCollisionType(0) {}
+Player::Player() : _posX(0), _posY(0), _role(0), _index(0), _connected(true), _secondaryAction(false), _lastCollisionType(0) {}
 
 Player::Player(int index, Game *game) : _posX(0), _posY(0), _role(0), _index(index), _game(game), _connected(true), _lastDirection("down") {}
 
@@ -40,6 +40,10 @@ Player::~Player() {}
 bool Player::isConnected() { return _connected; }
 
 void Player::setConnected(bool connected) { _connected = connected; }
+
+bool Player::hasSecondaryAction() { return _connected; }
+
+void Player::setSecondaryAction(bool secondaryAction) { _secondaryAction = secondaryAction; }
 
 std::string Player::getLastDirection() { return _lastDirection; }
 

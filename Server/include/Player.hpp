@@ -12,6 +12,7 @@ class Player
     class Game *_game;
     int _inGameID;
     bool _connected;
+    bool _secondaryAction;
     std::string _lastDirection;
     int _lastCollisionType;
 
@@ -34,6 +35,8 @@ public:
     void setInGameID(int inGameID);
     bool isConnected();
     void setConnected(bool connected);
+    bool hasSecondaryAction();
+    void setSecondaryAction(bool secondaryAction);
     std::string getLastDirection();
     void setLastDirection(std::string direction);
 

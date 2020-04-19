@@ -10,6 +10,15 @@ Game::Game(int gameID, std::string selectedMap) : _buttonState(false), _finished
 
 std::string Game::movePlayer(int playerID, std::string direction)
 {
+    /***** TO DO *****/
+    /*
+     * Check if block is ladder and player is elf
+     * Check if block is enemy and player is elf
+     * Check if block is ghost wall and player is ghost
+     * Increase number of players on lock if it is the case
+     */ 
+    /***** TO DO *****/    
+
     int newPosX = _players[playerID]->getPosX(), newPosY = _players[playerID]->getPosY();
     int posX = newPosX, posY = newPosY;
     std::string changes = "";
@@ -70,12 +79,17 @@ std::string Game::movePlayer(int playerID, std::string direction)
                     {
                         //change lock to empty
                         int i = 0;
+                        int locksValue[4];
+                        locksValue[0] = LOCK_1;
+                        locksValue[1] = LOCK_2;
+                        locksValue[2] = LOCK_3;
+                        locksValue[3] = LOCK_4;
                         for (Point point : _lockPosition)
                         {
                             changes += ',';
-                            _grid[point.posY][point.posX].blockValue += 2;
+                            _grid[point.posY][point.posX].blockValue += locksValue[i];
                             _grid[point.posY][point.posX].collisionValue = C_NOTHING;
-                            changes += tileToJSON(point.posX, point.posY, DOOR);
+                            changes += tileToJSON(point.posX, point.posY, locksValue[i]);
                             ++i;
                         }
                     }
@@ -113,6 +127,7 @@ bool Game::getFinished() { return _finished; }
 
 std::string Game::checkPush(std::string dir, int posX, int posY)
 {
+    //TO DO: pits handling
     std::string res = "";
     int pushX = posX, pushY = posY;
     if (_grid[posY][posX].blockValue == MOVABLE)
@@ -149,14 +164,29 @@ std::string Game::checkPush(std::string dir, int posX, int posY)
     return res;
 }
 
+std::string Game::checkJump(std::string dir, int posX, int posY)
+{
+    //TO DO: pits handling and what is behind
+    std::string res = "";
+
+    return res;
+}
+
+std::string Game::checkPassGhostWall()
+{
+    // Empty action
+    std::string res = "";
+    return res;
+}
+
 std::string Game::checkCreate(int posX, int posY)
 {
     std::string res = "";
     if (_grid[posY][posX].blockValue == WATER)
     {
-        _grid[posY][posX].blockValue = BRIDGE;
+        _grid[posY][posX].blockValue = LILYPAD;
         _grid[posY][posX].collisionValue = C_NOTHING;
-        res += tileToJSON(posX, posY, BRIDGE);
+        res += tileToJSON(posX, posY, LILYPAD);
     }
     return res;
 }
@@ -212,6 +242,14 @@ std::string Game::checkActivate(int posX, int posY)
     return res;
 }
 
+std::string Game::checkTeleport()
+{
+    //TO DO: check if dummy is set-up, otherwise set it up
+    std::string res = "";
+
+    return res;
+}
+
 std::string Game::checkBreak(int posX, int posY)
 {
     std::string res = "";
@@ -221,6 +259,28 @@ std::string Game::checkBreak(int posX, int posY)
         _grid[posY][posX].collisionValue = C_NOTHING;
         res += tileToJSON(posX, posY, EMPTY);
     }
+    return res;
+}
+
+std::string Game::checkKill(int posX, int posY)
+{
+    //TO DO: check if block is enemy
+    std::string res = "";
+
+    return res;
+}
+
+std::string Game::checkPassLadder()
+{
+    // Empty action
+    std::string res = "";
+    return res;
+}
+
+std::string Game::checkPassEnemy()
+{
+    // Empty action
+    std::string res = "";
     return res;
 }
 
@@ -251,18 +311,19 @@ std::string Game::doActionPlayer(int playerID)
     {
         switch (p->getRole())
         {
-        case PUSH:
-            res += checkPush(dir, posX, posY);
-            break;
-        case CREATE:
-            res += checkCreate(posX, posY);
-            break;
-        case ACTIVATE:
-            res += checkActivate(posX, posY);
-            break;
-        case BREAK:
-            res += checkBreak(posX, posY);
-            break;
+            //TO DO: If first action is not possible, check if secondary action is possible
+            case PUSH:
+                res += checkPush(dir, posX, posY);
+                break;
+            case CREATE:
+                res += checkCreate(posX, posY);
+                break;
+            case ACTIVATE:
+                res += checkActivate(posX, posY);
+                break;
+            case BREAK:
+                res += checkBreak(posX, posY);
+                break;
         }
     }
 
@@ -372,7 +433,7 @@ void Game::readBackground(RSJresource layerResource)
     }
 }
 
-void Game::readBlocks(RSJresource layerResource)
+void Game::readObjects(RSJresource layerResource)
 {
     std::string layerString = layerResource["data"].as<std::string>();
     layerString = layerString.substr(1, layerString.length() - 2);
@@ -574,33 +635,33 @@ void Game::readMap()
         {
             RSJresource layerResource = it->as<RSJresource>();
 
-            if (layerResource["name"].as<std::string>() == "Sol")
+            if (layerResource["name"].as<std::string>() == GROUND_LAYER)
             {
                 readBackground(layerResource);
             }
-            else if (layerResource["name"].as<std::string>() == "Collision")
+            else if (layerResource["name"].as<std::string>() == COLLISION_LAYER)
             {
                 readCollision(layerResource);
             }
-            else if (layerResource["name"].as<std::string>() == "Cle")
+            else if (layerResource["name"].as<std::string>() == KEYS_LAYER)
             {
                 readKey(layerResource);
             }
-            else if (layerResource["name"].as<std::string>() == "Interrupteur 2")
+            else if (layerResource["name"].as<std::string>() == ON_BUTTON_LAYER)
             {
                 readButtonOn(layerResource);
             }
-            else if (layerResource["name"].as<std::string>() == "Interrupteur 1")
+            else if (layerResource["name"].as<std::string>() == OFF_BUTTON_LAYER)
             {
                 readButtonOff(layerResource);
             }
-            else if (layerResource["name"].as<std::string>() == "Joueur")
+            else if (layerResource["name"].as<std::string>() == PLAYERS_LAYER)
             {
                 readPlayersStartPos(layerResource);
             }
-            else
+            else if (layerResource["name"].as<std::string>() == OBJECTS_LAYER)
             {
-                readBlocks(layerResource);
+                readObjects(layerResource);
             }
         }
     }
@@ -688,6 +749,9 @@ void Game::resetGame()
             }
         }
         delete[] _grid;
+    }
+    for(Player *p : _players) {
+        p->setSecondaryAction(false);
     }
     std::cerr<<"end reset"<<std::endl;
 }

@@ -195,9 +195,9 @@ bool Game::getFinished() { return _finished; }
 
 std::string Game::checkPush(std::string dir, int posX, int posY, Player *p)
 {
-    //TO DO: pits handling
     std::string res = "";
     int pushX = posX, pushY = posY;
+    // Retrieves the target position (= tile after the boulder)
     if (_grid[posY][posX].blockValue == MOVABLE)
     {
         if (dir == "up")
@@ -217,15 +217,31 @@ std::string Game::checkPush(std::string dir, int posX, int posY, Player *p)
             ++pushX;
         }
 
+        // Is the target position valid?
         if (pushX >= 0 && pushX < _width && pushY >= 0 && pushY < _height && _grid[pushY][pushX].collisionValue == C_NOTHING)
         {
+            _grid[p->getPosY()][p->getPosX()].collisionValue = p->getLastCollisionType();
+            p->setPos(posX, posY);
             _grid[posY][posX].blockValue = EMPTY;
-            _grid[posY][posX].collisionValue = C_NOTHING;
-            _grid[pushY][pushX].blockValue = MOVABLE;
-            _grid[pushY][pushX].collisionValue = C_BLOCK;
+            _grid[posY][posX].collisionValue = C_WALKABLE;
+            p->setLastCollisionType(_grid[posY][posX].collisionValue);
+
             res += tileToJSON(posX, posY, EMPTY);
             res += ',';
-            res += tileToJSON(pushX, pushY, MOVABLE);
+
+            // Is the boulder on a pit? If yes, we can now walk on it
+            if(_grid[pushY][pushX].blockValue == PIT)
+            {
+                _grid[pushY][pushX].blockValue = MOVABLE_GROUNDED;
+                _grid[pushY][pushX].collisionValue = C_NOTHING;
+                res += tileToJSON(pushX, pushY, C_NOTHING);
+            }
+            else
+            {
+                _grid[pushY][pushX].blockValue = MOVABLE;
+                _grid[pushY][pushX].collisionValue = C_BLOCK;
+                res += tileToJSON(pushX, pushY, MOVABLE);
+            }
         }
     }
 
@@ -234,8 +250,37 @@ std::string Game::checkPush(std::string dir, int posX, int posY, Player *p)
 
 std::string Game::checkJump(std::string dir, int posX, int posY, Player *p)
 {
-    //TO DO: pits handling and what is behind
     std::string res = "";
+    int jumpX = posX, jumpY = posY;
+
+    // Retrieves the target position (= tile after the pit)
+    if (_grid[posY][posX].blockValue == PIT)
+    {
+        if (dir == "up")
+        {
+            --jumpY;
+        }
+        else if (dir == "down")
+        {
+            ++jumpY;
+        }
+        else if (dir == "left")
+        {
+            --jumpX;
+        }
+        else if (dir == "right")
+        {
+            ++jumpX;
+        }
+
+        // Is the target position valid?
+        if (jumpX >= 0 && jumpX < _width && jumpY >= 0 && jumpY < _height && _grid[jumpY][jumpX].collisionValue < C_BLOCK)
+        {
+            _grid[p->getPosY()][p->getPosX()].collisionValue = p->getLastCollisionType();
+            p->setLastCollisionType(_grid[jumpY][jumpX].collisionValue);
+            p->setPos(jumpX, jumpY);
+        }
+    }
 
     return res;
 }
@@ -256,6 +301,7 @@ std::string Game::checkCreate(int posX, int posY)
         _grid[posY][posX].collisionValue = C_NOTHING;
         res += tileToJSON(posX, posY, LILYPAD);
     }
+    // TO DO: maybe more types of blocks
     return res;
 }
 
@@ -312,9 +358,29 @@ std::string Game::checkActivate(int posX, int posY)
 
 std::string Game::checkTeleport(Player *p)
 {
-    //TO DO: if secondaryaction: check if dummy is set-up and teleport the player to it, otherwise set it up
     std::string res = "";
-
+    //dummy not set up -> set it up on player's position
+    if(_dummy == nullptr)
+    {
+        _dummy = new Point();
+        _dummy->posX = p->getPosX();
+        _dummy->posY = p->getPosY();
+        res += tileToJSON(_dummy->posX, _dummy->posY, TELEPORT);
+        //changes
+        _grid[_dummy->posY][_dummy->posX].collisionValue = C_WALKABLE;
+        _grid[_dummy->posY][_dummy->posX].blockValue = TELEPORT;
+        p->setLastCollisionType(C_WALKABLE);
+        res += tileToJSON(_dummy->posX, _dummy->posY, TELEPORT);
+    }
+    //dummy set up: tp the player on it
+    else
+    {
+        _grid[p->getPosY()][p->getPosX()].collisionValue = p->getLastCollisionType();
+        p->setPos(_dummy->posX, _dummy->posY);
+        p->setLastCollisionType(C_NOTHING);
+        res += tileToJSON(_dummy->posX, _dummy->posY, EMPTY);
+        delete _dummy;
+    }
     return res;
 }
 
@@ -332,9 +398,13 @@ std::string Game::checkBreak(int posX, int posY)
 
 std::string Game::checkKill(int posX, int posY)
 {
-    //TO DO: check if block is enemy and secondaryAction = ok
     std::string res = "";
-
+    if (IS_ENEMY_BLOCK(_grid[posY][posX].blockValue))
+    {
+        _grid[posY][posX].blockValue = EMPTY;
+        _grid[posY][posX].collisionValue = C_NOTHING;
+        res += tileToJSON(posX, posY, EMPTY);
+    }
     return res;
 }
 

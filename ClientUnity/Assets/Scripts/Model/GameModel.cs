@@ -8,6 +8,7 @@ using UnityEngine.Tilemaps;
 public class GameModel : MonoBehaviour
 {
     public bool needsFullRedraw = false;
+    public bool needsObjectsRedraw = false;
     public Tilemap blocksTileMap;
     public Player playerPrefab;
 
@@ -27,7 +28,11 @@ public class GameModel : MonoBehaviour
         {
             RefreshBlocksTilemap();
             RefreshObjectsTilemap();
+        }else if (needsObjectsRedraw)
+        {
+            RefreshObjectsTilemap();
         }
+
         if(m_playerToInstantiate.Count > 0)
         {
             Player p = Instantiate(playerPrefab);
@@ -59,6 +64,7 @@ public class GameModel : MonoBehaviour
             }
         }
     }
+
     /// <summary>
     /// Changes the tilemap blocksTileMap to correspond with the id store in the int matrix
     /// </summary>
@@ -156,6 +162,15 @@ public class GameModel : MonoBehaviour
     public void MovePlayer(int id, int xPos, int yPos)
     {
         m_players[id].AddDestination(xPos, yPos);
+    }
+
+    public void UpdateObjects(JSONArray changes)
+    {
+        for(int i = 0; i < changes.Count; ++i)
+        {
+            m_objectsLayer[changes[i]["yPos"]][changes[i]["xPos"]] = changes[i]["value"];
+            needsObjectsRedraw = true;
+        }
     }
 
 }

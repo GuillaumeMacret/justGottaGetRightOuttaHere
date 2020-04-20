@@ -12,17 +12,17 @@ std::string Game::movePlayer(int playerID, std::string direction)
 {
     /***** TO DO *****/
     /*
-     * Check if block is ladder and player is elf
-     * Check if block is enemy and player is elf
-     * Check if block is ghost wall and player is ghost
-     * Increase number of players on lock if it is the case
+     * Check if on collectible
      */ 
     /***** TO DO *****/    
 
-    int newPosX = _players[playerID]->getPosX(), newPosY = _players[playerID]->getPosY();
+    Player *p = _players[playerID];
+    int newPosX = p->getPosX(), newPosY = p->getPosY();
     int posX = newPosX, posY = newPosY;
     bool _foundLock = false;
     std::string changes = "";
+
+    // Retrieves the position the player is facing
     if (direction == "up")
     {
         --newPosY;
@@ -39,17 +39,16 @@ std::string Game::movePlayer(int playerID, std::string direction)
     {
         ++newPosX;
     }
-    std::cout << "LastPos: [" << posX << "," << posY << "] --- NewPos: [" << newPosX << "," << newPosY << "]" << std::endl;
+
+    // Checks if the player tries to go outside of the map
     if (newPosX >= 0 && newPosX < _width && newPosY >= 0 && newPosY < _height)
     {
-        std::cout << "Positions valides" << std::endl;
+        // Checks if the player can move on the tile it is facing
         if (_grid[newPosY][newPosX].collisionValue < C_BLOCK && (posX != newPosX || posY != newPosY))
         {
-            std::cout << "No collision" << std::endl;
-            Player *p = _players[playerID];
             _grid[posY][posX].collisionValue = p->getLastCollisionType();
 
-            //Player moved and now stands on a stairway
+            // Player moved and now stands on a stairway
             if (_grid[newPosY][newPosX].backgroundValue == STAIRWAY)
             {
                 int index = 0;
@@ -119,14 +118,30 @@ std::string Game::movePlayer(int playerID, std::string direction)
             }
             p->setLastCollisionType(_grid[newPosY][newPosX].collisionValue);
         }
-        std::cout << "Collision value: " << _grid[newPosX][newPosY].collisionValue << std::endl;
+        // Checks if the player tries to go through a ghost wall
+        else if (p->getRole() == CREATE  && _grid[newPosY][newPosX].blockValue == GHOST_WALLS && (posX != newPosX || posY != newPosY))
+        {
+            _grid[posY][posX].collisionValue = p->getLastCollisionType();
+            p->setPos(newPosX, newPosY);
+            p->setLastCollisionType(C_BLOCK);
+        }
+        // Checks if the players tries to go through a ladder or ennemies
+        else if (p->getRole() == CLIMB && (posX != newPosX || posY != newPosY))
+        {
+            if(_grid[newPosY][newPosX].blockValue == LADDER || (((IS_ENEMY_BLOCK(_grid[newPosY][newPosX].blockValue)) && p->hasSecondaryAction())))
+            {
+                _grid[posY][posX].collisionValue = p->getLastCollisionType();
+                p->setPos(newPosX, newPosY);
+                p->setLastCollisionType(C_BLOCK);
+            }
+        }
     }
-    _players[playerID]->setLastDirection(direction);
+    p->setLastDirection(direction);
 
     // Checks if the player no longer stands on a lock.
     // If it is still on a lock, this will have no effect
     // as the boolean is already set
-    _players[playerID]->setOnLock(_foundLock);
+    p->setOnLock(_foundLock);
 
     return changes;
 }

@@ -47,6 +47,8 @@
 #define KEYS_LAYER "Keys"
 #define OBJECTS_LAYER "Objects"
 
+#define IS_ENEMY_BLOCK(i) i == ENEMY_UP || i == ENEMY_DOWN || i == ENEMY_LEFT || i == ENEMY_RIGHT
+
 #include <string>
 #include <vector>
 

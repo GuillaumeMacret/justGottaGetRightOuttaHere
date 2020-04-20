@@ -21,6 +21,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
 
     int newPosX = _players[playerID]->getPosX(), newPosY = _players[playerID]->getPosY();
     int posX = newPosX, posY = newPosY;
+    bool _foundLock = false;
     std::string changes = "";
     if (direction == "up")
     {
@@ -94,13 +95,23 @@ std::string Game::movePlayer(int playerID, std::string direction)
                         }
                     }
                 }
+                // Checks if the player is on a lock, and if so, if all the players stand on a lock
                 else
                 {
                     for (Point p : _lockPosition)
                     {
                         if (newPosX == p.posX && newPosY == p.posY)
                         {
+                            _players[playerID]->setOnLock(true);
                             _finished = true;
+                            _foundLock = true;
+                            for(Player *p : _players)
+                            {
+                                if(!p->isOnLock()) {
+                                    _finished = false;
+                                    break;
+                                }
+                            }
                             break;
                         }
                     }
@@ -111,6 +122,12 @@ std::string Game::movePlayer(int playerID, std::string direction)
         std::cout << "Collision value: " << _grid[newPosX][newPosY].collisionValue << std::endl;
     }
     _players[playerID]->setLastDirection(direction);
+
+    // Checks if the player no longer stands on a lock.
+    // If it is still on a lock, this will have no effect
+    // as the boolean is already set
+    _players[playerID]->setOnLock(_foundLock);
+
     return changes;
 }
 

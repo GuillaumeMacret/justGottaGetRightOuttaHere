@@ -70,6 +70,10 @@ public:
     bool hasSecondaryAction();
     /* Enables the secondary action of the player, or disables if the game restarts */
     void setSecondaryAction(bool secondaryAction);
+    /* Indicates if the player stands on a lock */
+    bool isOnLock();
+    /* Sets the onLock state of the player */
+    void setOnLock(bool onLock);
     /* Getter for the direction the player is facing */
     std::string getLastDirection();
     /* Sets the direction the player is facing to a new one */

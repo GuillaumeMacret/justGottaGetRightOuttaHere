@@ -8,6 +8,41 @@
 
 Game::Game(int gameID, std::string selectedMap) : _buttonState(false), _finished(false), _started(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
 
+void Game::enableSecondaryAction(int roleID)
+{
+    for(Player *p : _players)
+    {
+        if(p->getRole() == roleID)
+        {
+            p->setSecondaryAction(true);
+            return ;
+        }
+    }
+}
+
+bool Game::checkOnObject(int tileValue)
+{
+    switch (tileValue)
+    {
+        case SWORD:
+            enableSecondaryAction(BREAK);
+            return true;
+        case MONEY:
+            enableSecondaryAction(CLIMB);
+            return true;
+        case BOOK:
+            enableSecondaryAction(CREATE);
+            return true;
+        case DUMMY:
+            enableSecondaryAction(ACTIVATE);
+            return true;
+        case DIADEM:
+            enableSecondaryAction(PUSH);
+            return true;
+    }
+    return false;
+}
+
 std::string Game::movePlayer(int playerID, std::string direction)
 {
     /***** TO DO *****/
@@ -66,52 +101,59 @@ std::string Game::movePlayer(int playerID, std::string direction)
             else
             {
                 p->setPos(newPosX, newPosY);
-
-                //Player stands on a key
-                if (_grid[newPosY][newPosX].blockValue == KEY)
+                if(checkOnObject(_grid[newPosY][newPosX].backgroundValue))
                 {
                     _grid[newPosY][newPosX].blockValue = EMPTY;
                     _grid[newPosY][newPosX].collisionValue = C_NOTHING;
-                    p->setLastCollisionType(C_NOTHING);
                     changes += tileToJSON(newPosX, newPosY, EMPTY);
-                    --_nbKeys;
-                    if (!_nbKeys)
-                    {
-                        //change lock to empty
-                        int i = 0;
-                        int locksValue[4];
-                        locksValue[0] = LOCK_1;
-                        locksValue[1] = LOCK_2;
-                        locksValue[2] = LOCK_3;
-                        locksValue[3] = LOCK_4;
-                        for (Point point : _lockPosition)
-                        {
-                            changes += ',';
-                            _grid[point.posY][point.posX].blockValue += locksValue[i];
-                            _grid[point.posY][point.posX].collisionValue = C_NOTHING;
-                            changes += tileToJSON(point.posX, point.posY, locksValue[i]);
-                            ++i;
-                        }
-                    }
                 }
-                // Checks if the player is on a lock, and if so, if all the players stand on a lock
                 else
                 {
-                    for (Point p : _lockPosition)
+                    //Player stands on a key
+                    if (_grid[newPosY][newPosX].blockValue == KEY)
                     {
-                        if (newPosX == p.posX && newPosY == p.posY)
+                        _grid[newPosY][newPosX].blockValue = EMPTY;
+                        _grid[newPosY][newPosX].collisionValue = C_NOTHING;
+                        changes += tileToJSON(newPosX, newPosY, EMPTY);
+                        --_nbKeys;
+                        if (!_nbKeys)
                         {
-                            _players[playerID]->setOnLock(true);
-                            _finished = true;
-                            _foundLock = true;
-                            for(Player *p : _players)
+                            //change lock to empty
+                            int i = 0;
+                            int locksValue[4];
+                            locksValue[0] = LOCK_1;
+                            locksValue[1] = LOCK_2;
+                            locksValue[2] = LOCK_3;
+                            locksValue[3] = LOCK_4;
+                            for (Point point : _lockPosition)
                             {
-                                if(!p->isOnLock()) {
-                                    _finished = false;
-                                    break;
-                                }
+                                changes += ',';
+                                _grid[point.posY][point.posX].blockValue += locksValue[i];
+                                _grid[point.posY][point.posX].collisionValue = C_NOTHING;
+                                changes += tileToJSON(point.posX, point.posY, locksValue[i]);
+                                ++i;
                             }
-                            break;
+                        }
+                    }
+                    // Checks if the player is on a lock, and if so, if all the players stand on a lock
+                    else
+                    {
+                        for (Point p : _lockPosition)
+                        {
+                            if (newPosX == p.posX && newPosY == p.posY)
+                            {
+                                _players[playerID]->setOnLock(true);
+                                _finished = true;
+                                _foundLock = true;
+                                for(Player *p : _players)
+                                {
+                                    if(!p->isOnLock()) {
+                                        _finished = false;
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
                         }
                     }
                 }

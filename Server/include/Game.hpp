@@ -31,6 +31,7 @@
 #define BOOK 953
 #define DUMMY 1030
 #define DIADEM 1019
+#define TELEPORT 71
 
 /******** COLLISIONS ********/
 #define C_NOTHING 0
@@ -219,6 +220,15 @@ private:
     /** Checks if the player that requested the main action 'PassEnemy' which doesn't do anything
      * Returns the JSON answer to the pass enemy action */
     std::string checkPassEnemy();
+
+    /** Checks if the player has moved on an object, and if so, enable the secondary action
+     * of the corresponding player.
+     * @tileValue: The type of the object the player stands on, may be 0 if empty */
+    bool checkOnObject(int tileValue);
+
+    /** Searches for the player corresponding to the role given as parameter, and enables its secondary action
+     * @roleID: The role related to the secondary action to enable */
+    void enableSecondaryAction(int roleID);
 
 public:
     enum Roles

@@ -13,6 +13,7 @@ public class GameModel : MonoBehaviour
 
     /*Tiles layers*/
     private int[][] m_blocksLayer;
+    private int[][] m_objectsLayer;
 
     private List<Player> m_players;
     //The vec with info to create new players (xpos,ypos,id)
@@ -24,7 +25,8 @@ public class GameModel : MonoBehaviour
     {
         if (needsFullRedraw)
         {
-            RefreshTilemap();
+            RefreshBlocksTilemap();
+            RefreshObjectsTilemap();
         }
         if(m_playerToInstantiate.Count > 0)
         {
@@ -45,9 +47,9 @@ public class GameModel : MonoBehaviour
     }
 
     /// <summary>
-    /// Changes the tilemap blocsTileMap to correspond with the id store in the int matrix
+    /// Changes the tilemap blocksTileMap to correspond with the id store in the int matrix
     /// </summary>
-    private void RefreshTilemap()
+    private void RefreshBlocksTilemap()
     {
         for (int i = 0; i < m_blocksLayer.Length; ++i)
         {
@@ -57,7 +59,20 @@ public class GameModel : MonoBehaviour
             }
         }
     }
-    
+    /// <summary>
+    /// Changes the tilemap blocksTileMap to correspond with the id store in the int matrix
+    /// </summary>
+    private void RefreshObjectsTilemap()
+    {
+        for (int i = 0; i < m_objectsLayer.Length; ++i)
+        {
+            for (int j = 0; j < m_objectsLayer[i].Length; ++j)
+            {
+                blocksTileMap.SetTile(new Vector3Int(i, -j, 2), TilesResourcesLoader.GetTileByNameAndId(m_terrainTilesPath, m_objectsLayer[i][j]));
+            }
+        }
+    }
+
     /// <summary>
     /// Sets the given Json matrix into the classe's int matrix corresponding to the block layer
     /// </summary>
@@ -73,6 +88,25 @@ public class GameModel : MonoBehaviour
             for (int j = 0; j < ySize; ++j)
             {
                 m_blocksLayer[i][j] = matrix[i][j];
+            }
+        }
+    }
+
+    /// <summary>
+    /// Sets the objects int matrix acccording to Json given in argument
+    /// </summary>
+    /// <param name="xSize"></param>
+    /// <param name="ySize"></param>
+    /// <param name="objects"></param>
+    public void LoadObjects(int xSize, int ySize, JSONArray objects)
+    {
+        m_objectsLayer = new int[xSize][];
+        for (int i = 0; i < xSize; ++i)
+        {
+            m_objectsLayer[i] = new int[ySize];
+            for (int j = 0; j < ySize; ++j)
+            {
+                m_objectsLayer[i][j] = objects[i][j];
             }
         }
     }
@@ -94,7 +128,7 @@ public class GameModel : MonoBehaviour
     /// This includes : blocks layer, object layer and players
     /// </summary>
     /// <param name="loadLevelObject"></param>
-    public void LoadLevel(JSONArray blocks, JSONArray players)
+    public void LoadLevel(JSONArray blocks, JSONArray players, JSONArray objects)
     {
         if (blocks.Count > 0)
         {
@@ -105,9 +139,20 @@ public class GameModel : MonoBehaviour
             LoadPlayers(players.Count, players);
         }
         //TODO other layers
+        if(objects.Count > 0)
+        {
+            LoadObjects(objects.Count, objects[0].Count, objects);
+        }
         needsFullRedraw = true;
     }
 
+    /// <summary>
+    /// Adds the given coordinates to the player's (identified by id) destination list.
+    /// Destination list is a FIFO and so, the player will move there after completing his other movements
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="xPos"></param>
+    /// <param name="yPos"></param>
     public void MovePlayer(int id, int xPos, int yPos)
     {
         m_players[id].AddDestination(xPos, yPos);

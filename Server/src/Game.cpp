@@ -44,13 +44,7 @@ bool Game::checkOnObject(int tileValue)
 }
 
 std::string Game::movePlayer(int playerID, std::string direction)
-{
-    /***** TO DO *****/
-    /*
-     * Check if on collectible
-     */ 
-    /***** TO DO *****/    
-
+{  
     Player *p = _players[playerID];
     int newPosX = p->getPosX(), newPosY = p->getPosY();
     int posX = newPosX, posY = newPosY;
@@ -199,7 +193,7 @@ std::string Game::tileToJSON(int posX, int posY, int value)
 
 bool Game::getFinished() { return _finished; }
 
-std::string Game::checkPush(std::string dir, int posX, int posY)
+std::string Game::checkPush(std::string dir, int posX, int posY, Player *p)
 {
     //TO DO: pits handling
     std::string res = "";
@@ -238,7 +232,7 @@ std::string Game::checkPush(std::string dir, int posX, int posY)
     return res;
 }
 
-std::string Game::checkJump(std::string dir, int posX, int posY)
+std::string Game::checkJump(std::string dir, int posX, int posY, Player *p)
 {
     //TO DO: pits handling and what is behind
     std::string res = "";
@@ -316,9 +310,9 @@ std::string Game::checkActivate(int posX, int posY)
     return res;
 }
 
-std::string Game::checkTeleport()
+std::string Game::checkTeleport(Player *p)
 {
-    //TO DO: check if dummy is set-up, otherwise set it up
+    //TO DO: if secondaryaction: check if dummy is set-up and teleport the player to it, otherwise set it up
     std::string res = "";
 
     return res;
@@ -338,7 +332,7 @@ std::string Game::checkBreak(int posX, int posY)
 
 std::string Game::checkKill(int posX, int posY)
 {
-    //TO DO: check if block is enemy
+    //TO DO: check if block is enemy and secondaryAction = ok
     std::string res = "";
 
     return res;
@@ -383,22 +377,50 @@ std::string Game::doActionPlayer(int playerID)
 
     if (posX >= 0 && posX < _width && posY >= 0 && posY < _height)
     {
+        std::string actionString = "";
         switch (p->getRole())
         {
-            //TO DO: If first action is not possible, check if secondary action is possible
+            // Executes the main action of the player. If it is not possible,
+            // tries to execute the secondary if it is enabled
             case PUSH:
-                res += checkPush(dir, posX, posY);
+                actionString = checkPush(dir, posX, posY, p);
+                
+                if(actionString == "" && p->hasSecondaryAction())
+                {
+                    actionString = checkJump(dir, posX, posY, p);
+                }
                 break;
             case CREATE:
-                res += checkCreate(posX, posY);
+                actionString = checkPassGhostWall();
+                if(actionString == "" && p->hasSecondaryAction())
+                {
+                    actionString = checkCreate(posX, posY);
+                }
                 break;
             case ACTIVATE:
-                res += checkActivate(posX, posY);
+                actionString = checkActivate(posX, posY);
+                if(actionString == "" && p->hasSecondaryAction())
+                {
+                    actionString = checkTeleport(p);
+                }
                 break;
             case BREAK:
-                res += checkBreak(posX, posY);
+                actionString = checkBreak(posX, posY);
+                if(actionString == "" && p->hasSecondaryAction())
+                {
+                    actionString = checkKill(posX, posY);
+                }
+                break;
+            case CLIMB:
+                // These methods don't do anything, but are left in case we add something
+                actionString = checkPassLadder();
+                if(actionString == "" && p->hasSecondaryAction())
+                {
+                    actionString = checkPassEnemy();
+                }
                 break;
         }
+        res += actionString;
     }
 
     res += "]";

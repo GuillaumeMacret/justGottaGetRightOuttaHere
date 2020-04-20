@@ -171,15 +171,17 @@ private:
      * @dir: the direction the player is facing, used to check the object eventually behind a rock
      * @posX: the X position of the block faced by the player
      * @posY: the Y position of the block faced by the player
+     * @p: the player requesting the action
      * Returns the JSON answer to the push action */
-    std::string checkPush(std::string dir, int posX, int posY);
+    std::string checkPush(std::string dir, int posX, int posY, Player *p);
 
     /** Checks if the player that requested the secondary action 'Jump' can do this action
      * @dir: the direction the player is facing, used to check the object eventually behind a pit
      * @posX: the X position of the block faced by the player
      * @posY: the Y position of the block faced by the player
+     * @p: the player requesting the action
      * Returns the JSON answer to the jump action */
-    std::string checkJump(std::string dir, int posX, int posY);
+    std::string checkJump(std::string dir, int posX, int posY, Player *p);
 
     /** Checks if the player that requested the main action 'PassGhostWall' which doesn't do anything
      * Returns the JSON answer to the pass ghost wall action */
@@ -198,8 +200,9 @@ private:
     std::string checkActivate(int posX, int posY);
 
     /** Checks if the player that requested the secondary action 'Teleport' can do this action
+     * @p: the player requesting the action
      * Returns the JSON answer to the teleport action */
-    std::string checkTeleport();
+    std::string checkTeleport(Player *p);
 
     /** Checks if the player that requested the main action 'Break' can do this action
      * @posX: the X position of the block faced by the player
@@ -210,6 +213,7 @@ private:
     /** Checks if the player that requested the secondary action 'Kill' can do this action
      * @posX: the X position of the block faced by the player
      * @posY: the Y position of the block faced by the player
+     * @p: the player requesting the action
      * Returns the JSON answer to the kill action */
     std::string checkKill(int posX, int posY);
 

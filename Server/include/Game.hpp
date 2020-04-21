@@ -10,6 +10,8 @@
 #define LADDER 303
 #define WATER 1098
 #define GHOST_WALLS 671
+#define TELEPORT 71
+#define BLACK 309
 
 /******** OBJECTS ********/
 #define KEY 1056
@@ -31,7 +33,6 @@
 #define BOOK 953
 #define DUMMY 1030
 #define DIADEM 1019
-#define TELEPORT 71
 
 /******** COLLISIONS ********/
 #define C_NOTHING 0

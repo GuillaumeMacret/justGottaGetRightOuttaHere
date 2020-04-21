@@ -27,7 +27,7 @@ public class TCPClient
     private static Thread clientReceiveThread;
     private const int BUFFER_SIZE = 50000;
 
-    private const string SERVER_ADRESS = "localhost";
+    private const string SERVER_ADRESS = "norcisrasp.ddns.net";
     private const int SERVER_PORT = 1789;
     static IMessageHandler  m_MessageHandler = null;
     #endregion
@@ -53,6 +53,7 @@ public class TCPClient
             clientReceiveThread.IsBackground = true;
             clientReceiveThread.Start();
             socketConnected = true;
+            Debug.Log("Connected !");
         }
         catch (Exception e)
         {
@@ -115,7 +116,7 @@ public class TCPClient
                 // Write byte array to socketConnection stream.                 
                 stream.Write(clientMessageAsByteArray, 0, clientMessageAsByteArray.Length);
                 stream.Flush();
-                Debug.Log("Client sent his message - should be received by server");
+                Debug.Log("Client sent " + clientMessage);
             }
         }
         catch (SocketException socketException)

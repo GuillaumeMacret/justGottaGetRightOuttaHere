@@ -10,9 +10,14 @@ public class VirtualDpad : MonoBehaviour
     private Vector2 touchStartPosition, touchEndPosition;
     private string direction;
 
+    private float m_InputCooldown = .5f;
+    private float m_TimerCooldown = 0.0f;
+
     // Update is called once per frame
     void Update()
     {
+        /* Getting the touch */
+        direction = "";
         if (Input.touchCount > 0)
         {
             theTouch = Input.GetTouch(0);
@@ -36,16 +41,42 @@ public class VirtualDpad : MonoBehaviour
 
                 else if (Mathf.Abs(x) > Mathf.Abs(y))
                 {
-                    direction = x > 0 ? "Right" : "Left";
+                    direction = x > 0 ? "right" : "left";
                 }
 
                 else
                 {
-                    direction = y > 0 ? "Up" : "Down";
+                    direction = y > 0 ? "up" : "down";
                 }
             }
         }
 
-        directionText.text = direction;
+        /* Decide if the send is on cooldown */
+        if(m_TimerCooldown > 0)
+        {
+            m_TimerCooldown -= Time.deltaTime;
+            //Debug.Log("Send is on cooldown " + m_TimerCooldown + " seconds left");
+        }
+        else
+        {
+            /* Create the message and send it */
+            string messageToSend = "";
+            if (direction != "" && direction != "Tapped")
+            {
+                messageToSend = MessageBuilders.BuildMovementMessage(direction);
+                m_TimerCooldown = m_InputCooldown;
+            }
+            else if (direction == "Tapped")
+            {
+                messageToSend = MessageBuilders.BuildActionMessage();
+                m_TimerCooldown = m_InputCooldown;
+            }
+
+            if (messageToSend != "")
+            {
+                TCPClient.SendMessage(messageToSend);
+            }
+        }
+
     }
 }

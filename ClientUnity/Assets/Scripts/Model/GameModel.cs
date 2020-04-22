@@ -11,6 +11,7 @@ public class GameModel : MonoBehaviour
     public bool needsObjectsRedraw = false;
     public Tilemap blocksTileMap;
     public Player playerPrefab;
+    public Camera mainCamera;
 
     /*Tiles layers*/
     private int[][] m_blocksLayer;
@@ -26,10 +27,16 @@ public class GameModel : MonoBehaviour
     {
         if (needsFullRedraw)
         {
+            blocksTileMap.ClearAllTiles();
             RefreshBlocksTilemap();
             RefreshObjectsTilemap();
-        }else if (needsObjectsRedraw)
+            UpdateCameraSettings();
+            needsFullRedraw = false;
+        }
+        else if (needsObjectsRedraw)
         {
+            blocksTileMap.ClearAllTiles();
+            RefreshBlocksTilemap();
             RefreshObjectsTilemap();
         }
 
@@ -48,7 +55,33 @@ public class GameModel : MonoBehaviour
 
             m_playerToInstantiate.RemoveAt(0);
         }
-        //TODO move player sprites
+    }
+
+    /// <summary>
+    /// Sets the main camera position and size according to the size of the blocks layer
+    /// </summary>
+    private void UpdateCameraSettings()
+    {
+        //TODO
+        /* Dertemine wich dimension is reaching the border */
+        int width = m_blocksLayer[0].Length;
+        int height = m_blocksLayer.Length;
+        Debug.Log("Sizes : " + width + " " + height);
+        float widthRatio = width / 5.0f;
+        float heightRatio = height / 8.0f;
+        Debug.Log("Ratios : " + widthRatio + " " + heightRatio);
+        if (widthRatio > heightRatio)
+        {
+            Debug.Log("Width is limiting");
+            mainCamera.orthographicSize = (widthRatio * 8) / 2;
+        }
+        else
+        {
+            Debug.Log("Height is limiting");
+            mainCamera.orthographicSize = height / 2;
+        }
+
+        mainCamera.transform.position = new Vector3(width / 2.0f, -height / 2.0f, mainCamera.transform.position.z);
     }
 
     /// <summary>
@@ -56,11 +89,12 @@ public class GameModel : MonoBehaviour
     /// </summary>
     private void RefreshBlocksTilemap()
     {
+        if (m_blocksLayer == null) return;
         for (int i = 0; i < m_blocksLayer.Length; ++i)
         {
             for (int j = 0; j < m_blocksLayer[i].Length; ++j)
             {
-                blocksTileMap.SetTile(new Vector3Int(i, -j, 1), TilesResourcesLoader.GetTileByNameAndId(m_terrainTilesPath, m_blocksLayer[i][j]));
+                blocksTileMap.SetTile(new Vector3Int(j , -i - 1, 1), TilesResourcesLoader.GetTileByNameAndId(m_terrainTilesPath, m_blocksLayer[i][j]));
             }
         }
     }
@@ -70,11 +104,12 @@ public class GameModel : MonoBehaviour
     /// </summary>
     private void RefreshObjectsTilemap()
     {
+        if (m_objectsLayer == null) return;
         for (int i = 0; i < m_objectsLayer.Length; ++i)
         {
             for (int j = 0; j < m_objectsLayer[i].Length; ++j)
             {
-                blocksTileMap.SetTile(new Vector3Int(i, -j, 2), TilesResourcesLoader.GetTileByNameAndId(m_terrainTilesPath, m_objectsLayer[i][j]));
+                blocksTileMap.SetTile(new Vector3Int(j, -i-1, 2), TilesResourcesLoader.GetTileByNameAndId(m_terrainTilesPath, m_objectsLayer[i][j]));
             }
         }
     }
@@ -144,7 +179,6 @@ public class GameModel : MonoBehaviour
         {
             LoadPlayers(players.Count, players);
         }
-        //TODO other layers
         if(objects.Count > 0)
         {
             LoadObjects(objects.Count, objects[0].Count, objects);

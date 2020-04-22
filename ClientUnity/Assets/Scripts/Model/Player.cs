@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor.Animations;
 
 public class Player : MonoBehaviour
 {
@@ -50,5 +51,15 @@ public class Player : MonoBehaviour
     public void AddDestination(int xPos, int yPos)
     {
         targetPositions.Add(new Vector3(xPos, yPos, 0));
+    }
+
+    public void SetAnimatorController(AnimatorController anim)
+    {
+        if(animator == null)
+        {
+            Debug.LogError("Player's Animator reference is null! Can't set the controller ");
+            return;
+        }
+        animator.runtimeAnimatorController = anim;
     }
 }

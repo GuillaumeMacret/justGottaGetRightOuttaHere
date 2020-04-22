@@ -68,7 +68,10 @@ public class TCPServer implements Runnable{
     }
 }
 
-//{"Action":"loadLevel","Blocks":[[1,1,1],[2,2,2]],"Players":[{"xPos":0,"yPos":0},{"xPos":1,"yPos":1},{"xPos":0,"yPos":23},{"xPos":0,"yPos":21}],"Objects":[[3,3,3],[0,0,0]],"Bullshit":"Shitbull"}
+//{"Action":"loadLevel","Blocks":[[0,0,0],[0,0,0]],"Players":[{"xPos":0,"yPos":0},{"xPos":1,"yPos":1},{"xPos":0,"yPos":23},{"xPos":0,"yPos":21}],"Objects":[[3,3,3],[0,0,0]],"Bullshit":"Shitbull"}
+//{"Action":"loadLevel","Blocks":[[0,0,0],[0,0,0]],"Players":[{"xPos":0,"yPos":0},{"xPos":1,"yPos":1},{"xPos":0,"yPos":23},{"xPos":0,"yPos":21}],"Objects":[[0,0,0],[0,0,0]],"Bullshit":"Shitbull"}
+
+//{"Action":"loadLevel","Blocks":[[0,0,0],[0,0,0],[0,0,0]],"Players":[{"xPos":0,"yPos":0,"Role":0},{"xPos":1,"yPos":1,"Role":1},{"xPos":0,"yPos":23,"Role":2},{"xPos":0,"yPos":21,"Role":3}],"Objects":[[0,0,0],[0,0,0],[0,0,0]]}
 
 //{"Action":"loadLevel","Blocks":[[1,1,1],[2,2,2],[3,3,3]]}
 //{"Action":"loadLevel","Blocks":[[1,1,1],[2,2,2],[3,3,3],[3,3,3],[3,3,3],[3,3,3],[3,3,3],[3,3,3]]}

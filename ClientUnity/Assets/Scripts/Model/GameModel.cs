@@ -4,14 +4,17 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEditor.Animations;
 
 public class GameModel : MonoBehaviour
 {
     public bool needsFullRedraw = false;
     public bool needsObjectsRedraw = false;
     public Tilemap blocksTileMap;
+    public Tilemap objectsTileMap;
     public Player playerPrefab;
     public Camera mainCamera;
+    public PlayerAnimatorControllerFactory animFactory;
 
     /*Tiles layers*/
     private int[][] m_blocksLayer;
@@ -28,6 +31,7 @@ public class GameModel : MonoBehaviour
         if (needsFullRedraw)
         {
             blocksTileMap.ClearAllTiles();
+            objectsTileMap.ClearAllTiles();
             RefreshBlocksTilemap();
             RefreshObjectsTilemap();
             UpdateCameraSettings();
@@ -35,8 +39,6 @@ public class GameModel : MonoBehaviour
         }
         else if (needsObjectsRedraw)
         {
-            blocksTileMap.ClearAllTiles();
-            RefreshBlocksTilemap();
             RefreshObjectsTilemap();
         }
 
@@ -45,6 +47,8 @@ public class GameModel : MonoBehaviour
             Player p = Instantiate(playerPrefab);
             p.transform.position = new Vector3(m_playerToInstantiate[0][0], -m_playerToInstantiate[0][1],0);
             p.id = (int) m_playerToInstantiate[0][2];
+            AnimatorController animController = animFactory.GetAnimatorController(p.id);
+            p.SetAnimatorController(animController);
             m_players.Add(p);
 
             GameObject[] container = GameObject.FindGameObjectsWithTag("PlayersContainer");
@@ -62,22 +66,21 @@ public class GameModel : MonoBehaviour
     /// </summary>
     private void UpdateCameraSettings()
     {
-        //TODO
         /* Dertemine wich dimension is reaching the border */
         int width = m_blocksLayer[0].Length;
         int height = m_blocksLayer.Length;
-        Debug.Log("Sizes : " + width + " " + height);
+        //Debug.Log("Sizes : " + width + " " + height);
         float widthRatio = width / 5.0f;
         float heightRatio = height / 8.0f;
-        Debug.Log("Ratios : " + widthRatio + " " + heightRatio);
+        //Debug.Log("Ratios : " + widthRatio + " " + heightRatio);
         if (widthRatio > heightRatio)
         {
-            Debug.Log("Width is limiting");
+            //Debug.Log("Width is limiting");
             mainCamera.orthographicSize = (widthRatio * 8) / 2;
         }
         else
         {
-            Debug.Log("Height is limiting");
+            //Debug.Log("Height is limiting");
             mainCamera.orthographicSize = height / 2;
         }
 
@@ -109,7 +112,7 @@ public class GameModel : MonoBehaviour
         {
             for (int j = 0; j < m_objectsLayer[i].Length; ++j)
             {
-                blocksTileMap.SetTile(new Vector3Int(j, -i-1, 2), TilesResourcesLoader.GetTileByNameAndId(m_terrainTilesPath, m_objectsLayer[i][j]));
+                objectsTileMap.SetTile(new Vector3Int(j, -i-1, 2), TilesResourcesLoader.GetTileByNameAndId(m_terrainTilesPath, m_objectsLayer[i][j]));
             }
         }
     }
@@ -160,7 +163,7 @@ public class GameModel : MonoBehaviour
         m_players = new List<Player>();
         for(int i = 0; i < nbPlayers;++i)
         {
-            m_playerToInstantiate.Add(new Vector3(playersArray[i]["xPos"], playersArray[i]["yPos"], i));
+            m_playerToInstantiate.Add(new Vector3(playersArray[i]["xPos"], playersArray[i]["yPos"], playersArray[i]["Role"]));
         }
     }
 
@@ -179,6 +182,8 @@ public class GameModel : MonoBehaviour
         {
             LoadPlayers(players.Count, players);
         }
+        //FIXME If switching from a map with object to a map without, previous objects stay
+        // A map without objects should not exists so this is not an critical fix
         if(objects.Count > 0)
         {
             LoadObjects(objects.Count, objects[0].Count, objects);

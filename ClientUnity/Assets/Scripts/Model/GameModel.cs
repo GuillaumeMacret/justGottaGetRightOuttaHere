@@ -24,7 +24,7 @@ public class GameModel : MonoBehaviour
     //The vec with info to create new players (xpos,ypos,id)
     private List<Vector3> m_playerToInstantiate = new List<Vector3>();
 
-    private const string m_terrainTilesPath = "Tiles/TerrainTiles/terrain_atlas";
+    private const string m_terrainTilesPath = "Tiles/MergeTerrainTiles/Spritesheetmerge";
 
     private void Update()
     {
@@ -97,7 +97,11 @@ public class GameModel : MonoBehaviour
         {
             for (int j = 0; j < m_blocksLayer[i].Length; ++j)
             {
-                blocksTileMap.SetTile(new Vector3Int(j , -i - 1, 1), TilesResourcesLoader.GetTileByNameAndId(m_terrainTilesPath, m_blocksLayer[i][j]));
+                if(m_blocksLayer[i][j] > 0)
+                {
+                    blocksTileMap.SetTile(new Vector3Int(j, -i - 1, 1), TilesResourcesLoader.GetTileByNameAndId(m_terrainTilesPath, m_blocksLayer[i][j] - 1));
+                }
+                
             }
         }
     }
@@ -112,7 +116,11 @@ public class GameModel : MonoBehaviour
         {
             for (int j = 0; j < m_objectsLayer[i].Length; ++j)
             {
-                objectsTileMap.SetTile(new Vector3Int(j, -i-1, 2), TilesResourcesLoader.GetTileByNameAndId(m_terrainTilesPath, m_objectsLayer[i][j]));
+                if (m_objectsLayer[i][j] > 0)
+                {
+                    objectsTileMap.SetTile(new Vector3Int(j, -i - 1, 2), TilesResourcesLoader.GetTileByNameAndId(m_terrainTilesPath, m_objectsLayer[i][j] - 1));
+                }
+                    
             }
         }
     }

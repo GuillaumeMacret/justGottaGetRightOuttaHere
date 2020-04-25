@@ -150,8 +150,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerAnimators:
+  - {fileID: 9100000, guid: 19d22d3b32a52fa4e865a795977f4a47, type: 2}
   - {fileID: 9100000, guid: d0b5c2ed48bcf4e4b815569d94dfb3f0, type: 2}
   - {fileID: 9100000, guid: 34168172819492548aae20877c6e2be2, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!4 &520207646
 Transform:
   m_ObjectHideFlags: 0

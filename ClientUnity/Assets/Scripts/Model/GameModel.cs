@@ -45,11 +45,13 @@ public class GameModel : MonoBehaviour
         if(m_playerToInstantiate.Count > 0)
         {
             Player p = Instantiate(playerPrefab);
-            p.transform.position = new Vector3(m_playerToInstantiate[0][0], -m_playerToInstantiate[0][1],0);
+            //Debug.Log("Instatiating new player : " + m_playerToInstantiate[0][0] + m_playerToInstantiate[0][1] + m_playerToInstantiate[0][2]);
             p.id = (int) m_playerToInstantiate[0][2];
             AnimatorController animController = animFactory.GetAnimatorController(p.id);
             p.SetAnimatorController(animController);
+            p.transform.position = new Vector3(m_playerToInstantiate[0][0], -m_playerToInstantiate[0][1],0);
             m_players.Add(p);
+            Debug.Log(p.transform.position);
 
             GameObject[] container = GameObject.FindGameObjectsWithTag("PlayersContainer");
             if (container.Length > 0)

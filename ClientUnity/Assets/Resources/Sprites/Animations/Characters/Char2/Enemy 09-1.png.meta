@@ -1,43 +1,43 @@
 fileFormatVersion: 2
-guid: 3ccbcb74693441747b2d2d56b9bd209a
+guid: 5fe234945b0030b45a77ee0f729424fd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8144784638052731925
-    second: Male 18-1_0
+      213: 754085303044119588
+    second: Enemy 09-1_0
   - first:
-      213: -8700893360882203359
-    second: Male 18-1_1
+      213: -425086992313348419
+    second: Enemy 09-1_1
   - first:
-      213: -7052768617648643774
-    second: Male 18-1_2
+      213: 2802683664405048165
+    second: Enemy 09-1_2
   - first:
-      213: 4917235764662082246
-    second: Male 18-1_3
+      213: 1091906492725157110
+    second: Enemy 09-1_3
   - first:
-      213: 3657314152654938807
-    second: Male 18-1_4
+      213: 3185849820448871428
+    second: Enemy 09-1_4
   - first:
-      213: -8486514058301867113
-    second: Male 18-1_5
+      213: 3825404021248822435
+    second: Enemy 09-1_5
   - first:
-      213: 1319590655772410965
-    second: Male 18-1_6
+      213: -168438698497880619
+    second: Enemy 09-1_6
   - first:
-      213: 6341114153414873576
-    second: Male 18-1_7
+      213: -2191943603766293757
+    second: Enemy 09-1_7
   - first:
-      213: 3566026451454086939
-    second: Male 18-1_8
+      213: 7980763179668802547
+    second: Enemy 09-1_8
   - first:
-      213: 4045820986571034704
-    second: Male 18-1_9
+      213: -4817950575998347183
+    second: Enemy 09-1_9
   - first:
-      213: 6440890714884391974
-    second: Male 18-1_10
+      213: 1855369233535872935
+    second: Enemy 09-1_10
   - first:
-      213: -7065846640746335481
-    second: Male 18-1_11
+      213: 1324455095144624201
+    second: Enemy 09-1_11
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -134,253 +134,253 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Male 18-1_0
+      name: Enemy 09-1_0
       rect:
         serializedVersion: 2
         x: 0
         y: 96
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 40abb2fd3d445d44682bfd4f28ab7df6
-      internalID: -8144784638052731925
+      spriteID: 15d4927104e45ce4b8610ed817647021
+      internalID: 754085303044119588
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Male 18-1_1
+      name: Enemy 09-1_1
       rect:
         serializedVersion: 2
         x: 32
         y: 96
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8a5f5b0c552b4184787faca3b1c1375d
-      internalID: -8700893360882203359
+      spriteID: 05b16602ef1912f4a81266b3e58ccd7d
+      internalID: -425086992313348419
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Male 18-1_2
+      name: Enemy 09-1_2
       rect:
         serializedVersion: 2
         x: 64
         y: 96
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8a09977781d55624c94cf7eef42d4096
-      internalID: -7052768617648643774
+      spriteID: fed373ec618127842b020decbe7538ba
+      internalID: 2802683664405048165
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Male 18-1_3
+      name: Enemy 09-1_3
       rect:
         serializedVersion: 2
         x: 0
         y: 64
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8b6ff0b55bb6c844989f47b28c590a3e
-      internalID: 4917235764662082246
+      spriteID: a8823fe378b1d684283d3b3356b1d13c
+      internalID: 1091906492725157110
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Male 18-1_4
+      name: Enemy 09-1_4
       rect:
         serializedVersion: 2
         x: 32
         y: 64
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9e7f4544063091d4da684bf3d0284395
-      internalID: 3657314152654938807
+      spriteID: bef61de9d46a0f147928eac7134b8375
+      internalID: 3185849820448871428
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Male 18-1_5
+      name: Enemy 09-1_5
       rect:
         serializedVersion: 2
         x: 64
         y: 64
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4d9bccbbd7c608f4f8a3b2e2c046ea94
-      internalID: -8486514058301867113
+      spriteID: 2d66a2f1e9a1ab2489b769708a244420
+      internalID: 3825404021248822435
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Male 18-1_6
+      name: Enemy 09-1_6
       rect:
         serializedVersion: 2
         x: 0
         y: 32
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 49621a6d6b5bb0c4a9070f2fed163a14
-      internalID: 1319590655772410965
+      spriteID: 1e1ccf95373940a4383c1d319f9933a3
+      internalID: -168438698497880619
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Male 18-1_7
+      name: Enemy 09-1_7
       rect:
         serializedVersion: 2
         x: 32
         y: 32
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ae8cd0cd4d0e871488f01065fafc1c36
-      internalID: 6341114153414873576
+      spriteID: e277c4e31ca66b24181f782fcd2cf6a9
+      internalID: -2191943603766293757
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Male 18-1_8
+      name: Enemy 09-1_8
       rect:
         serializedVersion: 2
         x: 64
         y: 32
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 494c8aac8a28bdd44aa0f54b72e9fd3f
-      internalID: 3566026451454086939
+      spriteID: 9a5b8fda072d34844871a8b6f39528af
+      internalID: 7980763179668802547
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Male 18-1_9
+      name: Enemy 09-1_9
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c3eb56eaf13cbf040adffb28e356c85e
-      internalID: 4045820986571034704
+      spriteID: fbd02a39f496e5b47bd47ef0a2cfb98f
+      internalID: -4817950575998347183
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Male 18-1_10
+      name: Enemy 09-1_10
       rect:
         serializedVersion: 2
         x: 32
         y: 0
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9821fbd467b6d3a47809a466e7c2af52
-      internalID: 6440890714884391974
+      spriteID: 6319f35cfd716854ea8eda85d3480752
+      internalID: 1855369233535872935
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Male 18-1_11
+      name: Enemy 09-1_11
       rect:
         serializedVersion: 2
         x: 64
         y: 0
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f3b4bade80f99884b9ec0ae0fb6a3db9
-      internalID: -7065846640746335481
+      spriteID: d1e0ae6eb691cac4ca4f10bc1f7821c6
+      internalID: 1324455095144624201
       vertices: []
       indices: 
       edges: []

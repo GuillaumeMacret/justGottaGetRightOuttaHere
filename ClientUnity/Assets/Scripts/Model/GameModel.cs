@@ -32,6 +32,11 @@ public class GameModel : MonoBehaviour
         {
             blocksTileMap.ClearAllTiles();
             objectsTileMap.ClearAllTiles();
+            GameObject[] container = GameObject.FindGameObjectsWithTag("PlayersContainer");
+            foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                Destroy(g);
+            }
             RefreshBlocksTilemap();
             RefreshObjectsTilemap();
             UpdateCameraSettings();

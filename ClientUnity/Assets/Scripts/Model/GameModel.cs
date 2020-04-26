@@ -17,6 +17,13 @@ public class GameModel : MonoBehaviour
     public PlayerAnimatorControllerFactory animFactory;
     public List<AudioClip> musics;
 
+
+    private static float m_GameTimer;
+    public static float GameTimer { get => m_GameTimer; }
+
+    private static string m_LevelName = "No name";
+    public static string LevelName { get => m_LevelName; }
+
     private AudioSource m_audioSource;
     /*Tiles layers*/
     private int[][] m_blocksLayer;
@@ -28,9 +35,11 @@ public class GameModel : MonoBehaviour
 
     private const string m_terrainTilesPath = "Tiles/MergeTerrainTiles/Spritesheetmerge";
 
+
     private void Awake()
     {
         m_audioSource = GetComponent<AudioSource>();
+        m_GameTimer = 0;
     }
 
     private void startRandomMusic()
@@ -40,6 +49,7 @@ public class GameModel : MonoBehaviour
     }
     private void Update()
     {
+        m_GameTimer += Time.deltaTime;
         if (needsFullRedraw)
         {
             blocksTileMap.ClearAllTiles();
@@ -53,6 +63,7 @@ public class GameModel : MonoBehaviour
             RefreshObjectsTilemap();
             UpdateCameraSettings();
             startRandomMusic();
+            m_GameTimer = 0;
             needsFullRedraw = false;
         }
         else if (needsObjectsRedraw)
@@ -200,8 +211,9 @@ public class GameModel : MonoBehaviour
     /// This includes : blocks layer, object layer and players
     /// </summary>
     /// <param name="loadLevelObject"></param>
-    public void LoadLevel(JSONArray blocks, JSONArray players, JSONArray objects)
+    public void LoadLevel(JSONArray blocks, JSONArray players, JSONArray objects, string levelName)
     {
+        m_LevelName = levelName;
         if (blocks.Count > 0)
         {
             LoadBlocks(blocks.Count, blocks[0].Count, blocks);

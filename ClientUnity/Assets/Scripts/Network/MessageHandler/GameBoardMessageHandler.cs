@@ -16,7 +16,8 @@ public class GameBoardMessageHandler : MonoBehaviour, IMessageHandler
                 JSONArray blocks = loadLevelJson["Blocks"].AsArray;
                 JSONArray objects = loadLevelJson["Objects"].AsArray;
                 JSONArray players = loadLevelJson["Players"].AsArray;
-                model.LoadLevel(blocks, players, objects);
+                string levelName = loadLevelJson["Name"];
+                model.LoadLevel(blocks, players, objects, levelName);
                 break;
             case "move":
                 var moveJson = JSON.Parse(JSONString);

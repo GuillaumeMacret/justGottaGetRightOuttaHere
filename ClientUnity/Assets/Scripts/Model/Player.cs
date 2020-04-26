@@ -1,22 +1,25 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor.Animations;
 
 public class Player : MonoBehaviour
 {
+    public const int ROLE_PHANTOM = 1;
+
     public int id;
     public int speed = 10;
+    public List<AudioClip> stepSounds;
+    public float pitchRangeDown = .8f;
+    public float pitchRangeUp = 1.2f;
 
-    private Animator animator;
-
-    //FIXME public for test only
+    private Animator m_animator;
+    private AudioSource m_audioSource;
     public List<Vector3> targetPositions;
 
     private void Awake()
     {
-        animator = GetComponent<Animator>();
+        m_animator = GetComponent<Animator>();
+        m_audioSource = GetComponent<AudioSource>();
     }
 
     private void MoveTowardsNextDestination()
@@ -37,13 +40,18 @@ public class Player : MonoBehaviour
         {
             Vector3 direction = targetPositions[0] - transform.position;
             MoveTowardsNextDestination();
-            animator.SetFloat("MoveX", direction.x);
-            animator.SetFloat("MoveY", direction.y);
-            animator.SetBool("Moving", true);
+            m_animator.SetFloat("MoveX", direction.x);
+            m_animator.SetFloat("MoveY", direction.y);
+            m_animator.SetBool("Moving", true);
+            if (!m_audioSource.isPlaying && id != ROLE_PHANTOM)
+            {
+                m_audioSource.pitch = Random.Range(pitchRangeDown, pitchRangeUp);
+                m_audioSource.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Count)]);
+            }
         }
         else
         {
-            animator.SetBool("Moving", false); 
+            m_animator.SetBool("Moving", false); 
         }
 
     }
@@ -55,11 +63,11 @@ public class Player : MonoBehaviour
 
     public void SetAnimatorController(AnimatorController anim)
     {
-        if(animator == null)
+        if(m_animator == null)
         {
             Debug.LogError("Player's Animator reference is null! Can't set the controller ");
             return;
         }
-        animator.runtimeAnimatorController = anim;
+        m_animator.runtimeAnimatorController = anim;
     }
 }

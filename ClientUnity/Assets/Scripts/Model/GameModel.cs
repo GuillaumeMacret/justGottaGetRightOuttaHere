@@ -15,7 +15,9 @@ public class GameModel : MonoBehaviour
     public Player playerPrefab;
     public Camera mainCamera;
     public PlayerAnimatorControllerFactory animFactory;
+    public List<AudioClip> musics;
 
+    private AudioSource m_audioSource;
     /*Tiles layers*/
     private int[][] m_blocksLayer;
     private int[][] m_objectsLayer;
@@ -26,6 +28,16 @@ public class GameModel : MonoBehaviour
 
     private const string m_terrainTilesPath = "Tiles/MergeTerrainTiles/Spritesheetmerge";
 
+    private void Awake()
+    {
+        m_audioSource = GetComponent<AudioSource>();
+    }
+
+    private void startRandomMusic()
+    {
+        m_audioSource.clip = musics[Random.Range(0, musics.Count)];
+        m_audioSource.Play();
+    }
     private void Update()
     {
         if (needsFullRedraw)
@@ -40,6 +52,7 @@ public class GameModel : MonoBehaviour
             RefreshBlocksTilemap();
             RefreshObjectsTilemap();
             UpdateCameraSettings();
+            startRandomMusic();
             needsFullRedraw = false;
         }
         else if (needsObjectsRedraw)
@@ -193,13 +206,13 @@ public class GameModel : MonoBehaviour
         {
             LoadBlocks(blocks.Count, blocks[0].Count, blocks);
         }
-        if(players.Count > 0)
+        if (players.Count > 0)
         {
             LoadPlayers(players.Count, players);
         }
         //FIXME If switching from a map with object to a map without, previous objects stay
         // A map without objects should not exists so this is not an critical fix
-        if(objects.Count > 0)
+        if (objects.Count > 0)
         {
             LoadObjects(objects.Count, objects[0].Count, objects);
         }

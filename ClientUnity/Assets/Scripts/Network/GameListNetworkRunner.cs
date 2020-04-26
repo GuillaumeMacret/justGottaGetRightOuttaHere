@@ -20,4 +20,12 @@ public class GameListNetworkRunner : MonoBehaviour
 			TCPClient.SendMessage(messageToSend);
 		}
 	}
+
+	public void SendGameCreateRequest() 
+	{
+		string messageToSend = MessageBuilders.BuildCreateGameMessage();
+		if(messageToSend != "") {
+			TCPClient.SendMessage(messageToSend);
+		}
+	}
 }

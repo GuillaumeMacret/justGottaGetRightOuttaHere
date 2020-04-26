@@ -42,7 +42,12 @@ public class GameModel : MonoBehaviour
         m_GameTimer = 0;
     }
 
-    private void startRandomMusic()
+	private void Start() 
+	{
+		LoadLevel(GameLobbyData.BlocksJson, GameLobbyData.PlayersJson, GameLobbyData.ObjectsJson, GameLobbyData.LevelName);
+	}
+
+	private void startRandomMusic()
     {
         m_audioSource.clip = musics[Random.Range(0, musics.Count)];
         m_audioSource.Play();

@@ -14,12 +14,16 @@ public class MessageBuilders
 		return "{\"Action\":\"joinGame\",\"GameId\":" + gameId + "}";
 	}
 
+	public static string BuildCreateGameMessage() {
+		return "{\"Action\":\"createGame\"}";
+	}
+
 	public static string BuildChangeMapMessage(string map) 
 	{
 		return "{\"Action\":\"changeMap\",\"Map\":\"" + map + "\"}";
 	}
 
-	public static string BuildChangeRoleMessage(int playerId, int role) 
+	public static string BuildChangeRoleMessage(int role) 
 	{
 		return "{\"Action\":\"roleChange\",\"RoleId\":" + role + "}";
 	}

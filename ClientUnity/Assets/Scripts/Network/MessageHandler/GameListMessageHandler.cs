@@ -21,38 +21,39 @@ public class GameListMessageHandler : MonoBehaviour, IMessageHandler
 				}
 				gameListCreator.SetGameListAndUpdate(gameList);
 				break;
+
 			case "joinedGame":
 				JSONNode joinedGame = JSON.Parse(JSONString);
 				int gameId = joinedGame["GameId"];
 				int playerId = joinedGame["PlayerId"];
 				string map = joinedGame["Map"];
-				JSONArray playersJson = joinedGame["Players"].AsArray;
-				int[] players = new int[playersJson.Count];
-				for (int i = 0; i < playersJson.Count; ++i)
-					players[i] = playersJson[i];
-				sceneManager.ToLobbyScene(gameId, playerId, players, map);
+				JSONArray playersRolesJson = joinedGame["PlayersRoles"].AsArray;
+				int[] playersRoles = new int[playersRolesJson.Count];
+				for (int i = 0; i < playersRolesJson.Count; ++i)
+					playersRoles[i] = playersRolesJson[i];
+				sceneManager.ToLobbyScene(gameId, playerId, playersRoles, map);
 				break;
+
 			case "cantJoinGame":
 				JSONNode cantJoin = JSON.Parse(JSONString);
 				gameId = cantJoin["GameId"];
 				string errorMessage = cantJoin["MoreInfo"];
 				//TODO : Display the error message
 				break;
+
+			case "createdGame":
+				JSONNode createdGame = JSON.Parse(JSONString);
+				gameId = createdGame["GameId"];
+				JSONArray mapsJson = createdGame["MapList"].AsArray;
+				string[] mapList = new string[mapsJson.Count];
+				for (int i = 0; i < mapsJson.Count; ++i)
+					mapList[i] = mapsJson[i];
+				sceneManager.ToLobbyScene(gameId, mapList);
+				break;
+
 			default:
 				Debug.LogError("Can't handle this action : " + action.Action);
 				break;
 		}
 	}
-
-	// Start is called before the first frame update
-	void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

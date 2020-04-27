@@ -95,14 +95,17 @@ std::string Game::movePlayer(int playerID, std::string direction)
             else
             {
                 p->setPos(newPosX, newPosY);
-                if(checkOnObject(_grid[newPosY][newPosX].backgroundValue))
+                std::cout << "Are we on an object?" << std::endl;
+                if(checkOnObject(_grid[newPosY][newPosX].blockValue))
                 {
+                    std::cout << "Yes we can!" << std::endl;
                     _grid[newPosY][newPosX].blockValue = EMPTY;
                     _grid[newPosY][newPosX].collisionValue = C_NOTHING;
                     changes += tileToJSON(newPosX, newPosY, EMPTY);
                 }
                 else
                 {
+                    std::cout << "NO!!!!!!" << std::endl;
                     //Player stands on a key
                     if (_grid[newPosY][newPosX].blockValue == KEY)
                     {

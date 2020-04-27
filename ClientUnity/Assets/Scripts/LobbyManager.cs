@@ -40,7 +40,8 @@ public class LobbyManager : MonoBehaviour
 			MapName.gameObject.SetActive(false);
 			MapsDropdown.AddOptions(new List<string>(GameLobbyData.MapList));
 			MapsDropdown.onValueChanged.AddListener(delegate { MapChanged(MapsDropdown); });
-			LobbyPlayerControllers[0].ChangeRole(0, RoleCharacterSprites[0], RoleDescriptions[0]);
+			if (!string.IsNullOrEmpty(GameLobbyData.LevelName))
+				MapsDropdown.value = MapsDropdown.options.FindIndex((i) => { return i.text.Equals(GameLobbyData.LevelName); });
 		}
 		else // Game not created by user
 		{
@@ -48,11 +49,11 @@ public class LobbyManager : MonoBehaviour
 			StartGameButton.interactable = false;
 			ChangeMap(GameLobbyData.MapName);
 			Debug.Log("Joined the game, GameLobbyData.PlayersRoles.Length="+GameLobbyData.PlayersRoles.Length);
-			for(int i = 0; i < GameLobbyData.PlayersRoles.Length; ++i) 
-			{
-				Debug.Log("Change role, i=" + i + " role="+GameLobbyData.PlayersRoles[i]);
-				LobbyPlayerControllers[i].ChangeRole(GameLobbyData.PlayersRoles[i], RoleCharacterSprites[GameLobbyData.PlayersRoles[i]], RoleDescriptions[GameLobbyData.PlayersRoles[i]]);
-			}
+		}
+		for(int i = 0; i < GameLobbyData.PlayersRoles.Length; ++i) 
+		{
+			Debug.Log("Change role, i=" + i + " role="+GameLobbyData.PlayersRoles[i]);
+			LobbyPlayerControllers[i].ChangeRole(GameLobbyData.PlayersRoles[i], RoleCharacterSprites[GameLobbyData.PlayersRoles[i]], RoleDescriptions[GameLobbyData.PlayersRoles[i]]);
 		}
 		// Removing change character button for other players
 		for(int i = 0; i < LobbyPlayerControllers.Length; ++i) 

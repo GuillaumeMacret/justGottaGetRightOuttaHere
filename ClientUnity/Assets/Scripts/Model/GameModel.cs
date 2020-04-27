@@ -253,6 +253,8 @@ public class GameModel : MonoBehaviour
 
     public void UpdateObjects(JSONArray changes)
     {
+        if (changes == null) return;
+
         for(int i = 0; i < changes.Count; ++i)
         {
             Debug.Log("Changing object at " + changes[i]["yPos"] + " " + changes[i]["xPos"] +" from " + m_objectsLayer[changes[i]["yPos"]][changes[i]["xPos"]] + " to " + changes[i]["value"]);

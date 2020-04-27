@@ -15,4 +15,10 @@ public class ButtonInput : MonoBehaviour
         string messageToSend = MessageBuilders.BuildActionMessage();
         TCPClient.SendMessage(messageToSend);
     }
+
+    public void SendReturnMessage()
+    {
+        string messageToSend = MessageBuilders.BuildLobbyMessage();
+        TCPClient.SendMessage(messageToSend);
+    }
 }

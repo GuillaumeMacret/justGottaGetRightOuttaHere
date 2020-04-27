@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
 
     private Animator m_animator;
     private AudioSource m_audioSource;
+    private SpriteRenderer m_SpriteRenderer;
 
     private Vector3 lastDirection;
     public List<Vector3> targetPositions;
@@ -22,6 +23,7 @@ public class Player : MonoBehaviour
     {
         m_animator = GetComponent<Animator>();
         m_audioSource = GetComponent<AudioSource>();
+        m_SpriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void MoveTowardsNextDestination()
@@ -41,6 +43,19 @@ public class Player : MonoBehaviour
         if(targetPositions.Count > 0)
         {
             Vector3 direction = targetPositions[0] - transform.position;
+
+            if(direction.magnitude > 3)
+            {
+                Debug.Log("Big movement detected, going sneaky mode");
+                speed = 100;
+                GetComponent<SpriteRenderer>().enabled = false;
+            }
+            else
+            {
+                GetComponent<SpriteRenderer>().enabled = true;
+                speed = 10;
+            }
+
             MoveTowardsNextDestination();
             m_animator.SetBool("Moving", true);
             if (!m_audioSource.isPlaying && id != ROLE_PHANTOM)

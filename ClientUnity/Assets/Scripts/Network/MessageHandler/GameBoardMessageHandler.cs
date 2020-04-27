@@ -22,12 +22,14 @@ public class GameBoardMessageHandler : MonoBehaviour, IMessageHandler
             case "move":
                 var moveJson = JSON.Parse(JSONString);
                 model.MovePlayer(moveJson["Player"], moveJson["PosX"], moveJson["PosY"]);
+                model.UpdateObjects(moveJson["Changes"].AsArray);
                 break;
             case "action":
                 var updateLevelJson = JSON.Parse(JSONString);
                 JSONArray updates = updateLevelJson["Changes"].AsArray;
-
                 model.UpdateObjects(updates);
+                model.MovePlayer(updateLevelJson["Player"], updateLevelJson["PosX"], updateLevelJson["PosY"]);
+
                 break;
             default:
                 Debug.LogError("Can't handle this action : " + action.Action);

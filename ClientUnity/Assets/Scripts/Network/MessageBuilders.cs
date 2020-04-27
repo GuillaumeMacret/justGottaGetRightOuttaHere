@@ -42,4 +42,9 @@ public class MessageBuilders
     {
         return "{\"Action\":\"action\"}";
     }
+
+    public static string BuildLobbyMessage()
+    {
+        return "{\"Action\":\"returnToLobby\"}";
+    }
 }

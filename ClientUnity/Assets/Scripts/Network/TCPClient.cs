@@ -85,15 +85,35 @@ public class TCPClient
                         // Convert byte array to string message. 						
                         string serverMessage = Encoding.ASCII.GetString(incommingData);
                         Debug.Log("Server message received as: " + serverMessage);
-                        stringBuilder.Append(serverMessage);
-                        /*Debug.Log("Builder last char : '" + stringBuilder[stringBuilder.Length - 2]+"'")*/;
-                        if(m_MessageHandler != null /*&& stringBuilder[stringBuilder.Length - 2] == ';'*/)
+                        foreach(char c in serverMessage)
+                        {
+                            if(c == ';')
+                            {
+                                if(m_MessageHandler != null)
+                                {
+                                    m_MessageHandler.Handle(stringBuilder.ToString());
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("No handler set to handle the message <" + stringBuilder.ToString() + ">");
+                                }
+                                stringBuilder.Clear();
+                            }
+                            else if(c != '\n')
+                            {
+                                stringBuilder.Append(c);
+                            }
+                        }
+                        
+                        /*
+                        if(m_MessageHandler != null && stringBuilder[stringBuilder.Length - 2] == ';')
                         {
                             string JSONonly = stringBuilder.Remove(stringBuilder.Length - 2, 2).ToString();
                             Debug.Log("Handling message : <" + serverMessage.Remove(serverMessage.Length - 2,2) + ">");
                             m_MessageHandler.Handle(JSONonly);
                             stringBuilder = new StringBuilder();
                         }
+                        */
                     }
                 }
             }

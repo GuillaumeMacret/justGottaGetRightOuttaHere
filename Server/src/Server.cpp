@@ -205,7 +205,7 @@ void Server::requestJoinGame(int userIndex, int gameID)
             else
             {
                 answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", ";
-                answer += g->getMapToJSON();
+                answer += g->getCurrentStateToJSON();
                 answer += g->getPlayersToJSON();
                 answer += "};\n";
                 TCPConn.answers[userIndex] = answer;

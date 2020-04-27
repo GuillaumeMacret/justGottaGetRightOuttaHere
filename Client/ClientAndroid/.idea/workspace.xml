@@ -5,17 +5,25 @@
       <config />
     </shared>
   </component>
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="TCPServer:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="010dafe3-e730-42a8-b487-f795d07c9e4b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ClientUnity/Assets/Scripts/Model/GameModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../ClientUnity/Assets/Scripts/Model/GameModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ClientUnity/Assets/Scripts/Network/IMessageHandler.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ClientUnity/Assets/Scripts/Network/IMessageHandler.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ClientUnity/Assets/Scripts/Network/TextElementMessageHandler.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ClientUnity/Assets/Scripts/Network/TextElementMessageHandler.cs.meta" beforeDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="1259e7c8" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="Nexus_5X_API_29_x86" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -49,6 +57,11 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
   </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="DEBUGGABLE_DEVICE" value="Nexus_5X_API_29_x86 [emulator-5554]" />
     <property name="DEBUGGABLE_PROCESS" value="com.example.justgottagetrightouttahere_client" />
@@ -59,7 +72,14 @@
     <property name="android.sdk.path" value="D:/Android/SDK" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/app/src/main/res/drawable" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.17" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="PsdUISettings">
+    <option name="LAST_EDITED_BUILD_TYPE" value="release" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -75,19 +95,7 @@
       <recent name="C:\Users\Norcis\Documents\Git\justGottaGetRightOuttaHere\Client\app\src\main\res\drawable" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="Android App.app">
+  <component name="RunManager" selected="Application.TCPServer">
     <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
       <option name="TEST_OBJECT" value="class" />
       <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
@@ -110,31 +118,10 @@
       <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
       <option name="FORCE_STOP_RUNNING_APP" value="true" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
-      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
-      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
-      <option name="DEBUGGER_TYPE" value="Auto" />
-      <Auto>
-        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
-        <option name="SHOW_STATIC_VARS" value="true" />
-        <option name="WORKING_DIR" value="" />
-        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
-        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
-      </Auto>
-      <Hybrid>
-        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
-        <option name="SHOW_STATIC_VARS" value="true" />
-        <option name="WORKING_DIR" value="" />
-        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
-        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
-      </Hybrid>
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="DEBUGGER_TYPE" value="Java" />
       <Java />
-      <Native>
-        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
-        <option name="SHOW_STATIC_VARS" value="true" />
-        <option name="WORKING_DIR" value="" />
-        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
-        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
-      </Native>
       <Profilers>
         <option name="ADVANCED_PROFILING_ENABLED" value="false" />
         <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
@@ -213,5 +200,31 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="690" y="324" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1586248627024">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="690" y="324" key="#com.intellij.ide.util.TreeClassChooserDialog/1920.-853.1080.1880/0.0.1920.1040@0.0.1920.1040" timestamp="1586248627024" />
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1586248701624">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/1920.-853.1080.1880/0.0.1920.1040@0.0.1920.1040" timestamp="1586248701624" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1586248701624">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="282" key="GridCell.Tab.0.center/1920.-853.1080.1880/0.0.1920.1040@0.0.1920.1040" timestamp="1586248701624" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1586248701624">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="282" key="GridCell.Tab.0.left/1920.-853.1080.1880/0.0.1920.1040@0.0.1920.1040" timestamp="1586248701624" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1586248701624">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="282" key="GridCell.Tab.0.right/1920.-853.1080.1880/0.0.1920.1040@0.0.1920.1040" timestamp="1586248701624" />
+    <state x="440" y="136" width="1040" height="810" key="SettingsEditor" timestamp="1586248648942">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="440" y="136" width="1040" height="810" key="SettingsEditor/1920.-853.1080.1880/0.0.1920.1040@0.0.1920.1040" timestamp="1586248648942" />
   </component>
 </project>

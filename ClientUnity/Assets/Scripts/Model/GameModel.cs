@@ -245,7 +245,7 @@ public class GameModel : MonoBehaviour
     /// <param name="yPos"></param>
     public void MovePlayer(int id, int xPos, int yPos)
     {
-        m_players[id].AddDestination(xPos, yPos);
+        m_players[id].AddDestination(xPos, -yPos);
     }
 
     public void UpdateObjects(JSONArray changes)

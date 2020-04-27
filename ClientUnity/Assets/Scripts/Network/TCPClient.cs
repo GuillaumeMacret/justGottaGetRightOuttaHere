@@ -75,6 +75,7 @@ public class TCPClient
                 // Get a stream object for reading 				
                 using (NetworkStream stream = socketConnection.GetStream())
                 {
+                    bytes = new Byte[BUFFER_SIZE];
                     int length;
                     // Read incomming stream into byte arrary. 					
                     while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)

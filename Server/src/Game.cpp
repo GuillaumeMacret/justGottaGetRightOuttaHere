@@ -211,7 +211,7 @@ std::string Game::checkPush(std::string dir, int posX, int posY, Player *p)
         }
 
         // Is the target position valid?
-        if (pushX >= 0 && pushX < _width && pushY >= 0 && pushY < _height && _grid[pushY][pushX].collisionValue == C_NOTHING)
+        if (pushX >= 0 && pushX < _width && pushY >= 0 && pushY < _height && (_grid[pushY][pushX].blockValue == PIT || _grid[pushY][pushX].collisionValue == C_NOTHING))
         {
             _grid[p->getPosY()][p->getPosX()].collisionValue = p->getLastCollisionType();
             p->setPos(posX, posY);

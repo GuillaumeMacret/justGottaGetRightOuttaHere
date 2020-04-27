@@ -24,10 +24,10 @@
 #define LOCK_3 653
 #define LOCK_4 654
 #define LILYPAD 60
-#define ENEMY_UP 1108
-#define ENEMY_DOWN 1116
-#define ENEMY_LEFT 1110
-#define ENEMY_RIGHT 1113
+#define ENEMY_UP 1106
+#define ENEMY_DOWN 1115
+#define ENEMY_LEFT 1108
+#define ENEMY_RIGHT 1111
 #define SWORD 1061
 #define MONEY 995
 #define BOOK 953

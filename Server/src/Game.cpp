@@ -28,7 +28,6 @@ bool Game::checkOnObject(int tileValue)
             enableSecondaryAction(BREAK);
             return true;
         case MONEY:
-            std::cout<<"Grab that cash with bothands"<<std::endl;
             enableSecondaryAction(CLIMB);
             return true;
         case BOOK:
@@ -158,10 +157,8 @@ std::string Game::movePlayer(int playerID, std::string direction)
         // Checks if the players tries to go through a ladder or ennemies
         else if (p->getRole() == CLIMB && (posX != newPosX || posY != newPosY))
         {
-            std::cout<<"GO THROUG ENEMY???"<<std::endl;
             if(_grid[newPosY][newPosX].blockValue == LADDER || (((IS_ENEMY_BLOCK(_grid[newPosY][newPosX].blockValue)) && p->hasSecondaryAction())))
             {
-                std::cout<<"YES!!!"<<std::endl;
                 _grid[posY][posX].collisionValue = p->getLastCollisionType();
                 p->setPos(newPosX, newPosY);
                 p->setLastCollisionType(C_BLOCK);

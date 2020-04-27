@@ -95,17 +95,14 @@ std::string Game::movePlayer(int playerID, std::string direction)
             else
             {
                 p->setPos(newPosX, newPosY);
-                std::cout << "Are we on an object?" << std::endl;
                 if(checkOnObject(_grid[newPosY][newPosX].blockValue))
                 {
-                    std::cout << "Yes we can!" << std::endl;
                     _grid[newPosY][newPosX].blockValue = EMPTY;
                     _grid[newPosY][newPosX].collisionValue = C_NOTHING;
                     changes += tileToJSON(newPosX, newPosY, EMPTY);
                 }
                 else
                 {
-                    std::cout << "NO!!!!!!" << std::endl;
                     //Player stands on a key
                     if (_grid[newPosY][newPosX].blockValue == KEY)
                     {
@@ -366,6 +363,7 @@ std::string Game::checkTeleport(Player *p)
         _grid[_dummy->posY][_dummy->posX].collisionValue = C_WALKABLE;
         _grid[_dummy->posY][_dummy->posX].blockValue = TELEPORT;
         p->setLastCollisionType(C_WALKABLE);
+        res += ',';
         res += tileToJSON(_dummy->posX, _dummy->posY, TELEPORT);
     }
     //dummy set up: tp the player on it

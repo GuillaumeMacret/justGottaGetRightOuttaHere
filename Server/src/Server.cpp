@@ -123,9 +123,11 @@ void Server::requestAction(int userIndex)
 
     if (g != nullptr)
     {
-        std::string answer;
-        answer = "{\"Action\":\"" ACTION_ACTION "\", \"Changes\":";
-        answer += g->doActionPlayer(_players[userIndex]->getInGameID());
+        std::string answer, changes = g->doActionPlayer(_players[userIndex]->getInGameID());
+        answer = "{\"Action\":\"" ACTION_ACTION "\", \"PosX\":" + std::to_string(_players[userIndex]->getPosX());
+        answer += ", \"PosY\":" + std::to_string(_players[userIndex]->getPosY());
+        answer += ", \"Player\":" + std::to_string(_players[userIndex]->getInGameID());
+        answer += ", \"Changes\":" + changes;
         answer += "};\n";
         broadcastGame(g, answer);
     }
@@ -203,7 +205,7 @@ void Server::requestJoinGame(int userIndex, int gameID)
             else
             {
                 answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", ";
-                answer += g->getCurrentStateToJSON();
+                answer += g->getMapToJSON();
                 answer += g->getPlayersToJSON();
                 answer += "};\n";
                 TCPConn.answers[userIndex] = answer;

@@ -85,10 +85,10 @@ public class TCPClient
                         string serverMessage = Encoding.ASCII.GetString(incommingData);
                         Debug.Log("Server message received as: " + serverMessage);
                         stringBuilder.Append(serverMessage);
-                        Debug.Log("Builder last char : '" + stringBuilder[stringBuilder.Length - 3]+"'");
-                        if(m_MessageHandler != null && stringBuilder[stringBuilder.Length - 3] == ';')
+                        Debug.Log("Builder last char : '" + stringBuilder[stringBuilder.Length - 2]+"'");
+                        if(m_MessageHandler != null && stringBuilder[stringBuilder.Length - 2] == ';')
                         {
-                            string JSONonly = stringBuilder.Remove(stringBuilder.Length - 3, 3).ToString();
+                            string JSONonly = stringBuilder.Remove(stringBuilder.Length - 2, 2).ToString();
                             Debug.Log("Handling message : <" + JSONonly + ">");
                             m_MessageHandler.Handle(JSONonly);
                             stringBuilder = new StringBuilder();

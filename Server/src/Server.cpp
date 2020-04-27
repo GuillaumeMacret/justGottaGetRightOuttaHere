@@ -290,7 +290,7 @@ void Server::requestMove(int userIndex, std::string moveDir)
 
     if (g->getFinished())
     {
-        answer = "{\"Action\":\"win\"}\n";
+        answer = "{\"Action\":\"win\"};\n";
     }
     broadcastGame(g, answer);
 }

@@ -8,7 +8,7 @@
 #define PIT 67
 #define STAIRWAY 335
 #define LADDER 303
-#define WATER 1098
+#define WATER 1097
 #define GHOST_WALLS 671
 #define TELEPORT 71
 #define BLACK 309

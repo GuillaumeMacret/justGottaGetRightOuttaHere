@@ -288,7 +288,7 @@ std::string Game::checkPassGhostWall()
 std::string Game::checkCreate(int posX, int posY)
 {
     std::string res = "";
-    if (_grid[posY][posX].blockValue == WATER)
+    if (_grid[posY][posX].backgroundValue == WATER)
     {
         _grid[posY][posX].blockValue = LILYPAD;
         _grid[posY][posX].collisionValue = C_NOTHING;

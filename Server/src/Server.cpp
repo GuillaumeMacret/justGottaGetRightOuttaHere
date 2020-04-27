@@ -123,9 +123,11 @@ void Server::requestAction(int userIndex)
 
     if (g != nullptr)
     {
-        std::string answer;
-        answer = "{\"Action\":\"" ACTION_ACTION "\", \"Changes\":";
-        answer += g->doActionPlayer(_players[userIndex]->getInGameID());
+        std::string answer, changes = g->doActionPlayer(_players[userIndex]->getInGameID());
+        answer = "{\"Action\":\"" ACTION_ACTION "\", \"PosX\":" + std::to_string(_players[userIndex]->getPosX());
+        answer += ", \"PosY\":" + std::to_string(_players[userIndex]->getPosY());
+        answer += ", \"Player\":" + std::to_string(_players[userIndex]->getInGameID());
+        answer += ", \"Changes\":" + changes;
         answer += "};\n";
         broadcastGame(g, answer);
     }
@@ -203,7 +205,7 @@ void Server::requestJoinGame(int userIndex, int gameID)
             else
             {
                 answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", ";
-                answer += g->getMapToJSON();
+                answer += g->getCurrentStateToJSON();
                 answer += g->getPlayersToJSON();
                 answer += "};\n";
                 TCPConn.answers[userIndex] = answer;
@@ -288,9 +290,11 @@ void Server::requestMove(int userIndex, std::string moveDir)
 
     if (g->getFinished())
     {
-        answer = "{\"Action\":\"win\"}\n";
+        std::cout << "Game is finished" << std::endl;
+        answer = "{\"Action\":\"win\"};\n";
+        broadcastGame(g, answer);
+        g->setFinished(false);
     }
-    broadcastGame(g, answer);
 }
 
 void Server::requestNextLevel(int userIndex)
@@ -324,6 +328,17 @@ void Server::requestLeaveGame(int userIndex)
         //Need broadcast + answer because we are no longer in the game
         broadcastGame(g, answer);
         TCPConn.answers[userIndex] = answer;
+    }
+}
+
+void Server::requestReturnToLobby(int userIndex)
+{
+    Game *g = getGameFromPlayer(userIndex);
+    if (g != nullptr)
+    {
+        std::string answer;
+        answer = "{\"Action\":\"" ACTION_RETURNED_LOBBY "\"};\n";
+        broadcastGame(g, answer);
     }
 }
 

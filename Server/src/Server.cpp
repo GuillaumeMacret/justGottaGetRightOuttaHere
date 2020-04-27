@@ -290,9 +290,10 @@ void Server::requestMove(int userIndex, std::string moveDir)
 
     if (g->getFinished())
     {
+        std::cout << "Game is finished" << std::endl;
         answer = "{\"Action\":\"win\"};\n";
+        broadcastGame(g, answer);
     }
-    broadcastGame(g, answer);
 }
 
 void Server::requestNextLevel(int userIndex)

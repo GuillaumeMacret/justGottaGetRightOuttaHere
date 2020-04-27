@@ -10,12 +10,12 @@ Game::Game(int gameID, std::string selectedMap) : _buttonState(true), _finished(
 
 void Game::enableSecondaryAction(int roleID)
 {
-    for(Player *p : _players)
+    for (Player *p : _players)
     {
-        if(p->getRole() == roleID)
+        if (p->getRole() == roleID)
         {
             p->setSecondaryAction(true);
-            return ;
+            return;
         }
     }
 }
@@ -24,27 +24,27 @@ bool Game::checkOnObject(int tileValue)
 {
     switch (tileValue)
     {
-        case SWORD:
-            enableSecondaryAction(BREAK);
-            return true;
-        case MONEY:
-            enableSecondaryAction(CLIMB);
-            return true;
-        case BOOK:
-            enableSecondaryAction(CREATE);
-            return true;
-        case DUMMY:
-            enableSecondaryAction(ACTIVATE);
-            return true;
-        case DIADEM:
-            enableSecondaryAction(PUSH);
-            return true;
+    case SWORD:
+        enableSecondaryAction(BREAK);
+        return true;
+    case MONEY:
+        enableSecondaryAction(CLIMB);
+        return true;
+    case BOOK:
+        enableSecondaryAction(CREATE);
+        return true;
+    case DUMMY:
+        enableSecondaryAction(ACTIVATE);
+        return true;
+    case DIADEM:
+        enableSecondaryAction(PUSH);
+        return true;
     }
     return false;
 }
 
 std::string Game::movePlayer(int playerID, std::string direction)
-{  
+{
     Player *p = _players[playerID];
     int newPosX = p->getPosX(), newPosY = p->getPosY();
     int posX = newPosX, posY = newPosY;
@@ -95,7 +95,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
             else
             {
                 p->setPos(newPosX, newPosY);
-                if(checkOnObject(_grid[newPosY][newPosX].blockValue))
+                if (checkOnObject(_grid[newPosY][newPosX].blockValue))
                 {
                     _grid[newPosY][newPosX].blockValue = EMPTY;
                     _grid[newPosY][newPosX].collisionValue = C_NOTHING;
@@ -129,12 +129,15 @@ std::string Game::movePlayer(int playerID, std::string direction)
                         {
                             if (newPosX == p.posX && newPosY == p.posY)
                             {
+                                std::cout << "OnLock player " << playerID << std::endl;
                                 _players[playerID]->setOnLock(true);
                                 _finished = true;
                                 _foundLock = true;
-                                for(Player *p : _players)
+                                for (Player *p : _players)
                                 {
-                                    if(!p->isOnLock()) {
+                                    if (!p->isOnLock())
+                                    {
+                                        std::cout << "But not OnLock for player " << p->getInGameID() << " so not finished game" << std::endl;
                                         _finished = false;
                                         break;
                                     }
@@ -148,7 +151,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
             p->setLastCollisionType(_grid[newPosY][newPosX].collisionValue);
         }
         // Checks if the player tries to go through a ghost wall
-        else if (p->getRole() == CREATE  && _grid[newPosY][newPosX].blockValue == GHOST_WALLS && (posX != newPosX || posY != newPosY))
+        else if (p->getRole() == CREATE && _grid[newPosY][newPosX].blockValue == GHOST_WALLS && (posX != newPosX || posY != newPosY))
         {
             _grid[posY][posX].collisionValue = p->getLastCollisionType();
             p->setPos(newPosX, newPosY);
@@ -157,7 +160,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
         // Checks if the players tries to go through a ladder or ennemies
         else if (p->getRole() == CLIMB && (posX != newPosX || posY != newPosY))
         {
-            if(_grid[newPosY][newPosX].blockValue == LADDER || (((IS_ENEMY_BLOCK(_grid[newPosY][newPosX].blockValue)) && p->hasSecondaryAction())))
+            if (_grid[newPosY][newPosX].blockValue == LADDER || (((IS_ENEMY_BLOCK(_grid[newPosY][newPosX].blockValue)) && p->hasSecondaryAction())))
             {
                 _grid[posY][posX].collisionValue = p->getLastCollisionType();
                 p->setPos(newPosX, newPosY);
@@ -223,7 +226,7 @@ std::string Game::checkPush(std::string dir, int posX, int posY, Player *p)
             res += ',';
 
             // Is the boulder on a pit? If yes, we can now walk on it
-            if(_grid[pushY][pushX].blockValue == PIT)
+            if (_grid[pushY][pushX].blockValue == PIT)
             {
                 _grid[pushY][pushX].blockValue = MOVABLE_GROUNDED;
                 _grid[pushY][pushX].collisionValue = C_NOTHING;
@@ -353,7 +356,7 @@ std::string Game::checkTeleport(Player *p)
 {
     std::string res = "";
     //dummy not set up -> set it up on player's position
-    if(_dummy == nullptr)
+    if (_dummy == nullptr)
     {
         _dummy = new Point();
         _dummy->posX = p->getPosX();
@@ -367,7 +370,7 @@ std::string Game::checkTeleport(Player *p)
         res += tileToJSON(_dummy->posX, _dummy->posY, TELEPORT);
     }
     //dummy set up: tp the player on it
-    else if(p->getLastCollisionType() == C_NOTHING)
+    else if (p->getLastCollisionType() == C_NOTHING)
     {
         _grid[p->getPosY()][p->getPosX()].collisionValue = p->getLastCollisionType();
         p->setPos(_dummy->posX, _dummy->posY);
@@ -445,45 +448,45 @@ std::string Game::doActionPlayer(int playerID)
         std::string actionString = "";
         switch (p->getRole())
         {
-            // Executes the main action of the player. If it is not possible,
-            // tries to execute the secondary if it is enabled
-            case PUSH:
-                actionString = checkPush(dir, posX, posY, p);
-                
-                if(actionString == "" && p->hasSecondaryAction())
-                {
-                    actionString = checkJump(dir, posX, posY, p);
-                }
-                break;
-            case CREATE:
-                actionString = checkPassGhostWall();
-                if(actionString == "" && p->hasSecondaryAction())
-                {
-                    actionString = checkCreate(posX, posY);
-                }
-                break;
-            case ACTIVATE:
-                actionString = checkActivate(posX, posY);
-                if(actionString == "" && p->hasSecondaryAction())
-                {
-                    actionString = checkTeleport(p);
-                }
-                break;
-            case BREAK:
-                actionString = checkBreak(posX, posY);
-                if(actionString == "" && p->hasSecondaryAction())
-                {
-                    actionString = checkKill(posX, posY);
-                }
-                break;
-            case CLIMB:
-                // These methods don't do anything, but are left in case we add something
-                actionString = checkPassLadder();
-                if(actionString == "" && p->hasSecondaryAction())
-                {
-                    actionString = checkPassEnemy();
-                }
-                break;
+        // Executes the main action of the player. If it is not possible,
+        // tries to execute the secondary if it is enabled
+        case PUSH:
+            actionString = checkPush(dir, posX, posY, p);
+
+            if (actionString == "" && p->hasSecondaryAction())
+            {
+                actionString = checkJump(dir, posX, posY, p);
+            }
+            break;
+        case CREATE:
+            actionString = checkPassGhostWall();
+            if (actionString == "" && p->hasSecondaryAction())
+            {
+                actionString = checkCreate(posX, posY);
+            }
+            break;
+        case ACTIVATE:
+            actionString = checkActivate(posX, posY);
+            if (actionString == "" && p->hasSecondaryAction())
+            {
+                actionString = checkTeleport(p);
+            }
+            break;
+        case BREAK:
+            actionString = checkBreak(posX, posY);
+            if (actionString == "" && p->hasSecondaryAction())
+            {
+                actionString = checkKill(posX, posY);
+            }
+            break;
+        case CLIMB:
+            // These methods don't do anything, but are left in case we add something
+            actionString = checkPassLadder();
+            if (actionString == "" && p->hasSecondaryAction())
+            {
+                actionString = checkPassEnemy();
+            }
+            break;
         }
         res += actionString;
     }
@@ -702,7 +705,8 @@ void Game::readButtonOff(RSJresource layerResource)
                 Point p = Point{i, j};
                 _offBlocks.push_back(Block{p, value});
             }
-            else _grid[j][i].blockValue = value;
+            else
+                _grid[j][i].blockValue = value;
         }
         tmp = "";
         ++i;
@@ -753,7 +757,7 @@ void Game::readPlayersStartPos(RSJresource layerResource)
         ss >> tmp;
         if (std::stringstream(tmp) >> value && value != 0 && value - 1 <= BREAK)
         {
-            if(cpt < _players.size())
+            if (cpt < _players.size())
             {
                 _players[cpt++]->setPos(i, j);
             }
@@ -854,7 +858,7 @@ std::string Game::getCurrentStateToJSON()
     }
     mapJSON += "],";
     objectsJSON += "],";
-    mapJSON += objectsJSON;    
+    mapJSON += objectsJSON;
     return mapJSON;
 }
 
@@ -898,24 +902,25 @@ int Game::getNbConnectedPlayers()
 void Game::resetGame()
 {
     _buttonState = false, _finished = false, _nbKeys = 0;
-    std::cerr<< "begin reset"<<std::endl;
-    if(_grid)
-        {
-        std::cerr<<"start freeing"<<std::endl;
+    std::cerr << "begin reset" << std::endl;
+    if (_grid)
+    {
+        std::cerr << "start freeing" << std::endl;
         for (int i = 0; i < _height; ++i)
         {
             if (_grid[i])
             {
-                std::cerr<<"freeing "<< i<<"th row"<<std::endl;
+                std::cerr << "freeing " << i << "th row" << std::endl;
                 delete[] _grid[i];
             }
         }
         delete[] _grid;
     }
-    for(Player *p : _players) {
+    for (Player *p : _players)
+    {
         p->setSecondaryAction(false);
     }
-    std::cerr<<"end reset"<<std::endl;
+    std::cerr << "end reset" << std::endl;
 }
 
 bool Game::getStarted()
@@ -933,7 +938,7 @@ Game::~Game()
     for (Player *p : _players)
         delete p;
 
-    if(_grid)
+    if (_grid)
     {
         for (int i = 0; i < _height; ++i)
         {

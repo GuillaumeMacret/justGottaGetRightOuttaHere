@@ -105,6 +105,10 @@ public:
      * @userIndex: the index of the player */
     void requestLeaveGame(int userIndex);
 
+    /** Asks the game to return to the lobby
+     * @userIndex: the index of the player */
+    void requestReturnToLobby(int userIndex);
+
     /** Retrieves the game corresponding to the player given
      * @userIndex: the index of the player
      * Returns the game associated to the player */

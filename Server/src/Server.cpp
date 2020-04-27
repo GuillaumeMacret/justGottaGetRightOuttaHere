@@ -329,6 +329,17 @@ void Server::requestLeaveGame(int userIndex)
     }
 }
 
+void Server::requestReturnToLobby(int userIndex)
+{
+    Game *g = getGameFromPlayer(userIndex);
+    if (g != nullptr)
+    {
+        std::string answer;
+        answer = "{\"Action\":\"" ACTION_RETURNED_LOBBY "\"};\n";
+        broadcastGame(g, answer);
+    }
+}
+
 Game *Server::getGameFromPlayer(int userIndex)
 {
     return _players[userIndex]->getGame();

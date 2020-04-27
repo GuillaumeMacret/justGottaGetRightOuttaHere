@@ -21,6 +21,7 @@
 #define ACTION_NEXT_LEVEL "nextLevel"
 #define ACTION_LEAVE_GAME "leaveGame"
 #define ACTION_CHANGE_MAP "changeMap"
+#define ACTION_RETURN_LOBBY "returnToLobby"
 
 /* Server actions */
 #define ACTION_CREATED_GAME "createdGame"
@@ -31,6 +32,8 @@
 #define ACTION_CANT_START_GAME "cantStartGame"
 #define ACTION_WIN "win"
 #define ACTION_CHANGED_MAP "changedMap"
+#define ACTION_RETURNED_LOBBY "returnToLobby"
+
 
 /* Client & Server actions */
 #define ACTION_GAMES_LIST "gameList"

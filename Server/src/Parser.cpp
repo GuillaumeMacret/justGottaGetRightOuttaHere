@@ -138,6 +138,12 @@ int Parser::requestLeaveGame(std::string &req, Server &server, int userIndex)
     return 0;
 }
 
+int Parser::requestReturnToLobby(std::string &req, class Server &server, int userIndex)
+{
+    server.requestReturnToLobby(userIndex);
+    return 0;
+}
+
 int Parser::getAction(std::string &req, Server &server, int userIndex)
 {
     std::string s = readArg(req);
@@ -182,6 +188,10 @@ int Parser::getAction(std::string &req, Server &server, int userIndex)
             res = requestMove(req, server, userIndex);
         }
         else if (s == ACTION_LEAVE_GAME)
+        {
+            res = requestLeaveGame(req, server, userIndex);
+        }
+        else if (s == ACTION_RETURN_LOBBY)
         {
             res = requestLeaveGame(req, server, userIndex);
         }

@@ -37,9 +37,10 @@ public class GameSceneManager : MonoBehaviour
 		goToLobbyScene = true;
 	}
 
-	public void ToLobbyScene(int gameId, string[] mapList) {
+	public void ToLobbyScene(int gameId, int[] playersRoles, string[] mapList) {
 		GameLobbyData.GameId = gameId;
 		GameLobbyData.MapList = mapList;
+		GameLobbyData.PlayersRoles = playersRoles;
 		GameLobbyData.CreatedGame = true;
 		GameLobbyData.PlayerId = 0;
 		goToLobbyScene = true;

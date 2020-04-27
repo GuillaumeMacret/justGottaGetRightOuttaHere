@@ -46,9 +46,11 @@ public class GameListMessageHandler : MonoBehaviour, IMessageHandler
 				gameId = createdGame["GameId"];
 				JSONArray mapsJson = createdGame["MapList"].AsArray;
 				string[] mapList = new string[mapsJson.Count];
+				playersRoles = new int[1];
+				playersRoles[0] = 0;
 				for (int i = 0; i < mapsJson.Count; ++i)
 					mapList[i] = mapsJson[i];
-				sceneManager.ToLobbyScene(gameId, mapList);
+				sceneManager.ToLobbyScene(gameId, playersRoles, mapList);
 				break;
 
 			default:

@@ -126,11 +126,12 @@ public class TCPClient
     /// <summary> 	
     /// Send message to server using socket connection. 	
     /// </summary> 	
-    public static void SendMessage(string clientMessage)
+    public static bool SendMessage(string clientMessage)
     {
         if (socketConnection == null)
         {
-            return;
+			Debug.LogWarning("Could not send message: Socket is null");
+            return false;
         }
         try
         {
@@ -144,11 +145,22 @@ public class TCPClient
                 stream.Write(clientMessageAsByteArray, 0, clientMessageAsByteArray.Length);
                 stream.Flush();
                 Debug.Log("Client sent " + clientMessage);
+				return true;
             }
         }
         catch (SocketException socketException)
         {
             Debug.Log("Socket exception: " + socketException);
         }
+		return false;
     }
+
+	/// <summary> 	
+	/// Returns true if socket is connected
+	/// </summary> 	
+	public static bool IsSocketConnected() 
+	{
+		return socketConnection != null;
+	}
+	
 }

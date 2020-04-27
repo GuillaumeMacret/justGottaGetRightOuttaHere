@@ -53,6 +53,17 @@ public class GameListMessageHandler : MonoBehaviour, IMessageHandler
 				sceneManager.ToLobbyScene(gameId, playersRoles, mapList);
 				break;
 
+			case "loadLevel":
+				JSONNode loadLevelJson = JSON.Parse(JSONString);
+				JSONArray blocks = loadLevelJson["Blocks"].AsArray;
+				JSONArray objects = loadLevelJson["Objects"].AsArray;
+				JSONArray players = loadLevelJson["Players"].AsArray;
+				string levelName = loadLevelJson["Name"];
+
+				sceneManager.ToGameboardScene(blocks, objects, players, levelName);
+				//model.LoadLevel(blocks, players, objects);
+				break;
+
 			default:
 				Debug.LogError("Can't handle this action : " + action.Action);
 				break;

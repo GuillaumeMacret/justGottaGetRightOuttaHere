@@ -47,8 +47,10 @@ public class LobbyManager : MonoBehaviour
 			MapsDropdown.gameObject.SetActive(false);
 			StartGameButton.interactable = false;
 			ChangeMap(GameLobbyData.MapName);
+			Debug.Log("Joined the game, GameLobbyData.PlayersRoles.Length="+GameLobbyData.PlayersRoles.Length);
 			for(int i = 0; i < GameLobbyData.PlayersRoles.Length; ++i) 
 			{
+				Debug.Log("Change role, i=" + i + " role="+GameLobbyData.PlayersRoles[i]);
 				LobbyPlayerControllers[i].ChangeRole(GameLobbyData.PlayersRoles[i], RoleCharacterSprites[GameLobbyData.PlayersRoles[i]], RoleDescriptions[GameLobbyData.PlayersRoles[i]]);
 			}
 		}

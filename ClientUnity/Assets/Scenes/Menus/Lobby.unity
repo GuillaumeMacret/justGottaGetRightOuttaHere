@@ -3401,10 +3401,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RoleCharacterSprites:
-  - {fileID: -1801323016989662738, guid: 76bdf4825c602c14da658b1ec425fdda, type: 3}
+  - {fileID: 9060422121159531784, guid: 74157bbd8fd7f3d45871b538fb585682, type: 3}
   - {fileID: -425086992313348419, guid: 5fe234945b0030b45a77ee0f729424fd, type: 3}
   - {fileID: 1983179003316544293, guid: 60a67ae0eadfadf40b19b6f4ecb7ef4e, type: 3}
-  - {fileID: 9060422121159531784, guid: 74157bbd8fd7f3d45871b538fb585682, type: 3}
+  - {fileID: -1801323016989662738, guid: 76bdf4825c602c14da658b1ec425fdda, type: 3}
   - {fileID: -8700893360882203359, guid: 3ccbcb74693441747b2d2d56b9bd209a, type: 3}
   RoleDescriptions:
   - 'Ability: Push blocks and jump over pits'

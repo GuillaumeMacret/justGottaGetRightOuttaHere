@@ -4,6 +4,7 @@ using SimpleJSON;
 public class GameBoardMessageHandler : MonoBehaviour, IMessageHandler
 {
     public GameModel model;
+	public GameSceneManager gameSceneManager;
 
     public void Handle(string JSONString)
     {
@@ -11,7 +12,7 @@ public class GameBoardMessageHandler : MonoBehaviour, IMessageHandler
         Debug.Log("Action recieved : " + action.Action);
         switch (action.Action)
         {
-            /*case "loadLevel":
+			/*case "loadLevel":
                 var loadLevelJson = JSON.Parse(JSONString);
                 JSONArray blocks = loadLevelJson["Blocks"].AsArray;
                 JSONArray objects = loadLevelJson["Objects"].AsArray;
@@ -19,6 +20,10 @@ public class GameBoardMessageHandler : MonoBehaviour, IMessageHandler
                 string levelName = loadLevelJson["Name"];
                 model.LoadLevel(blocks, players, objects, levelName);
                 break;*/
+			case "returnToLobby":
+				if (gameSceneManager != null)
+					gameSceneManager.ToLobbyScene();
+				break;
             case "move":
                 var moveJson = JSON.Parse(JSONString);
                 model.MovePlayer(moveJson["Player"], moveJson["PosX"], moveJson["PosY"]);

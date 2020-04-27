@@ -18,6 +18,8 @@ public class LobbyPlayerController : MonoBehaviour
 	private string ability;
 	private bool changeRole;
 	private Sprite characterSprite;
+	private float timeBetweenRefresh = 1f;
+	private float lastUpdate;
 
     // Start is called before the first frame update
     void Start()
@@ -26,18 +28,24 @@ public class LobbyPlayerController : MonoBehaviour
 		characterSprite = DefaultCharacterSprite;
 		ChangeCharacterButton.onClick.AddListener(ChangeCharacter);
 		changeRole = true;
+		lastUpdate = 0f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(changeRole) {
+		lastUpdate += Time.deltaTime;
+        if(changeRole || lastUpdate > timeBetweenRefresh) {
+			Debug.Log("Update Role:" + currentRole);
+			Debug.Log(characterSprite);
+			Debug.Log(ability);
 			if (characterSprite != null)
 				CharacterImage.sprite = characterSprite;
 			else
 				CharacterImage.sprite = DefaultCharacterSprite;
 			AbilityText.text = ability;
 			changeRole = false;
+			lastUpdate = 0f;
 		}
     }
 
@@ -49,6 +57,7 @@ public class LobbyPlayerController : MonoBehaviour
 
 	public void ChangeRole(int roleId, Sprite newCharacterSprite, string newAbility) 
 	{
+		Debug.Log("Role:" + roleId);
 		currentRole = roleId;
 		characterSprite = newCharacterSprite;
 		ability = newAbility;

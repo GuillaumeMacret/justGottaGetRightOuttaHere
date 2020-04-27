@@ -28,6 +28,10 @@ public class GameSceneManager : MonoBehaviour
 		SceneManager.LoadScene("GameList");
 	}
 	
+	public void ToLobbyScene() {
+		goToLobbyScene = true;
+	}
+
 	public void ToLobbyScene(int gameId, int playerId, int[] playersRoles, string map) {
 		GameLobbyData.GameId = gameId;
 		GameLobbyData.PlayerId = playerId;

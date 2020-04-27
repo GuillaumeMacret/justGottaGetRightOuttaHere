@@ -193,7 +193,7 @@ int Parser::getAction(std::string &req, Server &server, int userIndex)
         }
         else if (s == ACTION_RETURN_LOBBY)
         {
-            res = requestLeaveGame(req, server, userIndex);
+            res = requestReturnToLobby(req, server, userIndex);
         }
     }
     return res;

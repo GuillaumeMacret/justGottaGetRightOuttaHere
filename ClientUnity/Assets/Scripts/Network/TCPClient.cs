@@ -69,6 +69,7 @@ public class TCPClient
         {
             socketConnection = new TcpClient(SERVER_ADRESS, SERVER_PORT);
             Byte[] bytes = new Byte[BUFFER_SIZE];
+            StringBuilder stringBuilder = new StringBuilder();
             while (true)
             {
                 // Get a stream object for reading 				
@@ -82,10 +83,15 @@ public class TCPClient
                         Array.Copy(bytes, 0, incommingData, 0, length);
                         // Convert byte array to string message. 						
                         string serverMessage = Encoding.ASCII.GetString(incommingData);
-                        Debug.Log("server message received as: " + serverMessage);
-                        if(m_MessageHandler != null)
+                        Debug.Log("Server message received as: " + serverMessage);
+                        stringBuilder.Append(serverMessage);
+                        Debug.Log("Builder last char : '" + stringBuilder[stringBuilder.Length - 3]+"'");
+                        if(m_MessageHandler != null && stringBuilder[stringBuilder.Length - 3] == ';')
                         {
-                            m_MessageHandler.Handle(serverMessage.Remove(serverMessage.Length-1));
+                            string JSONonly = stringBuilder.Remove(stringBuilder.Length - 3, 3).ToString();
+                            Debug.Log("Handling message : <" + JSONonly + ">");
+                            m_MessageHandler.Handle(JSONonly);
+                            stringBuilder = new StringBuilder();
                         }
                     }
                 }

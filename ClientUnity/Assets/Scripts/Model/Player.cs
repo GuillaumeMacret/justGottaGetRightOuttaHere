@@ -14,6 +14,8 @@ public class Player : MonoBehaviour
 
     private Animator m_animator;
     private AudioSource m_audioSource;
+
+    private Vector3 lastDirection;
     public List<Vector3> targetPositions;
 
     private void Awake()
@@ -40,19 +42,21 @@ public class Player : MonoBehaviour
         {
             Vector3 direction = targetPositions[0] - transform.position;
             MoveTowardsNextDestination();
-            m_animator.SetFloat("MoveX", direction.x);
-            m_animator.SetFloat("MoveY", direction.y);
             m_animator.SetBool("Moving", true);
             if (!m_audioSource.isPlaying && id != ROLE_PHANTOM)
             {
                 m_audioSource.pitch = Random.Range(pitchRangeDown, pitchRangeUp);
                 m_audioSource.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Count)]);
             }
+            lastDirection = direction;
         }
         else
         {
-            m_animator.SetBool("Moving", false); 
+            m_animator.SetBool("Moving", false);
         }
+
+        m_animator.SetFloat("MoveX", lastDirection.x);
+        m_animator.SetFloat("MoveY", lastDirection.y);
 
     }
 

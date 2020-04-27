@@ -10,7 +10,7 @@ public class VirtualDpad : MonoBehaviour
     private Vector2 touchStartPosition, touchEndPosition;
     private string direction;
 
-    private float m_InputCooldown = .5f;
+    private float m_InputCooldown = .25f;
     private float m_TimerCooldown = 0.0f;
 
     // Update is called once per frame

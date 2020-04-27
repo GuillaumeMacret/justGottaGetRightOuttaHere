@@ -136,8 +136,7 @@ public class GameModel : MonoBehaviour
                 if(m_blocksLayer[i][j] > 0)
                 {
                     blocksTileMap.SetTile(new Vector3Int(j, -i - 1, 1), TilesResourcesLoader.GetTileByNameAndId(m_terrainTilesPath, m_blocksLayer[i][j] - 1));
-                }
-                
+                }                
             }
         }
     }
@@ -155,6 +154,10 @@ public class GameModel : MonoBehaviour
                 if (m_objectsLayer[i][j] > 0)
                 {
                     objectsTileMap.SetTile(new Vector3Int(j, -i - 1, 2), TilesResourcesLoader.GetTileByNameAndId(m_terrainTilesPath, m_objectsLayer[i][j] - 1));
+                }
+                else
+                {
+                    objectsTileMap.SetTile(new Vector3Int(j, -i - 1, 2), null);
                 }
                     
             }
@@ -252,6 +255,7 @@ public class GameModel : MonoBehaviour
     {
         for(int i = 0; i < changes.Count; ++i)
         {
+            Debug.Log("Changing object at " + changes[i]["yPos"] + " " + changes[i]["xPos"] +" from " + m_objectsLayer[changes[i]["yPos"]][changes[i]["xPos"]] + " to " + changes[i]["value"]);
             m_objectsLayer[changes[i]["yPos"]][changes[i]["xPos"]] = changes[i]["value"];
             needsObjectsRedraw = true;
         }

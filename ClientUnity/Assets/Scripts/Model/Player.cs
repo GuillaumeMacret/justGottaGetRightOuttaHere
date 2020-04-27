@@ -40,7 +40,9 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if(targetPositions.Count > 0)
+        m_SpriteRenderer.enabled = true;
+        speed = 10;
+        if (targetPositions.Count > 0)
         {
             Vector3 direction = targetPositions[0] - transform.position;
 
@@ -48,12 +50,7 @@ public class Player : MonoBehaviour
             {
                 Debug.Log("Big movement detected, going sneaky mode");
                 speed = 100;
-                GetComponent<SpriteRenderer>().enabled = false;
-            }
-            else
-            {
-                GetComponent<SpriteRenderer>().enabled = true;
-                speed = 10;
+                m_SpriteRenderer.enabled = false;
             }
 
             MoveTowardsNextDestination();

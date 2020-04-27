@@ -367,7 +367,7 @@ std::string Game::checkTeleport(Player *p)
         res += tileToJSON(_dummy->posX, _dummy->posY, TELEPORT);
     }
     //dummy set up: tp the player on it
-    else if(p->getLastCollisionType == C_NOTHING)
+    else if(p->getLastCollisionType() == C_NOTHING)
     {
         _grid[p->getPosY()][p->getPosX()].collisionValue = p->getLastCollisionType();
         p->setPos(_dummy->posX, _dummy->posY);

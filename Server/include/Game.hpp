@@ -279,6 +279,8 @@ public:
      * */
     bool getFinished();
 
+    void setFinished(bool finished);
+
     /** Changes the selected map
      * @mapName: the newly selected map */
     void changeMap(std::string mapName);

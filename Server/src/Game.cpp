@@ -189,6 +189,9 @@ std::string Game::tileToJSON(int posX, int posY, int value)
 
 bool Game::getFinished() { return _finished; }
 
+void Game::setFinished(bool finished) {_finished = finished; }
+
+
 std::string Game::checkPush(std::string dir, int posX, int posY, Player *p)
 {
     std::string res = "";

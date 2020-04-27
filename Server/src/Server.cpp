@@ -293,6 +293,7 @@ void Server::requestMove(int userIndex, std::string moveDir)
         std::cout << "Game is finished" << std::endl;
         answer = "{\"Action\":\"win\"};\n";
         broadcastGame(g, answer);
+        g->setFinished(false);
     }
 }
 

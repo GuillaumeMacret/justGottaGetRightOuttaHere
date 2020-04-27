@@ -35,7 +35,7 @@ public class LobbyPlayerController : MonoBehaviour
     void Update()
     {
 		lastUpdate += Time.deltaTime;
-        if(changeRole || lastUpdate > timeBetweenRefresh) {
+        if(changeRole) {
 			Debug.Log("Update Role:" + currentRole);
 			Debug.Log(characterSprite);
 			Debug.Log(ability);

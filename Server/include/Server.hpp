@@ -109,6 +109,12 @@ public:
      * @userIndex: the index of the player */
     void requestReturnToLobby(int userIndex);
 
+    /** Asks the game to inform every player that a ping has been sent at the given position
+     * @userIndex: the index of the player
+     * @posX: the x position of the ping
+     * @posY: the y position of the ping*/
+    void requestSendPing(int userIndex, int posX, int posY);
+
     /** Retrieves the game corresponding to the player given
      * @userIndex: the index of the player
      * Returns the game associated to the player */

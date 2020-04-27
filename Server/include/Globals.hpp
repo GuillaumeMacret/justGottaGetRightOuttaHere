@@ -39,6 +39,7 @@
 #define ACTION_GAMES_LIST "gameList"
 #define ACTION_CHANGE_ROLE "roleChange"
 #define ACTION_ACTION "action"
+#define ACTION_SEND_PING "sendPing"
 
 #define syserror(x) perror(x)
 #define fatalsyserror(x) syserror(x), exit(1)

@@ -823,10 +823,8 @@ void Game::readMap()
     }
 }
 
-std::string Game::getMapToJSON()
+std::string Game::getCurrentStateToJSON()
 {
-    readMap();
-    //bool firstObject = true;
     std::string mapJSON = "\"Name\":\"" + _selectedMap;
     mapJSON += "\", \"Blocks\":[";
     std::string objectsJSON = "\"Objects\":[";
@@ -854,8 +852,14 @@ std::string Game::getMapToJSON()
     }
     mapJSON += "],";
     objectsJSON += "],";
-    mapJSON += objectsJSON;
+    mapJSON += objectsJSON;    
     return mapJSON;
+}
+
+std::string Game::getMapToJSON()
+{
+    readMap();
+    return getCurrentStateToJSON();
 }
 
 std::string Game::getPlayersToJSON()

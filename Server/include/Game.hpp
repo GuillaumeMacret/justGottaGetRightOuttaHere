@@ -306,6 +306,10 @@ public:
     /* Transforms the map in a JSON format that can be read by the client */
     std::string getMapToJSON();
 
+
+    /* Transforms the current state of the map in a JSON format that can be read by the client */
+    std::string getCurrentStateToJSON();
+
     /* Transforms the players information in a JSON format that can be read by the client */
     std::string getPlayersToJSON();
 

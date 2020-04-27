@@ -669,8 +669,7 @@ void Game::readButtonOn(RSJresource layerResource)
                 Point p = Point{i, j};
                 _onBlocks.push_back(Block{p, value});
             }
-            else
-                _grid[j][i].blockValue = value;
+            _grid[j][i].blockValue = value;
         }
         tmp = "";
         ++i;
@@ -701,7 +700,7 @@ void Game::readButtonOff(RSJresource layerResource)
                 Point p = Point{i, j};
                 _offBlocks.push_back(Block{p, value});
             }
-            _grid[j][i].blockValue = value;
+            else _grid[j][i].blockValue = value;
         }
         tmp = "";
         ++i;

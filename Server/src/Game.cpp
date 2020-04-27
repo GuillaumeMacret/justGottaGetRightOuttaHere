@@ -227,7 +227,7 @@ std::string Game::checkPush(std::string dir, int posX, int posY, Player *p)
             {
                 _grid[pushY][pushX].blockValue = MOVABLE_GROUNDED;
                 _grid[pushY][pushX].collisionValue = C_NOTHING;
-                res += tileToJSON(pushX, pushY, C_NOTHING);
+                res += tileToJSON(pushX, pushY, MOVABLE_GROUNDED);
             }
             else
             {
@@ -367,13 +367,14 @@ std::string Game::checkTeleport(Player *p)
         res += tileToJSON(_dummy->posX, _dummy->posY, TELEPORT);
     }
     //dummy set up: tp the player on it
-    else
+    else if(p->getLastCollisionType == C_NOTHING)
     {
         _grid[p->getPosY()][p->getPosX()].collisionValue = p->getLastCollisionType();
         p->setPos(_dummy->posX, _dummy->posY);
         p->setLastCollisionType(C_NOTHING);
         res += tileToJSON(_dummy->posX, _dummy->posY, EMPTY);
         delete _dummy;
+        _dummy = nullptr;
     }
     return res;
 }

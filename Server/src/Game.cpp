@@ -305,7 +305,7 @@ std::string Game::checkActivate(int posX, int posY)
     if (_grid[posY][posX].blockValue == BUTTON)
     {
         int i = 0;
-        if (_buttonState)
+        if (!_buttonState)
         {
             for (Block ofb : _onBlocks)
             {
@@ -725,7 +725,7 @@ void Game::readCollision(RSJresource layerResource)
     {
         ss >> tmp;
         if (std::stringstream(tmp) >> value)
-            _grid[j][i].collisionValue = value;
+            _grid[j][i].collisionValue = value - 1;
         tmp = "";
         ++i;
         if (i % _width == 0)

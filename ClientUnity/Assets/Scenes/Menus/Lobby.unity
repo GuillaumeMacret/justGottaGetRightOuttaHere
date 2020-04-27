@@ -3781,6 +3781,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lobbyManager: {fileID: 859244571}
+  sceneManager: {fileID: 1999812360}
 --- !u!114 &1081724825
 MonoBehaviour:
   m_ObjectHideFlags: 0

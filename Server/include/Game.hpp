@@ -194,6 +194,11 @@ private:
      * Returns the JSON answer to the create action */
     std::string checkCreate(int posX, int posY);
 
+    /** Checks if one of the players stands on a solid block. Useful when activating buttons.
+     * @b The block to check
+     * Returns true if a player stands on a block */
+    bool checkPlayerOnBlock(Block b);
+
     /** Checks if the player that requested the main action 'Activate' can do this action
      * @posX: the X position of the block faced by the player
      * @posY: the Y position of the block faced by the player

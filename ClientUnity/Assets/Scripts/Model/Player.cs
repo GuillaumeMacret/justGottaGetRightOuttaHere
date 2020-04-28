@@ -44,23 +44,33 @@ public class Player : MonoBehaviour
         speed = 10;
         if (targetPositions.Count > 0)
         {
-            Vector3 direction = targetPositions[0] - transform.position;
-
-            if(direction.magnitude > 3)
+            //Try to prevent pivot when bumping into a wall
+            if (transform.position == targetPositions[0])
             {
-                Debug.Log("Big movement detected, going sneaky mode");
-                speed = 100;
-                m_SpriteRenderer.enabled = false;
+                targetPositions.RemoveAt(0);
+                return;
             }
-
-            MoveTowardsNextDestination();
-            m_animator.SetBool("Moving", true);
-            if (!m_audioSource.isPlaying && id != ROLE_PHANTOM)
+            else
             {
-                m_audioSource.pitch = Random.Range(pitchRangeDown, pitchRangeUp);
-                m_audioSource.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Count)]);
+
+                Vector3 direction = targetPositions[0] - transform.position;
+
+                if (direction.magnitude > 3)
+                {
+                    Debug.Log("Big movement detected, going sneaky mode");
+                    speed = 100;
+                    m_SpriteRenderer.enabled = false;
+                }
+
+                MoveTowardsNextDestination();
+                m_animator.SetBool("Moving", true);
+                if (!m_audioSource.isPlaying && id != ROLE_PHANTOM)
+                {
+                    m_audioSource.pitch = Random.Range(pitchRangeDown, pitchRangeUp);
+                    m_audioSource.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Count)]);
+                }
+                lastDirection = direction;
             }
-            lastDirection = direction;
         }
         else
         {

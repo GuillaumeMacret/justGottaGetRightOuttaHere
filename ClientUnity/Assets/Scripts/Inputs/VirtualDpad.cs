@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class VirtualDpad : MonoBehaviour
 {
-    public Text directionText;
     private Touch theTouch;
     private Vector2 touchStartPosition, touchEndPosition;
     private string direction;

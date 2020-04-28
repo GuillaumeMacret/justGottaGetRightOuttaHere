@@ -16,6 +16,9 @@ public class GameModel : MonoBehaviour
     public Camera mainCamera;
     public PlayerAnimatorControllerFactory animFactory;
     public List<AudioClip> musics;
+    public bool gameWon = false;
+    public GameObject virtualDPad;
+    public GameObject winMessageContainer;
 
 
     private static float m_GameTimer;
@@ -47,53 +50,61 @@ public class GameModel : MonoBehaviour
 		LoadLevel(GameLobbyData.BlocksJson, GameLobbyData.PlayersJson, GameLobbyData.ObjectsJson, GameLobbyData.LevelName);
 	}
 
-	private void startRandomMusic()
+	private void StartRandomMusic()
     {
         m_audioSource.clip = musics[Random.Range(0, musics.Count)];
         m_audioSource.Play();
     }
     private void Update()
     {
-        m_GameTimer += Time.deltaTime;
-        if (needsFullRedraw)
+        if (gameWon)
         {
-            blocksTileMap.ClearAllTiles();
-            objectsTileMap.ClearAllTiles();
-            GameObject[] container = GameObject.FindGameObjectsWithTag("PlayersContainer");
-            foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
+            virtualDPad.SetActive(false);
+            winMessageContainer.SetActive(true);
+        }
+        else
+        {
+            m_GameTimer += Time.deltaTime;
+            if (needsFullRedraw)
             {
-                Destroy(g);
+                blocksTileMap.ClearAllTiles();
+                objectsTileMap.ClearAllTiles();
+                GameObject[] container = GameObject.FindGameObjectsWithTag("PlayersContainer");
+                foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
+                {
+                    Destroy(g);
+                }
+                RefreshBlocksTilemap();
+                RefreshObjectsTilemap();
+                UpdateCameraSettings();
+                StartRandomMusic();
+                m_GameTimer = 0;
+                needsFullRedraw = false;
             }
-            RefreshBlocksTilemap();
-            RefreshObjectsTilemap();
-            UpdateCameraSettings();
-            startRandomMusic();
-            m_GameTimer = 0;
-            needsFullRedraw = false;
-        }
-        else if (needsObjectsRedraw)
-        {
-            RefreshObjectsTilemap();
-        }
-
-        if(m_playerToInstantiate.Count > 0)
-        {
-            Player p = Instantiate(playerPrefab);
-            //Debug.Log("Instatiating new player : " + m_playerToInstantiate[0][0] + m_playerToInstantiate[0][1] + m_playerToInstantiate[0][2]);
-            p.id = (int) m_playerToInstantiate[0][2];
-            AnimatorController animController = animFactory.GetAnimatorController(p.id);
-            p.SetAnimatorController(animController);
-            p.transform.position = new Vector3(m_playerToInstantiate[0][0], -m_playerToInstantiate[0][1],0);
-            m_players.Add(p);
-            Debug.Log(p.transform.position);
-
-            GameObject[] container = GameObject.FindGameObjectsWithTag("PlayersContainer");
-            if (container.Length > 0)
+            else if (needsObjectsRedraw)
             {
-                p.transform.SetParent(container[0].transform);
+                RefreshObjectsTilemap();
             }
 
-            m_playerToInstantiate.RemoveAt(0);
+            if (m_playerToInstantiate.Count > 0)
+            {
+                Player p = Instantiate(playerPrefab);
+                //Debug.Log("Instatiating new player : " + m_playerToInstantiate[0][0] + m_playerToInstantiate[0][1] + m_playerToInstantiate[0][2]);
+                p.id = (int)m_playerToInstantiate[0][2];
+                AnimatorController animController = animFactory.GetAnimatorController(p.id);
+                p.SetAnimatorController(animController);
+                p.transform.position = new Vector3(m_playerToInstantiate[0][0], -m_playerToInstantiate[0][1], 0);
+                m_players.Add(p);
+                Debug.Log(p.transform.position);
+
+                GameObject[] container = GameObject.FindGameObjectsWithTag("PlayersContainer");
+                if (container.Length > 0)
+                {
+                    p.transform.SetParent(container[0].transform);
+                }
+
+                m_playerToInstantiate.RemoveAt(0);
+            }
         }
     }
 
@@ -237,6 +248,9 @@ public class GameModel : MonoBehaviour
             LoadObjects(objects.Count, objects[0].Count, objects);
         }
         needsFullRedraw = true;
+        gameWon = false;
+        virtualDPad.SetActive(true);
+        winMessageContainer.SetActive(true);
     }
 
     /// <summary>

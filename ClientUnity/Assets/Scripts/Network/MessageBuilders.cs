@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -46,5 +47,10 @@ public class MessageBuilders
     public static string BuildLobbyMessage()
     {
         return "{\"Action\":\"returnToLobby\"}";
+    }
+
+    public static string BuildPingMessage(int x, int y)
+    {
+        return "{\"Action\":\"sendPing\",\"PosX\":" + x + ",\"PosY\":" + y + "}";
     }
 }

@@ -250,7 +250,7 @@ public class GameModel : MonoBehaviour
         needsFullRedraw = true;
         gameWon = false;
         virtualDPad.SetActive(true);
-        winMessageContainer.SetActive(true);
+        winMessageContainer.SetActive(false);
     }
 
     /// <summary>

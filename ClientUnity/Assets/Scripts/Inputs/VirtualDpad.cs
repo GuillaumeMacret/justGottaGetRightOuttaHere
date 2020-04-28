@@ -9,73 +9,119 @@ public class VirtualDpad : MonoBehaviour
     private Vector2 touchStartPosition, touchEndPosition;
     private string direction;
 
+    public bool actionMode = true;
+    private float m_cooldownAfterSwitch = .1f;
+    private float m_cooldownTimer = 0f;
+
     private float m_InputCooldown = .25f;
     private float m_TimerCooldown = 0.0f;
 
     // Update is called once per frame
     void Update()
     {
-        /* Getting the touch */
-        direction = "";
-        if (Input.touchCount > 0)
+        if (m_cooldownTimer > 0)
         {
-            theTouch = Input.GetTouch(0);
-
-            if (theTouch.phase == TouchPhase.Began)
-            {
-                touchStartPosition = theTouch.position;
-            }
-
-            else if (theTouch.phase == TouchPhase.Moved || theTouch.phase == TouchPhase.Ended)
-            {
-                touchEndPosition = theTouch.position;
-
-                float x = touchEndPosition.x - touchStartPosition.x;
-                float y = touchEndPosition.y - touchStartPosition.y;
-
-                if (Mathf.Abs(x) == 0 && Mathf.Abs(y) == 0)
-                {
-                    direction = "Tapped";
-                }
-
-                else if (Mathf.Abs(x) > Mathf.Abs(y))
-                {
-                    direction = x > 0 ? "right" : "left";
-                }
-
-                else
-                {
-                    direction = y > 0 ? "up" : "down";
-                }
-            }
-        }
-
-        /* Decide if the send is on cooldown */
-        if(m_TimerCooldown > 0)
-        {
-            m_TimerCooldown -= Time.deltaTime;
-            //Debug.Log("Send is on cooldown " + m_TimerCooldown + " seconds left");
+            m_cooldownTimer -= Time.deltaTime;
         }
         else
         {
-            /* Create the message and send it */
-            string messageToSend = "";
-            if (direction != "" && direction != "Tapped")
+            /* Getting the touch */
+            direction = "";
+            if (Input.touchCount > 0)
             {
-                messageToSend = MessageBuilders.BuildMovementMessage(direction);
-                m_TimerCooldown = m_InputCooldown;
-            }
-            else if (direction == "Tapped")
-            {
-                messageToSend = MessageBuilders.BuildActionMessage();
-                m_TimerCooldown = m_InputCooldown;
-            }
+                theTouch = Input.GetTouch(0);
 
-            if (messageToSend != "")
+                if (theTouch.phase == TouchPhase.Began)
+                {
+                    touchStartPosition = theTouch.position;
+                }
+
+                else if (theTouch.phase == TouchPhase.Moved || theTouch.phase == TouchPhase.Ended)
+                {
+                    touchEndPosition = theTouch.position;
+
+                    float x = touchEndPosition.x - touchStartPosition.x;
+                    float y = touchEndPosition.y - touchStartPosition.y;
+
+                    if (Mathf.Abs(x) == 0 && Mathf.Abs(y) == 0)
+                    {
+                        direction = "Tapped";
+                    }
+
+                    else if (Mathf.Abs(x) > Mathf.Abs(y))
+                    {
+                        direction = x > 0 ? "right" : "left";
+                    }
+
+                    else
+                    {
+                        direction = y > 0 ? "up" : "down";
+                    }
+                }
+            }
+            /* Decide if the send is on cooldown */
+            if (m_TimerCooldown > 0)
             {
-                TCPClient.SendMessage(messageToSend);
+                m_TimerCooldown -= Time.deltaTime;
+                //Debug.Log("Send is on cooldown " + m_TimerCooldown + " seconds left");
+            }
+            else
+            {
+                /* Create the message and send it */
+                if (direction != "" && direction != "Tapped")
+                {
+                    SendMoveMessage(direction);
+                    m_TimerCooldown = m_InputCooldown;
+                }
+                else if (direction == "Tapped")
+                {
+                    if (actionMode)
+                    {
+                        SendActionMessage();
+                    }
+                    else
+                    {
+                        SendPingMessage(Mathf.FloorToInt(touchEndPosition.x), -Mathf.FloorToInt(touchEndPosition.y));
+                    }
+                    m_TimerCooldown = m_InputCooldown;
+                }
             }
         }
+    }
+    public void SendMoveMessage(string direction)
+    {
+        string messageToSend = MessageBuilders.BuildMovementMessage(direction);
+        TCPClient.SendMessage(messageToSend);
+    }
 
+    public void SendActionMessage()
+    {
+        string messageToSend = MessageBuilders.BuildActionMessage();
+        TCPClient.SendMessage(messageToSend);
+    }
+
+    public void SendPingMessage(int x,int y)
+    {
+        string messageToSend = MessageBuilders.BuildPingMessage(x,y);
+        //TCPClient.SendMessage(messageToSend);
+        Debug.Log(messageToSend);
+    }
+
+    public void SendReturnMessage()
+    {
+        string messageToSend = MessageBuilders.BuildLobbyMessage();
+        TCPClient.SendMessage(messageToSend);
+    }
+
+    public void SwitchToActionMode()
+    {
+        actionMode = true;
+        m_cooldownTimer = m_cooldownAfterSwitch;
+    }
+
+    public void SwitchToPingMode()
+    {
+        actionMode = false;
+        m_cooldownTimer = m_cooldownAfterSwitch;
     }
 }

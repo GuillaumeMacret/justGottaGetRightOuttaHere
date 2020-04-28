@@ -328,4 +328,9 @@ public class GameModel : MonoBehaviour
     {
         m_PingToInstantiate.Add(new Vector2(x, y));
     }
+
+    public void SetPlayerFacing(int x,int y)
+    {
+        m_players[GameLobbyData.PlayerId].SetFacing(x, y);
+    }
 }

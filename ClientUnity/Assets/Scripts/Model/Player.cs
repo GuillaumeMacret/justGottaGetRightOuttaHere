@@ -38,6 +38,13 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void SetFacing(int x, int y)
+    {
+
+        m_animator.SetFloat("MoveX", x);
+        m_animator.SetFloat("MoveY", y);
+    }
+
     private void Update()
     {
         m_SpriteRenderer.enabled = true;
@@ -76,9 +83,10 @@ public class Player : MonoBehaviour
         {
             m_animator.SetBool("Moving", false);
         }
-
+        /*
         m_animator.SetFloat("MoveX", lastDirection.x);
         m_animator.SetFloat("MoveY", lastDirection.y);
+        */
 
     }
 

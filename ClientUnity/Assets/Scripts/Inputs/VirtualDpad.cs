@@ -87,6 +87,21 @@ public class VirtualDpad : MonoBehaviour
                     }
                     m_TimerCooldown = m_InputCooldown;
                 }
+                /*Adjust facing direction whatever the answer is*/
+                switch (direction) {
+                    case "up":
+                        model.SetPlayerFacing(0, 1);
+                        break;
+                    case "down":
+                        model.SetPlayerFacing(0, -1);
+                        break;
+                    case "left":
+                        model.SetPlayerFacing(-1, 0);
+                        break;
+                    case "right":
+                        model.SetPlayerFacing(1, 0);
+                        break;
+                }
             }
         }
     }

@@ -5,6 +5,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEditor.Animations;
+using UnityEngine.UI;
 
 public class GameModel : MonoBehaviour
 {
@@ -19,6 +20,10 @@ public class GameModel : MonoBehaviour
     public bool gameWon = false;
     public GameObject virtualDPad;
     public GameObject winMessageContainer;
+    public Image actionButtonImage;
+    public Image pingButtonImage;
+    public GameObject pingPrefab;
+    
 
 
     private static float m_GameTimer;
@@ -36,8 +41,16 @@ public class GameModel : MonoBehaviour
     //The vec with info to create new players (xpos,ypos,id)
     private List<Vector3> m_playerToInstantiate = new List<Vector3>();
 
+    private List<Vector2> m_PingToInstantiate = new List<Vector2>();
+
     private const string m_terrainTilesPath = "Tiles/MergeTerrainTiles/Spritesheetmerge";
 
+    /*Parameters to locate where is the ping*/
+    private float m_TileSize;
+    //The gap between the left of the screen and the first tile
+    private float m_XStartOffset;
+    //The gap between the bottom of the screen and the first tile
+    private float m_YStartOffset;
 
     private void Awake()
     {
@@ -95,7 +108,7 @@ public class GameModel : MonoBehaviour
                 p.SetAnimatorController(animController);
                 p.transform.position = new Vector3(m_playerToInstantiate[0][0], -m_playerToInstantiate[0][1], 0);
                 m_players.Add(p);
-                Debug.Log(p.transform.position);
+                //Debug.Log(p.transform.position);
 
                 GameObject[] container = GameObject.FindGameObjectsWithTag("PlayersContainer");
                 if (container.Length > 0)
@@ -105,6 +118,14 @@ public class GameModel : MonoBehaviour
 
                 m_playerToInstantiate.RemoveAt(0);
             }
+
+            if(m_PingToInstantiate.Count > 0)
+            {
+                GameObject ping = Instantiate(pingPrefab);
+                ping.transform.position = new Vector3(m_PingToInstantiate[0].x, -m_PingToInstantiate[0].y, 0);
+                Debug.Log("New ping at :" + ping.transform.position);
+                m_PingToInstantiate.RemoveAt(0);
+            }
         }
     }
 
@@ -113,6 +134,7 @@ public class GameModel : MonoBehaviour
     /// </summary>
     private void UpdateCameraSettings()
     {
+        Debug.Log("Screen Dimension : " + Screen.width + " " + Screen.height);
         /* Dertemine wich dimension is reaching the border */
         int width = m_blocksLayer[0].Length;
         int height = m_blocksLayer.Length;
@@ -124,12 +146,19 @@ public class GameModel : MonoBehaviour
         {
             //Debug.Log("Width is limiting");
             mainCamera.orthographicSize = (widthRatio * 8) / 2;
+            m_TileSize = Screen.width / width;
+            m_XStartOffset = 0;
+            m_YStartOffset = (Screen.height - (height * m_TileSize)) / 2;
         }
         else
         {
             //Debug.Log("Height is limiting");
             mainCamera.orthographicSize = height / 2;
+            m_TileSize = Screen.height / height;
+            m_YStartOffset = 0;
+            m_XStartOffset = (Screen.width - (width* m_TileSize)) / 2;
         }
+        Debug.Log("New tile size is : " + m_TileSize);
 
         mainCamera.transform.position = new Vector3(width / 2.0f, -height / 2.0f, mainCamera.transform.position.z);
     }
@@ -277,4 +306,26 @@ public class GameModel : MonoBehaviour
         }
     }
 
+    public Vector2 PixelPosToTilePos(int x,int y)
+    {
+        int width = m_blocksLayer[0].Length;
+        int height = m_blocksLayer.Length;
+        float tileX, tileY;
+        tileX = (x - m_XStartOffset) / m_TileSize;
+        tileY = (y - m_YStartOffset) / m_TileSize;
+        if (tileX < 0) tileX = 0;
+        if (tileY < 0) tileY = 0;
+        if (tileX >= width) tileX = width - 1;
+        if (tileY >= height) tileY = height - 1;
+
+        /*Inverse Y because our origin is TOPleft while this one is BOTleft*/
+        tileY = -(tileY - height);
+
+        return new Vector2(tileX, tileY);
+    }
+
+    public void CreatePing(int x, int y)
+    {
+        m_PingToInstantiate.Add(new Vector2(x, y));
+    }
 }

@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class VirtualDpad : MonoBehaviour
 {
+    public GameModel model;
+
     private Touch theTouch;
     private Vector2 touchStartPosition, touchEndPosition;
     private string direction;
@@ -13,7 +15,7 @@ public class VirtualDpad : MonoBehaviour
     private float m_cooldownAfterSwitch = .1f;
     private float m_cooldownTimer = 0f;
 
-    private float m_InputCooldown = .25f;
+    private float m_InputCooldown = .1f;
     private float m_TimerCooldown = 0.0f;
 
     // Update is called once per frame
@@ -81,7 +83,7 @@ public class VirtualDpad : MonoBehaviour
                     }
                     else
                     {
-                        SendPingMessage(Mathf.FloorToInt(touchEndPosition.x), -Mathf.FloorToInt(touchEndPosition.y));
+                        SendPingMessage(Mathf.FloorToInt(touchEndPosition.x), Mathf.FloorToInt(touchEndPosition.y));
                     }
                     m_TimerCooldown = m_InputCooldown;
                 }
@@ -102,14 +104,15 @@ public class VirtualDpad : MonoBehaviour
 
     public void SendPingMessage(int x,int y)
     {
-        string messageToSend = MessageBuilders.BuildPingMessage(x,y);
-        //TCPClient.SendMessage(messageToSend);
-        Debug.Log(messageToSend);
+        Vector2 convertedCoord = model.PixelPosToTilePos(x, y);
+        string messageToSend = MessageBuilders.BuildPingMessage(Mathf.FloorToInt(convertedCoord.x), Mathf.FloorToInt(convertedCoord.y));
+        TCPClient.SendMessage(messageToSend);
     }
 
     public void SendReturnMessage()
     {
         string messageToSend = MessageBuilders.BuildLobbyMessage();
+        m_cooldownTimer = m_cooldownAfterSwitch;
         TCPClient.SendMessage(messageToSend);
     }
 
@@ -117,11 +120,23 @@ public class VirtualDpad : MonoBehaviour
     {
         actionMode = true;
         m_cooldownTimer = m_cooldownAfterSwitch;
+        Color c = model.actionButtonImage.color;
+        c.a = 150/255.0f;
+        model.actionButtonImage.color = c;
+        c = model.pingButtonImage.color;
+        c.a = 100/255.0f;
+        model.pingButtonImage.color = c;
     }
 
     public void SwitchToPingMode()
     {
         actionMode = false;
         m_cooldownTimer = m_cooldownAfterSwitch;
+        Color c = model.actionButtonImage.color;
+        c.a = 100/255.0f;
+        model.actionButtonImage.color = c;
+        c = model.pingButtonImage.color;
+        c.a = 150/255.0f;
+        model.pingButtonImage.color = c;
     }
 }

@@ -38,6 +38,10 @@ public class GameBoardMessageHandler : MonoBehaviour, IMessageHandler
             case "win":
                 model.gameWon = true;
                 break;
+            case "sendPing":
+                var pingJson = JSON.Parse(JSONString);
+                model.CreatePing(pingJson["PosX"], pingJson["PosY"]);
+                break;
             default:
                 Debug.LogError("Can't handle this action : " + action.Action);
                 break;

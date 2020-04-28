@@ -6,15 +6,21 @@ using UnityEngine.SceneManagement;
 
 public class GameSceneManager : MonoBehaviour
 {
+	private bool goToGameListScene;
 	private bool goToLobbyScene;
 	private bool goToGameScene;
 
 	void Start() {
+		goToGameListScene = false;
 		goToLobbyScene = false;
 		goToGameScene = false;
 	}
 
 	void Update() {
+		if(goToGameListScene) {
+			goToGameListScene = false;
+			SceneManager.LoadScene("GameList");
+		}
 		if(goToLobbyScene) {
 			goToLobbyScene = false;
 			SceneManager.LoadScene("Lobby");
@@ -25,7 +31,7 @@ public class GameSceneManager : MonoBehaviour
 		}
 	}
 	public void ToGameListScene() {
-		SceneManager.LoadScene("GameList");
+		goToGameListScene = true;
 	}
 	
 	public void ToLobbyScene() {

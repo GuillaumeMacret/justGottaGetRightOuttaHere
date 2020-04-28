@@ -49,6 +49,10 @@ public class MessageBuilders
         return "{\"Action\":\"returnToLobby\"}";
     }
 
+	public static string BuildLeaveGameMessage() {
+		return "{\"Action\":\"leaveGame\"}";
+	}
+
     public static string BuildPingMessage(int x, int y)
     {
         return "{\"Action\":\"sendPing\",\"PosX\":" + x + ",\"PosY\":" + y + "}";

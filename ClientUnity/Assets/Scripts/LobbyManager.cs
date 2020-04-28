@@ -29,13 +29,18 @@ public class LobbyManager : MonoBehaviour
 	// Private bool to change state of UI
 	private bool changeMapName;
 	private bool playerJoined;
-	private int indexToUpdate;
+	private bool playerLeft;
+	private bool sceneInitialized;
+	private int playerJoinedIndex;
+	private int playerLeftIndex;
 
     // Start is called before the first frame update
     void Start()
     {
 		GameLobbyData.TotalNbRoles = RoleDescriptions.Length;
-		if(GameLobbyData.CreatedGame) // Game created by user
+		//sceneInitialized = false;
+		GameIdText.text = "Game " + GameLobbyData.GameId;
+		if (GameLobbyData.CreatedGame) // Game created by user
 		{
 			MapName.gameObject.SetActive(false);
 			MapsDropdown.AddOptions(new List<string>(GameLobbyData.MapList));
@@ -48,20 +53,18 @@ public class LobbyManager : MonoBehaviour
 			MapsDropdown.gameObject.SetActive(false);
 			StartGameButton.interactable = false;
 			ChangeMap(GameLobbyData.MapName);
-			Debug.Log("Joined the game, GameLobbyData.PlayersRoles.Length="+GameLobbyData.PlayersRoles.Length);
 		}
-		for(int i = 0; i < GameLobbyData.PlayersRoles.Length; ++i) 
-		{
-			Debug.Log("Change role, i=" + i + " role="+GameLobbyData.PlayersRoles[i]);
+		for (int i = 0; i < GameLobbyData.PlayersRoles.Length; ++i) {
 			LobbyPlayerControllers[i].ChangeRole(GameLobbyData.PlayersRoles[i], RoleCharacterSprites[GameLobbyData.PlayersRoles[i]], RoleDescriptions[GameLobbyData.PlayersRoles[i]]);
 		}
 		// Removing change character button for other players
-		for(int i = 0; i < LobbyPlayerControllers.Length; ++i) 
-		{
+		for (int i = 0; i < LobbyPlayerControllers.Length; ++i) {
 			if (i != GameLobbyData.PlayerId)
 				LobbyPlayerControllers[i].ChangeCharacterButton.gameObject.SetActive(false);
 		}
-    }
+		//sceneInitialized = true;
+
+	}
 
     // Update is called once per frame
     void Update()
@@ -73,28 +76,37 @@ public class LobbyManager : MonoBehaviour
 		}
 		if(playerJoined) 
 		{
-			LobbyPlayerControllers[indexToUpdate].ChangeRole(GameLobbyData.PlayersRoles[indexToUpdate], RoleCharacterSprites[GameLobbyData.PlayersRoles[indexToUpdate]], RoleDescriptions[GameLobbyData.PlayersRoles[indexToUpdate]]);
+			LobbyPlayerControllers[playerJoinedIndex].ChangeRole(GameLobbyData.PlayersRoles[playerJoinedIndex], RoleCharacterSprites[GameLobbyData.PlayersRoles[playerJoinedIndex]], RoleDescriptions[GameLobbyData.PlayersRoles[playerJoinedIndex]]);
 			playerJoined = false;
+		}
+		if(playerLeft) 
+		{
+			LobbyPlayerControllers[playerLeftIndex].Reset();
+			playerLeft = false;
 		}
     }
 
+	// Will send a message to the server requesting a map change
 	void MapChanged(Dropdown change) 
 	{
 		Runner.SendMapChangeRequest(change.value);
 	}
 
+	// Is called when a player joined the lobby, to update its role
 	public void JoinedGame(int playerId, int[] roles) 
 	{
-		indexToUpdate = playerId;
+		playerJoinedIndex = playerId;
 		playerJoined = true;
 	}
 
+	// Is called when the leader has changed the map
 	public void ChangeMap(string newMap) 
 	{
 		GameLobbyData.MapName = newMap;
 		changeMapName = true;
 	}
 
+	// Is called when a player changed role
 	public void ChangeRole(int playerId, int roleId) 
 	{
 		if(roleId < RoleCharacterSprites.Length && roleId < RoleDescriptions.Length) 
@@ -102,5 +114,11 @@ public class LobbyManager : MonoBehaviour
 			GameLobbyData.PlayersRoles[playerId] = roleId;
 			LobbyPlayerControllers[playerId].ChangeRole(roleId, RoleCharacterSprites[roleId], RoleDescriptions[roleId]);
 		}
+	}
+
+	public void PlayerLeftGame(int playerId) 
+	{
+		playerLeftIndex = playerId;
+		playerLeft = true;
 	}
 }

@@ -53,6 +53,15 @@ public class LobbyMessageHandler : MonoBehaviour, IMessageHandler {
 				string errorMessage = cantStart["MoreInfo"];
 				//TODO : Display the error message
 				break;
+
+			case "leaveGame":
+				JSONNode leaveGame = JSON.Parse(JSONString);
+				int id = leaveGame["Player"];
+				if (id == GameLobbyData.PlayerId)
+					sceneManager.ToGameListScene();
+				else
+					lobbyManager.PlayerLeftGame(id);
+				break;
 			default:
 				Debug.LogError("Can't handle this action : " + action.Action);
 				break;

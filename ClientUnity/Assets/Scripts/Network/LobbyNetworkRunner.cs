@@ -32,4 +32,11 @@ public class LobbyNetworkRunner : MonoBehaviour
 		if (message != "")
 			TCPClient.SendMessage(message);
 	}
+
+	public void SendLeaveGameRequest() 
+	{
+		string message = MessageBuilders.BuildLeaveGameMessage();
+		if(message != "")
+			TCPClient.SendMessage(message);
+	}
 }

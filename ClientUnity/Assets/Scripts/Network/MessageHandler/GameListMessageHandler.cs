@@ -2,11 +2,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameListMessageHandler : MonoBehaviour, IMessageHandler
 {
 	public GameListCreator gameListCreator;
 	public GameSceneManager sceneManager;
+	public Image CantJoinMessagePanel;
+	public Text CantJoinMessageErrorText;
+
+	private string errorMessage;
+	private bool showErrorMessage;
+
+	private void Start() {
+		showErrorMessage = false;
+	}
+
+	private void Update() {
+		if(showErrorMessage) {
+			showErrorMessage = false;
+			CantJoinMessagePanel.gameObject.SetActive(true);
+			CantJoinMessageErrorText.text = errorMessage;
+		}
+	}
 
 	public void Handle(string JSONString) {
 		ActionJson action = JsonUtility.FromJson<ActionJson>(JSONString);
@@ -37,8 +55,8 @@ public class GameListMessageHandler : MonoBehaviour, IMessageHandler
 			case "cantJoinGame":
 				JSONNode cantJoin = JSON.Parse(JSONString);
 				gameId = cantJoin["GameId"];
-				string errorMessage = cantJoin["MoreInfo"];
-				//TODO : Display the error message
+				errorMessage = "Couldn't join the game "+ gameId + ":\n" + cantJoin["MoreInfo"];
+				showErrorMessage = true;
 				break;
 
 			case "createdGame":
@@ -68,5 +86,10 @@ public class GameListMessageHandler : MonoBehaviour, IMessageHandler
 				Debug.LogError("Can't handle this action : " + action.Action);
 				break;
 		}
+	}
+
+	public void CloseCantJoinGameMessage() 
+	{
+		CantJoinMessagePanel.gameObject.SetActive(false);
 	}
 }

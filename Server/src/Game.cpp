@@ -635,8 +635,6 @@ void Game::readBackground(RSJresource layerResource)
         if (std::stringstream(tmp) >> value)
         {
             _grid[j][i].backgroundValue = value;
-            _grid[j][i].blockValue = EMPTY;
-            _grid[j][i].collisionValue = C_NOTHING;
             if (value == STAIRWAY)
             {
                 _stairways.push_back(Block{Point{i, j}, value});
@@ -666,6 +664,7 @@ void Game::readObjects(RSJresource layerResource)
         ss >> tmp;
         if (std::stringstream(tmp) >> value && value)
             _grid[j][i].blockValue = value;
+        else _grid[j][i].blockValue = EMPTY;
         tmp = "";
         ++i;
         if (i % _width == 0)

@@ -19,10 +19,6 @@
 #define MOVABLE 65
 #define MOVABLE_GROUNDED 66
 #define BREAKABLE 41
-#define LOCK_1 645
-#define LOCK_2 646
-#define LOCK_3 653
-#define LOCK_4 654
 #define LILYPAD 60
 #define ENEMY_UP 1106
 #define ENEMY_DOWN 1115

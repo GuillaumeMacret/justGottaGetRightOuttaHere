@@ -765,8 +765,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -24.11}
-  m_SizeDelta: {x: 200, y: 20}
+  m_AnchoredPosition: {x: 0, y: -74.465}
+  m_SizeDelta: {x: 599.9999, y: 57.136673}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &633901260
 MonoBehaviour:
@@ -801,11 +801,11 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 729ecd214e319ee4cb28c70cf9e59319, type: 3}
-    m_FontSize: 14
+    m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
+    m_MinSize: 4
+    m_MaxSize: 45
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -2952,7 +2952,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1467828375}
         m_MethodName: SendReturnMessage
         m_Mode: 1
         m_Arguments:
@@ -3028,8 +3028,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -22.5, y: 5}
-  m_SizeDelta: {x: 45, y: 25}
+  m_AnchoredPosition: {x: -100, y: 10}
+  m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &6239908743895873812
 CanvasRenderer:
@@ -3054,7 +3054,8 @@ MonoBehaviour:
   lobbyNetworkRunner: {fileID: 0}
   DefaultCharacterSprite: {fileID: 21300000, guid: 4503f38031a06734b9b631e56e138076,
     type: 3}
-  ChangeCharacterButton: {fileID: 6239908743135986482}
+  PreviousCharacterButton: {fileID: 0}
+  NextCharacterButton: {fileID: 0}
   PlayerIdText: {fileID: 6239908744049489102}
   AbilityText: {fileID: 0}
   CharacterImage: {fileID: 0}
@@ -3147,7 +3148,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 80}
+  m_SizeDelta: {x: 600, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6239908744049489088
 GameObject:
@@ -3184,7 +3185,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: -3}
-  m_SizeDelta: {x: 200, y: 20}
+  m_SizeDelta: {x: 599.9999, y: 71.46486}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &6239908744049489102
 MonoBehaviour:
@@ -3207,11 +3208,11 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 729ecd214e319ee4cb28c70cf9e59319, type: 3}
-    m_FontSize: 14
+    m_FontSize: 50
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
+    m_MinSize: 0
+    m_MaxSize: 300
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1

@@ -232,11 +232,11 @@ void Server::requestStartGame(int userIndex)
     std::string answer;
 
     Game *g = getGameFromPlayer(userIndex);
-    if (g != nullptr && g->getNbConnectedPlayers() == 4)
+    if (g != nullptr/* && g->getNbConnectedPlayers() == 4*/)
     {
         //g->resetGame();
         std::vector<Player *> players = g->getPlayers();
-        bool available = true;
+        /*bool available = true;
         for (size_t i = 0; i < players.size() - 1; ++i)
         {
             for (size_t j = i + 1; j < players.size(); ++j)
@@ -247,8 +247,8 @@ void Server::requestStartGame(int userIndex)
                     i = j = players.size();
                 }
             }
-        }
-        if (available && g->getMapName() != "")
+        }*/
+        if (/*available && */g->getMapName() != "")
         {
             g->setStarted(true);
             answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", ";

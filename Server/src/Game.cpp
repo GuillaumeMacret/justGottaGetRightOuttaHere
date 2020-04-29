@@ -6,7 +6,7 @@
 #include <sstream>
 #include "RSJParser.tcc"
 
-Game::Game(int gameID, std::string selectedMap) : _buttonState(true), _finished(false), _started(false), _init(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
+Game::Game(int gameID, std::string selectedMap) : _buttonState(true), _finished(false), _started(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
 
 void Game::enableSecondaryAction(int roleID)
 {
@@ -842,12 +842,6 @@ void Game::readMap()
         _width = json_file_resource["width"].as<int>();
         _height = json_file_resource["height"].as<int>();
 
-        _grid = new Tile *[_height];
-        for (int i = 0; i < _height; ++i)
-        {
-            _grid[i] = new Tile[_width];
-        }
-
         for (auto it = json_file_resource["layers"].as_array().begin(); it != json_file_resource["layers"].as_array().end(); ++it)
         {
             RSJresource layerResource = it->as<RSJresource>();
@@ -957,26 +951,10 @@ int Game::getNbConnectedPlayers()
 void Game::resetGame()
 {
     _buttonState = false, _finished = false, _nbKeys = 0;
-    std::cerr << "begin reset" << std::endl;
-    if (_init && _grid)
-    {
-        std::cerr << "start freeing" << std::endl;
-        for (int i = 0; i < _height; ++i)
-        {
-            if (_grid[i])
-            {
-                std::cerr << "freeing " << i << "th row" << std::endl;
-                delete[] _grid[i];
-            }
-        }
-        delete[] _grid;
-    }
     for (Player *p : _players)
     {
         p->setSecondaryAction(false);
     }
-    std::cerr << "end reset" << std::endl;
-    _init = true;
 }
 
 bool Game::getStarted()
@@ -993,16 +971,4 @@ Game::~Game()
 {
     for (Player *p : _players)
         delete p;
-
-    if (_grid)
-    {
-        for (int i = 0; i < _height; ++i)
-        {
-            if (_grid[i])
-            {
-                delete[] _grid[i];
-            }
-        }
-        delete[] _grid;
-    }
 }

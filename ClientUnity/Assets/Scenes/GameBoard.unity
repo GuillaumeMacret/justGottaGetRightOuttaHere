@@ -3039,26 +3039,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6239908743895873832}
   m_CullTransparentMesh: 0
---- !u!114 &6239908743895873813
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6239908743895873832}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d90826c0e1e0a047821752f3861cbd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lobbyNetworkRunner: {fileID: 0}
-  DefaultCharacterSprite: {fileID: 21300000, guid: 4503f38031a06734b9b631e56e138076,
-    type: 3}
-  PreviousCharacterButton: {fileID: 0}
-  NextCharacterButton: {fileID: 0}
-  PlayerIdText: {fileID: 6239908744049489102}
-  AbilityText: {fileID: 0}
-  CharacterImage: {fileID: 0}
 --- !u!114 &6239908743895873814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3120,7 +3100,6 @@ GameObject:
   - component: {fileID: 6239908743895873812}
   - component: {fileID: 6239908743895873815}
   - component: {fileID: 6239908743895873814}
-  - component: {fileID: 6239908743895873813}
   m_Layer: 5
   m_Name: WinContainer
   m_TagString: Untagged

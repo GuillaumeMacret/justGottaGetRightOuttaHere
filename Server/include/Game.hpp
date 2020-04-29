@@ -104,6 +104,9 @@ private:
     /* Boolean that is true if the game has started, false otherwise */
     bool _started;
 
+    /* Boolean to know if the game is finished being initialized */
+    bool _init;
+
     /* Width of the map */
     int _width;
 

@@ -36,6 +36,7 @@ public class LobbyManager : MonoBehaviour
 	private bool showErrorMessage;
 	private int playerJoinedIndex;
 	private int playerLeftIndex;
+	private string errorMessage;
 
     // Start is called before the first frame update
     void Start()
@@ -90,6 +91,7 @@ public class LobbyManager : MonoBehaviour
 		}
 		if(showErrorMessage) 
 		{
+			ErrorMessageText.text = errorMessage;
 			CantStartGameErrorMessageCanvas.gameObject.SetActive(true);
 		}
 		else 
@@ -101,7 +103,7 @@ public class LobbyManager : MonoBehaviour
 	public void ShowErrorMessage(string message) 
 	{
 		showErrorMessage = true;
-		ErrorMessageText.text = message;
+		errorMessage = message;
 	}
 
 	public void CloseErrorMessage() 

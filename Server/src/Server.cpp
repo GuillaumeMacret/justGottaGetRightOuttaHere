@@ -257,6 +257,7 @@ void Server::requestStartGame(int userIndex)
                 }
             }
         }*/
+        std::cout << "Loading map called -" << g->getMapName() << "-" << std::endl;
         if (/*available && */g->getMapName() != "")
         {
             g->setStarted(true);
@@ -346,6 +347,7 @@ void Server::requestReturnToLobby(int userIndex)
     Game *g = getGameFromPlayer(userIndex);
     if (g != nullptr)
     {
+        g->resetGame();
         g->setStarted(false);
         std::string answer;
         answer = "{\"Action\":\"" ACTION_RETURNED_LOBBY "\"};\n";

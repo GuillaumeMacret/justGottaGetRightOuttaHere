@@ -561,17 +561,18 @@ bool Game::addPlayer(Player *p)
                 ++role;
         }
         p->setRole(role);
+        p->setConnected(true);
         _players.push_back(p);
         return true;
     }
-    for (auto it : _players)
+    for (uint i = 0; i < _players.size(); ++i)
     {
-        if (!it->isConnected())
+        if (!_players[i]->isConnected())
         {
-            it->setIndex(p->getIndex());
-            it->setGame(this);
-            it->setConnected(true);
-            p = it;
+            p->copy(_players[i]);
+            p->setConnected(true);
+            delete _players[i];
+            _players[i] = p;
             return true;
         }
     }
@@ -580,11 +581,14 @@ bool Game::addPlayer(Player *p)
 
 void Game::disconnectPlayer(int playerIndex)
 {
-    for (auto it = _players.begin(); it != _players.end(); ++it)
+    for(uint i = 0; i < _players.size(); ++i)
     {
-        if ((*it)->getIndex() == playerIndex)
+        if(_players[i]->getIndex() == playerIndex)
         {
-            (*it)->setConnected(false);
+            //Create a copy of the player
+            Player *tmp = new Player(_players[i]);
+            tmp->setConnected(false);
+            _players[i] = tmp;
         }
     }
 }

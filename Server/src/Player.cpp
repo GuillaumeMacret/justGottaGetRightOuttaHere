@@ -5,6 +5,11 @@ Player::Player() : _posX(0), _posY(0), _role(0), _index(0), _connected(true), _s
 
 Player::Player(int index, Game *game) : _posX(0), _posY(0), _role(0), _index(index), _game(game), _connected(true), _lastDirection("down") {}
 
+Player::Player(Player *p)
+{
+    copy(p);
+}
+
 int Player::getPosX() { return _posX; }
 
 int Player::getPosY() { return _posY; }
@@ -68,4 +73,20 @@ void Player::Teleport()
     setPos(_dummy->posX, _dummy->posY);
     delete _dummy;
     _dummy = nullptr;
+}
+
+void Player::copy(Player *p)
+{
+    _posX = p->_posX;
+    _posY = p->_posY;
+    _role = p->_role;
+    _index = p->_index;
+    _game = p->_game;
+    _inGameID = p->_inGameID;
+    _connected = p->_connected;
+    _secondaryAction = p->_secondaryAction;
+    _onLock = p->_onLock;
+    _lastDirection = p->_lastDirection;
+    _lastCollisionType = p->_lastCollisionType;
+    _dummy = p->_dummy;
 }

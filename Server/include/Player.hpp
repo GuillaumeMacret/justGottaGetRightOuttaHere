@@ -38,6 +38,7 @@ class Player
 public:
     Player();
     Player(int index, class Game *game = nullptr);
+    Player(Player*);
 
     /* Getter for the X position */
     int getPosX();
@@ -86,7 +87,7 @@ public:
     /* Sets the dummy of the player */
     Point *setDummy();
     void Teleport();
-
+    void copy(Player *);
 
     ~Player();
 };

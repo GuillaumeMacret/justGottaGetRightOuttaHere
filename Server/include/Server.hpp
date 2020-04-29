@@ -46,6 +46,8 @@ private:
      * @index: the index of the player to remove */
     void removePlayerFromGame(int index);
 
+    Game *AddToGameList(int userIndex);
+
 public:
     Server();
     ~Server();

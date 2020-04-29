@@ -42,6 +42,7 @@ void Server::runPlayer(int index)
         if (!TCPConn.answers[index].empty() && TCPConn.server_send(index) == ERR)
         {
             removePlayerFromGame(index);
+            std::cout << "Player " << _players[index]->getInGameID() << "of game" << getGameFromPlayer(index)->getGameID() << " pipe broken" << std::endl;
             return;
         }
         req.clear();
@@ -137,10 +138,7 @@ void Server::requestAction(int userIndex)
 
 void Server::requestCreateGame(int userIndex)
 {
-    Game *g = new Game(_games.size());
-    _players[userIndex]->setGame(g);
-    g->addPlayer(_players[userIndex]);
-    _games.push_back(g);
+    Game *g = AddToGameList(userIndex);
 
     std::string answer = "{\"Action\":\"" ACTION_CREATED_GAME "\",";
     answer += "\"GameId\":" + std::to_string(g->getGameID()) + ',';
@@ -161,7 +159,7 @@ void Server::requestCreateGame(int userIndex)
         }
         std::sort(mapNames.begin(), mapNames.end());
         int i = 0;
-        for(std::string s : mapNames)
+        for (std::string s : mapNames)
         {
             if (i)
                 answer += ',';
@@ -258,7 +256,7 @@ void Server::requestStartGame(int userIndex)
             }
         }*/
         std::cout << "Loading map called -" << g->getMapName() << "-" << std::endl;
-        if (/*available && */g->getMapName() != "")
+        if (/*available && */ g->getMapName() != "")
         {
             g->setStarted(true);
             //g->setInLobby(false);
@@ -403,4 +401,28 @@ void Server::removePlayerFromGame(int index)
             }
         }
     }
+}
+
+Game *Server::AddToGameList(int userIndex)
+{
+    int id = 0;
+    bool unique = false;
+    while (!unique)
+    {
+        unique = true;
+        for (Game *g : _games)
+        {
+            if (g->getGameID() == id)
+            {
+                ++id;
+                unique = false;
+            }
+        }
+    }
+
+    Game *g = new Game(id);
+    _players[userIndex]->setGame(g);
+    g->addPlayer(_players[userIndex]);
+    _games.push_back(g);
+    return g;
 }

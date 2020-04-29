@@ -132,8 +132,6 @@ private:
     /* The name of the current map selected by the leader of the party */
     std::string _selectedMap;
 
-    bool _inLobby;
-
     /** Reads the background layer of the selected map, in a JSON format
      * @layerResource: contains the JSON information of the layer */
     void readBackground(RSJresource layerResource);
@@ -333,10 +331,6 @@ public:
 
     /* Changes the game state */
     void setStarted(bool);
-
-    bool isInLobby();
-
-    void setInLobby(bool);
 
     ~Game();
 };

@@ -90,8 +90,11 @@ public class LobbyManager : MonoBehaviour
 		}
 		if(showErrorMessage) 
 		{
-			CantStartGameErrorMessageCanvas.gameObject.SetActive(true) ;
-			showErrorMessage = false;
+			CantStartGameErrorMessageCanvas.gameObject.SetActive(true);
+		}
+		else 
+		{
+			CantStartGameErrorMessageCanvas.gameObject.SetActive(false);
 		}
     }
 
@@ -104,7 +107,6 @@ public class LobbyManager : MonoBehaviour
 	public void CloseErrorMessage() 
 	{
 		showErrorMessage = false;
-		CantStartGameErrorMessageCanvas.gameObject.SetActive(false);
 	}
 
 	// Will send a message to the server requesting a map change

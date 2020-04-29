@@ -15,7 +15,6 @@ void Game::enableSecondaryAction(int roleID)
         if (p->getRole() == roleID)
         {
             p->setSecondaryAction(true);
-            return;
         }
     }
 }

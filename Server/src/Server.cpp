@@ -241,7 +241,7 @@ void Server::requestStartGame(int userIndex)
     std::string answer;
 
     Game *g = getGameFromPlayer(userIndex);
-    if (g != nullptr/* && g->getNbConnectedPlayers() == 4*/)
+    if (g != nullptr && g->getNbConnectedPlayers() == 4)
     {
         //g->resetGame();
         std::vector<Player *> players = g->getPlayers();

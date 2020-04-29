@@ -1,10 +1,8 @@
 ﻿using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEditor.Animations;
 using UnityEngine.UI;
 
 public class GameModel : MonoBehaviour
@@ -104,7 +102,7 @@ public class GameModel : MonoBehaviour
                 Player p = Instantiate(playerPrefab);
                 //Debug.Log("Instatiating new player : " + m_playerToInstantiate[0][0] + m_playerToInstantiate[0][1] + m_playerToInstantiate[0][2]);
                 p.id = (int)m_playerToInstantiate[0][2];
-                AnimatorController animController = animFactory.GetAnimatorController(p.id);
+                RuntimeAnimatorController animController = animFactory.GetAnimatorController(p.id);
                 p.SetAnimatorController(animController);
                 p.transform.position = new Vector3(m_playerToInstantiate[0][0], -m_playerToInstantiate[0][1], 0);
                 m_players.Add(p);

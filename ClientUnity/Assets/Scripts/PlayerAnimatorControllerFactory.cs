@@ -1,14 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class PlayerAnimatorControllerFactory : MonoBehaviour
 {
 
-    public List<AnimatorController> playerAnimators;
+    public List<RuntimeAnimatorController> playerAnimators;
 
-    public AnimatorController GetAnimatorController(int id)
+    public RuntimeAnimatorController GetAnimatorController(int id)
     {
         if (id > playerAnimators.Count - 1)
         {

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor.Animations;
 
 public class Player : MonoBehaviour
 {
@@ -95,7 +94,7 @@ public class Player : MonoBehaviour
         targetPositions.Add(new Vector3(xPos, yPos, 0));
     }
 
-    public void SetAnimatorController(AnimatorController anim)
+    public void SetAnimatorController(RuntimeAnimatorController anim)
     {
         if(m_animator == null)
         {

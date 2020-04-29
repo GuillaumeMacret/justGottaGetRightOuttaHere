@@ -342,6 +342,19 @@ void Server::requestReturnToLobby(int userIndex)
     }
 }
 
+void Server::requestSendPing(int userIndex, int posX, int posY)
+{
+    Game *g = getGameFromPlayer(userIndex);
+    if (g != nullptr)
+    {
+        std::string answer;
+        answer = "{\"Action\":\"" ACTION_SEND_PING "\", \"PosX\":" + std::to_string(posX);
+        answer += ", \"PosY\":" + std::to_string(posY);
+        answer += "};\n";
+        broadcastGame(g, answer);
+    }
+}
+
 Game *Server::getGameFromPlayer(int userIndex)
 {
     return _players[userIndex]->getGame();

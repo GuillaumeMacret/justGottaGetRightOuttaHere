@@ -304,6 +304,18 @@ std::string Game::checkCreate(int posX, int posY)
     return res;
 }
 
+bool Game::checkPlayerOnBlock(Block b)
+{
+    for(Player *p : _players)
+    {
+        if(p->getPosX() == b.p.posX && p->getPosY() == b.p.posY)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 std::string Game::checkActivate(int posX, int posY)
 {
     std::string res = "";
@@ -313,13 +325,23 @@ std::string Game::checkActivate(int posX, int posY)
         int i = 0;
         if (!_buttonState)
         {
-            for (Block ofb : _onBlocks)
+            for (Block onb : _onBlocks)
             {
+                // Is it safe to activate the button?
+                if(checkPlayerOnBlock(onb))
+                {
+                    for(int j = 0; j < i; ++i)
+                    {
+                        _grid[onb.p.posY][onb.p.posX].blockValue = EMPTY;
+                        _grid[onb.p.posY][onb.p.posX].collisionValue = C_NOTHING;
+                    }
+                    return "";
+                }
                 if (i)
                     res += ',';
-                _grid[ofb.p.posY][ofb.p.posX].blockValue = ofb.value;
-                _grid[ofb.p.posY][ofb.p.posX].collisionValue = C_BLOCK;
-                res += tileToJSON(ofb.p.posX, ofb.p.posY, ofb.value);
+                _grid[onb.p.posY][onb.p.posX].blockValue = onb.value;
+                _grid[onb.p.posY][onb.p.posX].collisionValue = C_BLOCK;
+                res += tileToJSON(onb.p.posX, onb.p.posY, onb.value);
                 ++i;
             }
             for (Block ofb : _offBlocks)
@@ -332,13 +354,23 @@ std::string Game::checkActivate(int posX, int posY)
         }
         else
         {
-            for (Block ofb : _onBlocks)
+            for (Block onb : _onBlocks)
             {
+                // Is it safe to activate the button?
+                if(checkPlayerOnBlock(onb))
+                {
+                    for(int j = 0; j < i; ++i)
+                    {
+                        _grid[onb.p.posY][onb.p.posX].blockValue = EMPTY;
+                        _grid[onb.p.posY][onb.p.posX].collisionValue = C_NOTHING;
+                    }
+                    return "";
+                }
                 if (i)
                     res += ',';
-                _grid[ofb.p.posY][ofb.p.posX].blockValue = EMPTY;
-                _grid[ofb.p.posY][ofb.p.posX].collisionValue = C_NOTHING;
-                res += tileToJSON(ofb.p.posX, ofb.p.posY, EMPTY);
+                _grid[onb.p.posY][onb.p.posX].blockValue = EMPTY;
+                _grid[onb.p.posY][onb.p.posX].collisionValue = C_NOTHING;
+                res += tileToJSON(onb.p.posX, onb.p.posY, EMPTY);
                 ++i;
             }
             for (Block ofb : _offBlocks)

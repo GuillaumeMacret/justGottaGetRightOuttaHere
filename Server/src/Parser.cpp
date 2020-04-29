@@ -144,6 +144,22 @@ int Parser::requestReturnToLobby(std::string &req, class Server &server, int use
     return 0;
 }
 
+int Parser::requestSendPing(std::string &req, class Server &server, int userIndex)
+{
+    int posX, posY;
+    try
+    {
+        posX = readInt(req);
+        posY = readInt(req);
+        server.requestSendPing(userIndex, posX, posY);
+    }
+    catch (std::exception const &e)
+    {
+        return 1;
+    }
+    return 0;
+}
+
 int Parser::getAction(std::string &req, Server &server, int userIndex)
 {
     std::string s = readArg(req);
@@ -194,6 +210,9 @@ int Parser::getAction(std::string &req, Server &server, int userIndex)
         else if (s == ACTION_RETURN_LOBBY)
         {
             res = requestReturnToLobby(req, server, userIndex);
+        } else if(s == ACTION_SEND_PING)
+        {
+            res = requestSendPing(req, server, userIndex);
         }
     }
     return res;

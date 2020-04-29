@@ -139,20 +139,24 @@ public class GameModel : MonoBehaviour
         int width = m_blocksLayer[0].Length;
         int height = m_blocksLayer.Length;
         //Debug.Log("Sizes : " + width + " " + height);
-        float widthRatio = width / 5.0f;
-        float heightRatio = height / 8.0f;
-        //Debug.Log("Ratios : " + widthRatio + " " + heightRatio);
+        float aspectRatio = (float)Screen.width / (float)Screen.height;
+        Debug.Log("Aspect ratio : " + aspectRatio);
+
+        float widthRatio = width / aspectRatio;
+        float heightRatio = height;
+        Debug.Log("Ratios : " + widthRatio + " " + heightRatio);
         if (widthRatio > heightRatio)
         {
-            //Debug.Log("Width is limiting");
-            mainCamera.orthographicSize = (widthRatio * 8) / 2;
+            Debug.Log("Width is limiting");
+            mainCamera.orthographicSize = width / aspectRatio / 2;
+            Debug.Log("New size is "+ widthRatio);
             m_TileSize = Screen.width / width;
             m_XStartOffset = 0;
             m_YStartOffset = (Screen.height - (height * m_TileSize)) / 2;
         }
         else
         {
-            //Debug.Log("Height is limiting");
+            Debug.Log("Height is limiting");
             mainCamera.orthographicSize = height / 2;
             m_TileSize = Screen.height / height;
             m_YStartOffset = 0;

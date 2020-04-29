@@ -35,6 +35,7 @@ public class GameListCreator : MonoBehaviour
 				foreach (GameListElementModel gameElement in games) {
 					GameObject newGame = Instantiate(ListGamePrefab);
 					GameListItemController gameListItemController = newGame.GetComponent<GameListItemController>();
+					gameListItemController.gameId = gameElement.GameId;
 					gameListItemController.GameIDText.text = "Game " + gameElement.GameId;
 					gameListItemController.NbPlayersText.text = "Players: " + gameElement.NbPlayers + "/4";
 					newGame.transform.SetParent(ContentPanel.transform);

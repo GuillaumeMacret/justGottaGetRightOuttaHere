@@ -115,9 +115,9 @@ std::string Game::movePlayer(int playerID, std::string direction)
                             for (Point point : _lockPosition)
                             {
                                 changes += ',';
-                                _grid[point.posY][point.posX].blockValue = BLACK;
+                                _grid[point.posY][point.posX].blockValue = EMPTY;
                                 _grid[point.posY][point.posX].collisionValue = C_NOTHING;
-                                changes += tileToJSON(point.posX, point.posY, BLACK);
+                                changes += tileToJSON(point.posX, point.posY, EMPTY);
                             }
                         }
                     }

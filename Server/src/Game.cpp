@@ -6,7 +6,7 @@
 #include <sstream>
 #include "RSJParser.tcc"
 
-Game::Game(int gameID, std::string selectedMap) : _buttonState(true), _finished(false), _started(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
+Game::Game(int gameID, std::string selectedMap) : _dummy(nullptr), _buttonState(true), _finished(false), _started(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
 
 void Game::enableSecondaryAction(int roleID)
 {
@@ -188,8 +188,7 @@ std::string Game::tileToJSON(int posX, int posY, int value)
 
 bool Game::getFinished() { return _finished; }
 
-void Game::setFinished(bool finished) {_finished = finished; }
-
+void Game::setFinished(bool finished) { _finished = finished; }
 
 std::string Game::checkPush(std::string dir, int posX, int posY, Player *p)
 {
@@ -305,9 +304,9 @@ std::string Game::checkCreate(int posX, int posY)
 
 bool Game::checkPlayerOnBlock(Block b)
 {
-    for(Player *p : _players)
+    for (Player *p : _players)
     {
-        if(p->getPosX() == b.p.posX && p->getPosY() == b.p.posY)
+        if (p->getPosX() == b.p.posX && p->getPosY() == b.p.posY)
         {
             return true;
         }
@@ -327,9 +326,9 @@ std::string Game::checkActivate(int posX, int posY)
             for (Block onb : _onBlocks)
             {
                 // Is it safe to activate the button?
-                if(checkPlayerOnBlock(onb))
+                if (checkPlayerOnBlock(onb))
                 {
-                    for(int j = 0; j < i; ++i)
+                    for (int j = 0; j < i; ++i)
                     {
                         _grid[onb.p.posY][onb.p.posX].blockValue = EMPTY;
                         _grid[onb.p.posY][onb.p.posX].collisionValue = C_NOTHING;
@@ -356,9 +355,9 @@ std::string Game::checkActivate(int posX, int posY)
             for (Block onb : _onBlocks)
             {
                 // Is it safe to activate the button?
-                if(checkPlayerOnBlock(onb))
+                if (checkPlayerOnBlock(onb))
                 {
-                    for(int j = 0; j < i; ++i)
+                    for (int j = 0; j < i; ++i)
                     {
                         _grid[onb.p.posY][onb.p.posX].blockValue = EMPTY;
                         _grid[onb.p.posY][onb.p.posX].collisionValue = C_NOTHING;

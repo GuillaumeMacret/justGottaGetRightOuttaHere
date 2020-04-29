@@ -684,7 +684,7 @@ void Game::readKey(RSJresource layerResource)
     std::stringstream ss;
     ss << layerString;
     std::string tmp;
-    int value, i = 0, j = 0, lockIndex = 0;
+    int value, i = 0, j = 0;
     while (!ss.eof())
     {
         ss >> tmp;
@@ -696,7 +696,7 @@ void Game::readKey(RSJresource layerResource)
             }
             else
             {
-                _lockPosition[lockIndex++] = Point{i, j};
+                _lockPosition.push_back(Point{i, j});
             }
             _grid[j][i].blockValue = value;
         }
@@ -976,6 +976,7 @@ void Game::resetGame()
     {
         _grid[i].clear();
     }
+    _lockPosition.clear();
     _grid.clear();
 }
 

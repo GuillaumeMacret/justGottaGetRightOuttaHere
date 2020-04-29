@@ -93,7 +93,7 @@ private:
     std::vector<Block> _stairways;
 
     /* Position of the 4 tiles representing the lock */
-    Point _lockPosition[4];
+    std::vector<Point> _lockPosition;
 
     /* Boolean that is true if On Blocks are displayed, false otherwise */
     bool _buttonState;

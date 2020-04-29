@@ -8,7 +8,8 @@ public class LobbyPlayerController : MonoBehaviour
 	public LobbyNetworkRunner lobbyNetworkRunner;
 
 	public Sprite DefaultCharacterSprite;
-	public Button ChangeCharacterButton;
+	public Button PreviousCharacterButton;
+	public Button NextCharacterButton;
 	public Text PlayerIdText;
 	public Text AbilityText;
 	public Image CharacterImage;
@@ -27,7 +28,8 @@ public class LobbyPlayerController : MonoBehaviour
     }
 
 	void Start() {
-		ChangeCharacterButton.onClick.AddListener(ChangeCharacter);
+		PreviousCharacterButton.onClick.AddListener(ChangeToPreviousCharacter);
+		NextCharacterButton.onClick.AddListener(ChangeToNextCharacter);
 	}
 
 	// Update is called once per frame
@@ -41,12 +43,21 @@ public class LobbyPlayerController : MonoBehaviour
 				CharacterImage.sprite = DefaultCharacterSprite;
 			AbilityText.text = ability;
 			changeRole = false;
-			//lastUpdate = 0f;
 		}
     }
 
-	void ChangeCharacter() 
+	void ChangeToPreviousCharacter() 
 	{
+		if (lobbyNetworkRunner != null) 
+		{
+			if(currentRole - 1 < 0)
+				lobbyNetworkRunner.SendRoleChangeRequest(GameLobbyData.TotalNbRoles - 1);
+			else
+				lobbyNetworkRunner.SendRoleChangeRequest(currentRole - 1);
+		}
+	}
+
+	void ChangeToNextCharacter() {
 		if (lobbyNetworkRunner != null)
 			lobbyNetworkRunner.SendRoleChangeRequest((currentRole + 1) % GameLobbyData.TotalNbRoles);
 	}

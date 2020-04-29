@@ -20,6 +20,8 @@ public class LobbyManager : MonoBehaviour
 
 	[Header("Network")]
 	public LobbyNetworkRunner Runner;
+	public Image CantStartGameErrorMessageCanvas;
+	public Text ErrorMessageText;
 
 	[Header("Map")]
 	public Dropdown MapsDropdown;
@@ -31,6 +33,7 @@ public class LobbyManager : MonoBehaviour
 	private bool playerJoined;
 	private bool playerLeft;
 	private bool sceneInitialized;
+	private bool showErrorMessage;
 	private int playerJoinedIndex;
 	private int playerLeftIndex;
 
@@ -38,7 +41,6 @@ public class LobbyManager : MonoBehaviour
     void Start()
     {
 		GameLobbyData.TotalNbRoles = RoleDescriptions.Length;
-		//sceneInitialized = false;
 		GameIdText.text = "Game " + GameLobbyData.GameId;
 		if (GameLobbyData.CreatedGame) // Game created by user
 		{
@@ -59,10 +61,12 @@ public class LobbyManager : MonoBehaviour
 		}
 		// Removing change character button for other players
 		for (int i = 0; i < LobbyPlayerControllers.Length; ++i) {
-			if (i != GameLobbyData.PlayerId)
-				LobbyPlayerControllers[i].ChangeCharacterButton.gameObject.SetActive(false);
+			if (i != GameLobbyData.PlayerId) {
+				LobbyPlayerControllers[i].PreviousCharacterButton.gameObject.SetActive(false);
+				LobbyPlayerControllers[i].NextCharacterButton.gameObject.SetActive(false);
+			}
 		}
-		//sceneInitialized = true;
+		showErrorMessage = false;
 
 	}
 
@@ -84,7 +88,24 @@ public class LobbyManager : MonoBehaviour
 			LobbyPlayerControllers[playerLeftIndex].Reset();
 			playerLeft = false;
 		}
+		if(showErrorMessage) 
+		{
+			CantStartGameErrorMessageCanvas.gameObject.SetActive(true) ;
+			showErrorMessage = false;
+		}
     }
+
+	public void ShowErrorMessage(string message) 
+	{
+		showErrorMessage = true;
+		ErrorMessageText.text = message;
+	}
+
+	public void CloseErrorMessage() 
+	{
+		showErrorMessage = false;
+		CantStartGameErrorMessageCanvas.gameObject.SetActive(false);
+	}
 
 	// Will send a message to the server requesting a map change
 	void MapChanged(Dropdown change) 

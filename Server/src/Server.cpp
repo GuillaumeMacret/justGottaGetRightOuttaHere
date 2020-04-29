@@ -205,6 +205,7 @@ void Server::requestJoinGame(int userIndex, int gameID)
                 }
                 answer += "], \"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
                 answer += ", \"Map\":\"" + g->getMapName();
+                answer += ", \"Lobby\":\"" + g->isInLobby();
                 answer += "\"};\n";
 
                 broadcastGame(g, answer);
@@ -259,6 +260,7 @@ void Server::requestStartGame(int userIndex)
         if (/*available && */g->getMapName() != "")
         {
             g->setStarted(true);
+            g->setInLobby(false);
             answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", ";
             answer += g->getMapToJSON();
             answer += g->getPlayersToJSON();
@@ -344,6 +346,7 @@ void Server::requestReturnToLobby(int userIndex)
     Game *g = getGameFromPlayer(userIndex);
     if (g != nullptr)
     {
+        g->setInLobby(true);
         std::string answer;
         answer = "{\"Action\":\"" ACTION_RETURNED_LOBBY "\"};\n";
         broadcastGame(g, answer);

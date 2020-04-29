@@ -6,7 +6,7 @@
 #include <sstream>
 #include "RSJParser.tcc"
 
-Game::Game(int gameID, std::string selectedMap) : _buttonState(true), _finished(false), _started(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
+Game::Game(int gameID, std::string selectedMap) : _buttonState(true), _finished(false), _started(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap), _inLobby(true) {}
 
 void Game::enableSecondaryAction(int roleID)
 {
@@ -965,6 +965,16 @@ bool Game::getStarted()
 void Game::setStarted(bool started)
 {
     _started = started;
+}
+
+bool Game::isInLobby()
+{
+    return _inLobby;
+}
+
+void Game::setInLobby(bool inLobby)
+{
+    _inLobby = inLobby;
 }
 
 Game::~Game()

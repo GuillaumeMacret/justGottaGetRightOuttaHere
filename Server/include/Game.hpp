@@ -99,9 +99,6 @@ private:
     /* Position of the 4 tiles representing the lock */
     Point _lockPosition[4];
 
-    /* The dummy placed by the Pumpkin if possible, in order to teleport to it */
-    Point *_dummy;
-
     /* Boolean that is true if On Blocks are displayed, false otherwise */
     bool _buttonState;
 

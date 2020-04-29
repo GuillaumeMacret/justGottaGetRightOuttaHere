@@ -6,7 +6,7 @@
 #include <sstream>
 #include "RSJParser.tcc"
 
-Game::Game(int gameID, std::string selectedMap) : _dummy(nullptr), _buttonState(true), _finished(false), _started(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
+Game::Game(int gameID, std::string selectedMap) : _buttonState(true), _finished(false), _started(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
 
 void Game::enableSecondaryAction(int roleID)
 {
@@ -389,28 +389,48 @@ std::string Game::checkTeleport(Player *p)
 {
     std::string res = "";
     //dummy not set up -> set it up on player's position
-    if (_dummy == nullptr)
+    Point *dummy = p->getDummy();
+    if (dummy == nullptr)
     {
-        _dummy = new Point();
-        _dummy->posX = p->getPosX();
-        _dummy->posY = p->getPosY();
-        res += tileToJSON(_dummy->posX, _dummy->posY, TELEPORT);
+        //Can't create a dummy on a fence
+        if (!_buttonState)
+        {
+            for (Block onb : _onBlocks)
+            {
+                // Is it safe to activate the button?
+                if (checkPlayerOnBlock(onb))
+                {
+                    return res;
+                }
+            }
+        }
+        else
+        {
+            for (Block ofb : _offBlocks)
+            {
+                // Is it safe to activate the button?
+                if (checkPlayerOnBlock(ofb))
+                {
+                    return res;
+                }
+            }
+        }
+        
+        dummy = p->setDummy();
+        res += tileToJSON(dummy->posX, dummy->posY, TELEPORT);
         //changes
-        _grid[_dummy->posY][_dummy->posX].collisionValue = C_WALKABLE;
-        _grid[_dummy->posY][_dummy->posX].blockValue = TELEPORT;
+        _grid[dummy->posY][dummy->posX].collisionValue = C_WALKABLE;
+        _grid[dummy->posY][dummy->posX].blockValue = TELEPORT;
         p->setLastCollisionType(C_WALKABLE);
         res += ',';
-        res += tileToJSON(_dummy->posX, _dummy->posY, TELEPORT);
+        res += tileToJSON(dummy->posX, dummy->posY, TELEPORT);
     }
     //dummy set up: tp the player on it
     else if (p->getLastCollisionType() == C_NOTHING)
     {
         _grid[p->getPosY()][p->getPosX()].collisionValue = p->getLastCollisionType();
-        p->setPos(_dummy->posX, _dummy->posY);
-        p->setLastCollisionType(C_NOTHING);
-        res += tileToJSON(_dummy->posX, _dummy->posY, EMPTY);
-        delete _dummy;
-        _dummy = nullptr;
+        p->Teleport();
+        res += tileToJSON(dummy->posX, dummy->posY, EMPTY);
     }
     return res;
 }

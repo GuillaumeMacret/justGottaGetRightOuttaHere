@@ -2,6 +2,7 @@
 #define _PLAYER_H_
 
 #include <string>
+#include "Game.hpp"
 
 class Player
 {
@@ -31,6 +32,8 @@ class Player
      * But once the player has moved, it is possible again. In our case, this is more effective than
      * Checking if the tile is empty or not. */
     int _lastCollisionType;
+    /* The dummy placed by the Pumpkin if possible, in order to teleport to it */
+    Point *_dummy;
 
 public:
     Player();
@@ -78,6 +81,12 @@ public:
     std::string getLastDirection();
     /* Sets the direction the player is facing to a new one */
     void setLastDirection(std::string direction);
+    /* Getter for the dummy of the player */
+    Point *getDummy();
+    /* Sets the dummy of the player */
+    Point *setDummy();
+    void Teleport();
+
 
     ~Player();
 };

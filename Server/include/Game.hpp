@@ -81,7 +81,7 @@ private:
     std::vector<Player *> _players;
     
     /* Array of tiles representing the map state */
-    Tile _grid[64][64];
+    std::vector<std::vector<Tile>> _grid;
 
     /* List of 'On' blocks and their position */
     std::vector<Block> _onBlocks;

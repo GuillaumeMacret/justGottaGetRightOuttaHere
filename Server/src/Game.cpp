@@ -842,6 +842,16 @@ void Game::readMap()
         _width = json_file_resource["width"].as<int>();
         _height = json_file_resource["height"].as<int>();
 
+        for(int i = 0; i < _height; ++i)
+        {
+            std::vector<Tile> v;
+            for(int j = 0; j < _width; ++j)
+            {
+                v.push_back(Tile{0, 0, C_NOTHING});
+            }
+            _grid.push_back(v);
+        }
+
         for (auto it = json_file_resource["layers"].as_array().begin(); it != json_file_resource["layers"].as_array().end(); ++it)
         {
             RSJresource layerResource = it->as<RSJresource>();
@@ -962,6 +972,11 @@ void Game::resetGame()
     {
         p->setSecondaryAction(false);
     }
+    for(int i = 0; i < _height; ++i)
+    {
+        _grid[i].clear();
+    }
+    _grid.clear();
 }
 
 bool Game::getStarted()

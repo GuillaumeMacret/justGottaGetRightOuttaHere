@@ -9,6 +9,8 @@
 #include <string>
 #include <dirent.h>
 #include <string.h>
+#include <algorithm>
+#include <vector>
 
 Server::Server()
 {
@@ -147,20 +149,26 @@ void Server::requestCreateGame(int userIndex)
     DIR *mapDir;
     struct dirent *map;
     std::string mapName;
+    std::vector<std::string> mapNames;
     if ((mapDir = opendir("./maps")))
     {
-        int i = 0;
         while ((map = readdir(mapDir)))
         {
             if (strcmp(map->d_name, ".") != 0 && strcmp(map->d_name, "..") != 0)
             {
-                if (i)
-                    answer += ',';
-                mapName = map->d_name;
-                mapName = mapName.substr(0, mapName.find(".json"));
-                answer += "\"" + mapName + "\"";
-                ++i;
+                mapNames.push_back(map->d_name);
             }
+        }
+        std::sort(mapNames.begin(), mapNames.end());
+        int i = 0;
+        for(std::string s : mapNames)
+        {
+            if (i)
+                answer += ',';
+            mapName = s;
+            mapName = mapName.substr(0, s.find(".json"));
+            answer += "\"" + mapName + "\"";
+            ++i;
         }
         closedir(mapDir);
     }

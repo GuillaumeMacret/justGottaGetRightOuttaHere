@@ -848,30 +848,37 @@ void Game::readMap()
 
             if (layerResource["name"].as<std::string>() == GROUND_LAYER)
             {
+                std::cout << "reading ground" << std::endl;
                 readBackground(layerResource);
             }
             else if (layerResource["name"].as<std::string>() == COLLISION_LAYER)
             {
+                std::cout << "reading collision" << std::endl;
                 readCollision(layerResource);
             }
             else if (layerResource["name"].as<std::string>() == KEYS_LAYER)
             {
+                std::cout << "reading keys" << std::endl;
                 readKey(layerResource);
             }
             else if (layerResource["name"].as<std::string>() == ON_BUTTON_LAYER)
             {
+                std::cout << "reading onbuttons" << std::endl;
                 readButtonOn(layerResource);
             }
             else if (layerResource["name"].as<std::string>() == OFF_BUTTON_LAYER)
             {
+                std::cout << "reading offbuttons" << std::endl;
                 readButtonOff(layerResource);
             }
             else if (layerResource["name"].as<std::string>() == PLAYERS_LAYER)
             {
+                std::cout << "reading players" << std::endl;
                 readPlayersStartPos(layerResource);
             }
             else if (layerResource["name"].as<std::string>() == OBJECTS_LAYER)
             {
+                std::cout << "reading objects" << std::endl;
                 readObjects(layerResource);
             }
         }

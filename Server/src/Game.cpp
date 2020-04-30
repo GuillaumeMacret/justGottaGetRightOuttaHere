@@ -972,17 +972,24 @@ void Game::resetGame()
     _buttonState = false, _started = false, _finished = false, _nbKeys = 0;
     for (Player *p : _players)
     {
+        std::cout << "reset Player " << p->getInGameID() << std::endl;
         p->setSecondaryAction(false);
         p->deleteDummy();
     }
-    for(int i = 0; i < _height; ++i)
+    for(unsigned int i = 0; i < _grid.size(); ++i)
     {
+        std::cout << "reset grid " << i << std::endl;
         _grid[i].clear();
     }
+    std::cout << "reset grid base" << std::endl;
     _grid.clear();
+    std::cout << "reset lockPosition" << std::endl;
     _lockPosition.clear();
+    std::cout << "reset onBlocks" << std::endl;
     _onBlocks.clear();
+    std::cout << "reset offBlocks" << std::endl;
     _offBlocks.clear();
+    std::cout << "reset stairways" << std::endl;
     _stairways.clear();
 }
 

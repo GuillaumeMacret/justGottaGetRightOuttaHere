@@ -241,7 +241,9 @@ void Server::requestStartGame(int userIndex)
     Game *g = getGameFromPlayer(userIndex);
     if (g != nullptr && g->getNbConnectedPlayers() == 4)
     {
+        std::cout << "request start -> resetGame begin" << std::endl;
         g->resetGame();
+        std::cout << "request start -> resetGame end" << std::endl;
         std::vector<Player *> players = g->getPlayers();
         /*bool available = true;
         for (size_t i = 0; i < players.size() - 1; ++i)

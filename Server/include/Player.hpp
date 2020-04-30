@@ -86,7 +86,7 @@ public:
     Point *getDummy();
     /* Sets the dummy of the player */
     Point *setDummy();
-    void Teleport();
+    void teleport();
     void copy(Player *);
 
     ~Player();

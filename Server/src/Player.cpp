@@ -68,7 +68,7 @@ Point *Player::setDummy()
     return _dummy;
 }
 
-void Player::Teleport()
+void Player::teleport()
 {
     setPos(_dummy->posX, _dummy->posY);
     delete _dummy;

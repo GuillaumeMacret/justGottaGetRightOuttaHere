@@ -429,8 +429,8 @@ std::string Game::checkTeleport(Player *p)
     else if (p->getLastCollisionType() == C_NOTHING)
     {
         _grid[p->getPosY()][p->getPosX()].collisionValue = p->getLastCollisionType();
-        p->Teleport();
         res += tileToJSON(dummy->posX, dummy->posY, EMPTY);
+        p->teleport();
     }
     return res;
 }
@@ -973,6 +973,7 @@ void Game::resetGame()
     for (Player *p : _players)
     {
         p->setSecondaryAction(false);
+        p->>teleport();
     }
     for(int i = 0; i < _height; ++i)
     {

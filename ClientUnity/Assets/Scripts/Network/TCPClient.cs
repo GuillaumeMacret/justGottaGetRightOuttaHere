@@ -27,7 +27,7 @@ public class TCPClient
     private static Thread clientReceiveThread;
     private const int BUFFER_SIZE = 50000;
 
-    private const string SERVER_ADRESS = "norcisrasp.ddns.net";
+    public static string serverAddr = "norcisrasp.ddns.net";
     private const int SERVER_PORT = 1789;
     static IMessageHandler  m_MessageHandler = null;
     #endregion
@@ -46,7 +46,7 @@ public class TCPClient
     /// </summary> 	
     private static void ConnectToTcpServer()
     {
-        Debug.Log("Trying to connect to " + SERVER_ADRESS + ":" + SERVER_PORT);
+        Debug.Log("Trying to connect to " + serverAddr + ":" + SERVER_PORT);
         try
         {
             clientReceiveThread = new Thread(new ThreadStart(ListenForData));
@@ -67,7 +67,7 @@ public class TCPClient
     {
         try
         {
-            socketConnection = new TcpClient(SERVER_ADRESS, SERVER_PORT);
+            socketConnection = new TcpClient(serverAddr, SERVER_PORT);
             Byte[] bytes = new Byte[BUFFER_SIZE];
             StringBuilder stringBuilder = new StringBuilder();
             while (true)

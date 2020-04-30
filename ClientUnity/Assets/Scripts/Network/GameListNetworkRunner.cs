@@ -22,6 +22,7 @@ public class GameListNetworkRunner : MonoBehaviour
 		ConnectToServer();
 		lastRefresh = 0f;
 		waitingForConnection = 0f;
+		TimeBetweenRefreshRequests = 1f;
 		isConnected = false;
 		timeoutMessage = false;
 	}
@@ -40,6 +41,7 @@ public class GameListNetworkRunner : MonoBehaviour
 			if(lastRefresh > TimeBetweenRefreshRequests) 
 			{
 				SendGameListRequest();
+				TimeBetweenRefreshRequests = 5f;
 			}
 		}
 		if (waitingForConnection > TimeoutThreshold && !timeoutMessage) 

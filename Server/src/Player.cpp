@@ -68,11 +68,16 @@ Point *Player::setDummy()
     return _dummy;
 }
 
+void Player::deleteDummy()
+{
+    delete _dummy;
+    _dummy = nullptr;
+}
+
 void Player::teleport()
 {
     setPos(_dummy->posX, _dummy->posY);
-    delete _dummy;
-    _dummy = nullptr;
+    deleteDummy();
 }
 
 void Player::copy(Player *p)

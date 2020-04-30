@@ -969,7 +969,7 @@ int Game::getNbConnectedPlayers()
 
 void Game::resetGame()
 {
-    _buttonState = false, _finished = false, _nbKeys = 0;
+    _buttonState = false, _started = false, _finished = false, _nbKeys = 0;
     for (Player *p : _players)
     {
         p->setSecondaryAction(false);
@@ -979,8 +979,11 @@ void Game::resetGame()
     {
         _grid[i].clear();
     }
-    _lockPosition.clear();
     _grid.clear();
+    _lockPosition.clear();
+    _onBlocks.clear();
+    _offBlocks.clear();
+    _stairways.clear();
 }
 
 bool Game::getStarted()

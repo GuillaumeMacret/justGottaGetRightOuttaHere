@@ -88,6 +88,7 @@ public:
     Point *setDummy();
     void teleport();
     void copy(Player *);
+    void deleteDummy();
 
     ~Player();
 };

@@ -70,8 +70,11 @@ Point *Player::setDummy()
 
 void Player::deleteDummy()
 {
-    delete _dummy;
-    _dummy = nullptr;
+    if(_dummy)
+    {
+        delete _dummy;
+        _dummy = nullptr;
+    }
 }
 
 void Player::teleport()

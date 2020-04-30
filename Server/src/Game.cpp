@@ -973,7 +973,7 @@ void Game::resetGame()
     for (Player *p : _players)
     {
         p->setSecondaryAction(false);
-        p->teleport();
+        p->deleteDummy();
     }
     for(int i = 0; i < _height; ++i)
     {

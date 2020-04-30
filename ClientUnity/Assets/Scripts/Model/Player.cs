@@ -60,7 +60,7 @@ public class Player : MonoBehaviour
             {
 
                 Vector3 direction = targetPositions[0] - transform.position;
-
+                SetFacing((int)direction.x, (int)direction.y);
                 if (direction.magnitude > 3)
                 {
                     Debug.Log("Big movement detected, going sneaky mode");

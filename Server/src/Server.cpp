@@ -37,12 +37,12 @@ void Server::runPlayer(int index)
             TCPConn.answers[index] = "Error";
         }
 
-        std::cout << "Sending this to player " << _players[index]->getInGameID() << " : " << TCPConn.answers[index] << std::endl;
+        std::cout << "Sending this to user " << index << " : " << TCPConn.answers[index] << std::endl;
 
         if (!TCPConn.answers[index].empty() && TCPConn.server_send(index) == ERR)
         {
             removePlayerFromGame(index);
-            std::cout << "Player " << _players[index]->getInGameID() << "of game" << getGameFromPlayer(index)->getGameID() << " pipe broken" << std::endl;
+            //std::cout << "Player " << _players[index]->getInGameID() << "of game" << getGameFromPlayer(index)->getGameID() << " pipe broken" << std::endl;
             return;
         }
         req.clear();

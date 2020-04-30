@@ -2671,7 +2671,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Server addr (norcisrasp.ddns.net by default)
+  m_Text: Custom server addres
 --- !u!222 &1583553525
 CanvasRenderer:
   m_ObjectHideFlags: 0

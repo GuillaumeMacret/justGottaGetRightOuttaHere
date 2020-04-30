@@ -27,7 +27,8 @@ public class TCPClient
     private static Thread clientReceiveThread;
     private const int BUFFER_SIZE = 50000;
 
-    public static string serverAddr = "norcisrasp.ddns.net";
+    public static string serverAddr = "";
+    public const string DEFAULT_SERVER_ADDR = "norcisrasp.ddns.net";
     private const int SERVER_PORT = 1789;
     static IMessageHandler  m_MessageHandler = null;
     #endregion
@@ -46,6 +47,7 @@ public class TCPClient
     /// </summary> 	
     private static void ConnectToTcpServer()
     {
+        if (serverAddr.Length <= 1) serverAddr = DEFAULT_SERVER_ADDR;
         Debug.Log("Trying to connect to " + serverAddr + ":" + SERVER_PORT);
         try
         {

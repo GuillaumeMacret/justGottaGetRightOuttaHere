@@ -16,7 +16,7 @@ public class PingFade : MonoBehaviour
     {
         if(m_SpriteRenderer.color.a <= 0)
         {
-            Destroy(this);
+            Destroy(this.gameObject);
         }
         Color c = m_SpriteRenderer.color;
         c.a -= m_FadeSpeed / 255.0f;

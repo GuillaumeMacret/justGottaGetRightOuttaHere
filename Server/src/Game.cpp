@@ -321,7 +321,7 @@ std::string Game::checkActivate(int posX, int posY)
     if (_grid[posY][posX].blockValue == BUTTON)
     {
         int i = 0;
-        if (!_buttonState)
+        if (_buttonState)
         {
             for (Block onb : _onBlocks)
             {

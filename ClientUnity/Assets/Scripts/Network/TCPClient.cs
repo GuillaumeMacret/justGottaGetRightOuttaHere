@@ -15,10 +15,10 @@ public class TCPClient
         return INSTANCE;
     }
 
-    public static bool socketConnected = false;
+    //public static bool socketConnected = false;
     public static void ConnectIfNotConnected()
     {
-        if (socketConnected) return;
+        if (socketConnection != null) return;
         ConnectToTcpServer();
     }
 
@@ -54,7 +54,7 @@ public class TCPClient
             clientReceiveThread = new Thread(new ThreadStart(ListenForData));
             clientReceiveThread.IsBackground = true;
             clientReceiveThread.Start();
-            socketConnected = true;
+            //socketConnected = true;
             Debug.Log("Connected !");
         }
         catch (Exception e)

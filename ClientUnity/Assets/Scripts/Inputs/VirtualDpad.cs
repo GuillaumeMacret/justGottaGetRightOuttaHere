@@ -136,7 +136,7 @@ public class VirtualDpad : MonoBehaviour
         actionMode = true;
         m_cooldownTimer = m_cooldownAfterSwitch;
         Color c = model.actionButtonImage.color;
-        c.a = 150/255.0f;
+        c.a = 200/255.0f;
         model.actionButtonImage.color = c;
         c = model.pingButtonImage.color;
         c.a = 100/255.0f;
@@ -151,7 +151,7 @@ public class VirtualDpad : MonoBehaviour
         c.a = 100/255.0f;
         model.actionButtonImage.color = c;
         c = model.pingButtonImage.color;
-        c.a = 150/255.0f;
+        c.a = 200/255.0f;
         model.pingButtonImage.color = c;
     }
 }

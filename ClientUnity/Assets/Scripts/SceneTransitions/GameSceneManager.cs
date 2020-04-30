@@ -1,4 +1,5 @@
 ﻿using SimpleJSON;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,8 +34,7 @@ public class GameSceneManager : MonoBehaviour
 	public void ToGameListScene() {
 		goToGameListScene = true;
 	}
-	
-	public void ToLobbyScene() {
+    public void ToLobbyScene() {
 		goToLobbyScene = true;
 	}
 

@@ -299,7 +299,7 @@ public class GameModel : MonoBehaviour
     public void UpdateObjects(JSONArray changes)
     {
         if (changes == null) return;
-
+        if (m_objectsLayer.Length <= 0) Debug.LogError("Trying to change an object but the matrix is empty");
         for(int i = 0; i < changes.Count; ++i)
         {
             Debug.Log("Changing object at " + changes[i]["yPos"] + " " + changes[i]["xPos"] +" from " + m_objectsLayer[changes[i]["yPos"]][changes[i]["xPos"]] + " to " + changes[i]["value"]);

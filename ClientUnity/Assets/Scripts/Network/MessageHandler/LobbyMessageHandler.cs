@@ -44,7 +44,8 @@ public class LobbyMessageHandler : MonoBehaviour, IMessageHandler {
 				JSONArray players = loadLevelJson["Players"].AsArray;
 				string levelName = loadLevelJson["Name"];
 
-				sceneManager.ToGameboardScene(blocks, objects, players, levelName);
+                sceneManager.SetLoadingBoxActive(true);
+                sceneManager.ToGameboardScene(blocks, objects, players, levelName);
 				break;
 
 			case "cantStartGame":

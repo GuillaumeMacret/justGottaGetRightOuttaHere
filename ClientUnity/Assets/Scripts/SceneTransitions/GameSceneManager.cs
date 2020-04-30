@@ -7,18 +7,23 @@ using UnityEngine.SceneManagement;
 
 public class GameSceneManager : MonoBehaviour
 {
-	private bool goToGameListScene;
+    public GameObject loadingBox;
+
+    private bool goToGameListScene;
 	private bool goToLobbyScene;
 	private bool goToGameScene;
 
-	void Start() {
+    private bool isLoadingMap;
+    void Start() {
 		goToGameListScene = false;
 		goToLobbyScene = false;
 		goToGameScene = false;
-	}
+        isLoadingMap = false;
+    }
 
-	void Update() {
-		if(goToGameListScene) {
+	void Update()
+    {
+        if (goToGameListScene) {
 			goToGameListScene = false;
 			SceneManager.LoadScene("GameList");
 		}
@@ -27,7 +32,8 @@ public class GameSceneManager : MonoBehaviour
 			SceneManager.LoadScene("Lobby");
 		}
 		if(goToGameScene) {
-			goToGameScene = false;
+            RefreshLoadingBox();
+            goToGameScene = false;
 			SceneManager.LoadScene("GameBoard");
 		}
 	}
@@ -63,4 +69,20 @@ public class GameSceneManager : MonoBehaviour
 		GameLobbyData.LevelName = levelName;
 		goToGameScene = true;
 	}
+
+    public void SetLoadingBoxActive(bool active)
+    {
+        isLoadingMap = active;
+    }
+    public void RefreshLoadingBox()
+    {
+        if (isLoadingMap && loadingBox != null)
+        {
+            loadingBox.SetActive(true);
+        }
+        else if (loadingBox != null)
+        {
+            loadingBox.SetActive(false);
+        }
+    }
 }

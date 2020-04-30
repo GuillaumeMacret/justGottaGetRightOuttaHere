@@ -352,31 +352,31 @@ std::string Game::checkActivate(int posX, int posY)
         }
         else
         {
-            for (Block onb : _onBlocks)
+            for (Block ofb : _offBlocks)
             {
                 // Is it safe to activate the button?
-                if (checkPlayerOnBlock(onb))
+                if (checkPlayerOnBlock(ofb))
                 {
                     for (int j = 0; j < i; ++j)
                     {
-                        _grid[onb.p.posY][onb.p.posX].blockValue = EMPTY;
-                        _grid[onb.p.posY][onb.p.posX].collisionValue = C_NOTHING;
+                        _grid[ofb.p.posY][ofb.p.posX].blockValue = EMPTY;
+                        _grid[ofb.p.posY][ofb.p.posX].collisionValue = C_NOTHING;
                     }
                     return "";
                 }
                 if (i)
                     res += ',';
-                _grid[onb.p.posY][onb.p.posX].blockValue = EMPTY;
-                _grid[onb.p.posY][onb.p.posX].collisionValue = C_NOTHING;
-                res += tileToJSON(onb.p.posX, onb.p.posY, EMPTY);
-                ++i;
-            }
-            for (Block ofb : _offBlocks)
-            {
-                res += ',';
                 _grid[ofb.p.posY][ofb.p.posX].blockValue = ofb.value;
                 _grid[ofb.p.posY][ofb.p.posX].collisionValue = C_BLOCK;
                 res += tileToJSON(ofb.p.posX, ofb.p.posY, ofb.value);
+                ++i;
+            }
+            for (Block onb : _onBlocks)
+            {
+                res += ',';
+                _grid[onb.p.posY][onb.p.posX].blockValue = EMPTY;
+                _grid[onb.p.posY][onb.p.posX].collisionValue = C_NOTHING;
+                res += tileToJSON(onb.p.posX, onb.p.posY, EMPTY);
             }
         }
         _buttonState = !_buttonState;

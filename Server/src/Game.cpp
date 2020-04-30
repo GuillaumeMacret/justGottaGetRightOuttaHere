@@ -328,7 +328,7 @@ std::string Game::checkActivate(int posX, int posY)
                 // Is it safe to activate the button?
                 if (checkPlayerOnBlock(onb))
                 {
-                    for (int j = 0; j < i; ++i)
+                    for (int j = 0; j < i; ++j)
                     {
                         _grid[onb.p.posY][onb.p.posX].blockValue = EMPTY;
                         _grid[onb.p.posY][onb.p.posX].collisionValue = C_NOTHING;
@@ -357,7 +357,7 @@ std::string Game::checkActivate(int posX, int posY)
                 // Is it safe to activate the button?
                 if (checkPlayerOnBlock(onb))
                 {
-                    for (int j = 0; j < i; ++i)
+                    for (int j = 0; j < i; ++j)
                     {
                         _grid[onb.p.posY][onb.p.posX].blockValue = EMPTY;
                         _grid[onb.p.posY][onb.p.posX].collisionValue = C_NOTHING;
@@ -668,7 +668,6 @@ void Game::readObjects(RSJresource layerResource)
         ss >> tmp;
         if (std::stringstream(tmp) >> value && value)
             _grid[j][i].blockValue = value;
-        else _grid[j][i].blockValue = EMPTY;
         tmp = "";
         ++i;
         if (i % _width == 0)

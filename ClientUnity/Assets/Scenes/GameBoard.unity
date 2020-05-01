@@ -541,7 +541,7 @@ GameObject:
   - component: {fileID: 255253293}
   m_Layer: 5
   m_Name: ReturnButton
-  m_TagString: Untagged
+  m_TagString: LockedDuringLoad
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1358,7 +1358,7 @@ GameObject:
   - component: {fileID: 841713831}
   m_Layer: 5
   m_Name: PingButton
-  m_TagString: Untagged
+  m_TagString: LockedDuringLoad
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1832,7 +1832,7 @@ GameObject:
   - component: {fileID: 1467828375}
   m_Layer: 0
   m_Name: Inputs
-  m_TagString: Untagged
+  m_TagString: LockedDuringLoad
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1880,7 +1880,7 @@ GameObject:
   - component: {fileID: 1535751139}
   m_Layer: 5
   m_Name: ActionButton
-  m_TagString: Untagged
+  m_TagString: LockedDuringLoad
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

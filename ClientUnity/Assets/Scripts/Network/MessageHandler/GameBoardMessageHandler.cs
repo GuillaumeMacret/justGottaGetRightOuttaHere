@@ -42,6 +42,9 @@ public class GameBoardMessageHandler : MonoBehaviour, IMessageHandler
                 var pingJson = JSON.Parse(JSONString);
                 model.CreatePing(pingJson["PosX"], pingJson["PosY"]);
                 break;
+            case "gameReady":
+                model.UnlockSceneInputs();
+                break;
             default:
                 Debug.LogError("Can't handle this action : " + action.Action);
                 break;

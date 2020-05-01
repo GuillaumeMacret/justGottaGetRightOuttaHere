@@ -22,7 +22,7 @@ public class GameModel : MonoBehaviour
     public Image pingButtonImage;
     public GameObject pingPrefab;
     public Button returnButton;
-
+    public GameObject loadingBox;
 
     private static float m_GameTimer;
     public static float GameTimer { get => m_GameTimer; }
@@ -52,17 +52,53 @@ public class GameModel : MonoBehaviour
 
     private const int UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4;
 
+    private bool m_SceneWasLocked = true;
+
+    /// <summary>
+    /// Looks for objects with tag "LockedDuringLoad" in scene and disable them
+    /// Looks also for an object with tag "LoadingMessage" to enable it
+    /// The goal here is to prevent players from sending update message while other are still loading the scene
+    /// </summary>
+    public void LockSceneInputs()
+    {
+        m_SceneWasLocked = true;
+        GameObject[] objects = GameObject.FindGameObjectsWithTag("LockedDuringLoad");
+        foreach(GameObject o in objects)
+        {
+            o.SetActive(false);
+        }
+        GameObject.FindGameObjectWithTag("LoadingMessage").SetActive(true);
+    }
+
+    /// <summary>
+    /// Does the opposite of LockSceneInputs()
+    /// </summary>
+    public void UnlockSceneInputs()
+    {
+        GameObject[] objects = GameObject.FindGameObjectsWithTag("LockedDuringLoad");
+        foreach (GameObject o in objects)
+        {
+            o.SetActive(true);
+        }
+        GameObject.FindGameObjectWithTag("LoadingMessage").SetActive(false);
+        m_GameTimer = 0;
+    }
+
     private void Awake()
     {
+        LockSceneInputs();
         m_audioSource = GetComponent<AudioSource>();
         m_GameTimer = 0;
     }
 
-	private void Start() 
+    private void Start() 
 	{
 		LoadLevel(GameLobbyData.BlocksJson, GameLobbyData.PlayersJson, GameLobbyData.ObjectsJson, GameLobbyData.LevelName);
 	}
 
+    /// <summary>
+    /// Plays a music at random picked from the musics array
+    /// </summary>
 	private void StartRandomMusic()
     {
         m_audioSource.clip = musics[Random.Range(0, musics.Count)];
@@ -70,6 +106,12 @@ public class GameModel : MonoBehaviour
     }
     private void Update()
     {
+        if (m_SceneWasLocked)
+        {
+            string messageToSend = MessageBuilders.BuildRdyMessage();
+            TCPClient.SendMessage(messageToSend);
+            m_SceneWasLocked = false;
+        }
         if (GameLobbyData.PlayerId != 0)
         {
             returnButton.interactable = false;
@@ -273,6 +315,7 @@ public class GameModel : MonoBehaviour
     /// <param name="loadLevelObject"></param>
     public void LoadLevel(JSONArray blocks, JSONArray players, JSONArray objects, string levelName)
     {
+        LockSceneInputs();
         m_LevelName = levelName;
         if (blocks.Count > 0)
         {
@@ -322,6 +365,10 @@ public class GameModel : MonoBehaviour
         m_players[id].AddDestination(xPos, -yPos, facing);
     }
 
+    /// <summary>
+    /// Updates the object matrix according to the JSON array given in argument
+    /// </summary>
+    /// <param name="changes"></param>
     public void UpdateObjects(JSONArray changes)
     {
         if (changes == null) return;
@@ -334,6 +381,12 @@ public class GameModel : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Give the x and y of the tile clicked on according to the x and y postion of the pixel given in parameter
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public Vector2 PixelPosToTilePos(int x,int y)
     {
         int width = m_blocksLayer[0].Length;
@@ -352,11 +405,21 @@ public class GameModel : MonoBehaviour
         return new Vector2(tileX, tileY);
     }
 
+    /// <summary>
+    /// Adds a ping wich will be instantiated in the next update loop
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
     public void CreatePing(int x, int y)
     {
         m_PingToInstantiate.Add(new Vector2(x, y));
     }
 
+    /// <summary>
+    /// Sets the user's player facing direction
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
     public void SetPlayerFacing(int x,int y)
     {
         m_players[GameLobbyData.PlayerId].SetFacing(x, y);

@@ -26,14 +26,14 @@ public class GameBoardMessageHandler : MonoBehaviour, IMessageHandler
 				break;
             case "move":
                 var moveJson = JSON.Parse(JSONString);
-                model.MovePlayer(moveJson["Player"], moveJson["PosX"], moveJson["PosY"]);
+                model.MovePlayer(moveJson["Player"], moveJson["PosX"], moveJson["PosY"], moveJson["Dir"]);
                 model.UpdateObjects(moveJson["Changes"].AsArray);
                 break;
             case "action":
                 var updateLevelJson = JSON.Parse(JSONString);
                 JSONArray updates = updateLevelJson["Changes"].AsArray;
                 model.UpdateObjects(updates);
-                model.MovePlayer(updateLevelJson["Player"], updateLevelJson["PosX"], updateLevelJson["PosY"]);
+                model.MovePlayer(updateLevelJson["Player"], updateLevelJson["PosX"], updateLevelJson["PosY"], updateLevelJson["Dir"]);
                 break;
             case "win":
                 model.gameWon = true;

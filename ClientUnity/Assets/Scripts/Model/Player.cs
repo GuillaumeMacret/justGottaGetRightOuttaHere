@@ -16,6 +16,8 @@ public class Player : MonoBehaviour
     private SpriteRenderer m_SpriteRenderer;
 
     private Vector3 lastDirection;
+    private int m_facing;
+    private const int UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4;
     public List<Vector3> targetPositions;
 
     private void Awake()
@@ -29,9 +31,12 @@ public class Player : MonoBehaviour
     {
         Debug.Log("Player " + id + " Moving toward " + targetPositions[0]);
         float step = speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, targetPositions[0], step);
 
-        if(transform.position == targetPositions[0])
+        Vector3 movementVector = new Vector3(targetPositions[0].x, targetPositions[0].y, 0);
+        transform.position = Vector3.MoveTowards(transform.position, movementVector, step);
+        m_facing = (int) targetPositions[0].z;
+
+        if (transform.position == targetPositions[0])
         {
             targetPositions.RemoveAt(0);
         }
@@ -50,7 +55,6 @@ public class Player : MonoBehaviour
         speed = 10;
         if (targetPositions.Count > 0)
         {
-            //Try to prevent pivot when bumping into a wall
             if (transform.position == targetPositions[0])
             {
                 targetPositions.RemoveAt(0);
@@ -89,6 +93,23 @@ public class Player : MonoBehaviour
         {
             m_animator.SetBool("Moving", false);
         }
+        switch (m_facing)
+        {
+            case 0:
+                break;
+            case UP:
+                SetFacing(0, -1);
+                break;
+            case DOWN:
+                SetFacing(0, 1);
+                break;
+            case LEFT:
+                SetFacing(-1, 0);
+                break;
+            case RIGHT:
+                SetFacing(1, 0);
+                break;
+        }
         /*
         m_animator.SetFloat("MoveX", lastDirection.x);
         m_animator.SetFloat("MoveY", lastDirection.y);
@@ -96,9 +117,9 @@ public class Player : MonoBehaviour
 
     }
 
-    public void AddDestination(int xPos, int yPos)
+    public void AddDestination(int xPos, int yPos, int facing)
     {
-        targetPositions.Add(new Vector3(xPos, yPos, 0));
+        targetPositions.Add(new Vector3(xPos, yPos, facing));
     }
 
     public void SetAnimatorController(RuntimeAnimatorController anim)

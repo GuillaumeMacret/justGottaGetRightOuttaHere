@@ -50,6 +50,8 @@ public class GameModel : MonoBehaviour
     //The gap between the bottom of the screen and the first tile
     private float m_YStartOffset;
 
+    private const int UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4;
+
     private void Awake()
     {
         m_audioSource = GetComponent<AudioSource>();
@@ -299,9 +301,25 @@ public class GameModel : MonoBehaviour
     /// <param name="id"></param>
     /// <param name="xPos"></param>
     /// <param name="yPos"></param>
-    public void MovePlayer(int id, int xPos, int yPos)
+    public void MovePlayer(int id, int xPos, int yPos, string directionFacing)
     {
-        m_players[id].AddDestination(xPos, -yPos);
+        int facing = 0;
+        switch (directionFacing)
+        {
+            case "up":
+                facing = UP;
+                break;
+            case "down":
+                facing = DOWN;
+                break;
+            case "left":
+                facing = LEFT;
+                break;
+            case "right":
+                facing = RIGHT;
+                break;
+        }
+        m_players[id].AddDestination(xPos, -yPos, facing);
     }
 
     public void UpdateObjects(JSONArray changes)

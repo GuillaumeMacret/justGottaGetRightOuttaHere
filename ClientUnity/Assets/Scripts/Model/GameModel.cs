@@ -21,7 +21,7 @@ public class GameModel : MonoBehaviour
     public Image actionButtonImage;
     public Image pingButtonImage;
     public GameObject pingPrefab;
-    
+    public Button returnButton;
 
 
     private static float m_GameTimer;
@@ -68,6 +68,14 @@ public class GameModel : MonoBehaviour
     }
     private void Update()
     {
+        if (GameLobbyData.PlayerId != 0)
+        {
+            returnButton.interactable = false;
+        }
+        else
+        {
+            returnButton.interactable = true;
+        }
         if (gameWon)
         {
             virtualDPad.SetActive(false);

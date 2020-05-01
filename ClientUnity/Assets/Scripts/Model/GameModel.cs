@@ -1,10 +1,9 @@
 ﻿using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEditor.Animations;
+using UnityEngine.UI;
 
 public class GameModel : MonoBehaviour
 {
@@ -16,6 +15,13 @@ public class GameModel : MonoBehaviour
     public Camera mainCamera;
     public PlayerAnimatorControllerFactory animFactory;
     public List<AudioClip> musics;
+    public bool gameWon = false;
+    public GameObject virtualDPad;
+    public GameObject winMessageContainer;
+    public Image actionButtonImage;
+    public Image pingButtonImage;
+    public GameObject pingPrefab;
+    
 
 
     private static float m_GameTimer;
@@ -33,8 +39,16 @@ public class GameModel : MonoBehaviour
     //The vec with info to create new players (xpos,ypos,id)
     private List<Vector3> m_playerToInstantiate = new List<Vector3>();
 
+    private List<Vector2> m_PingToInstantiate = new List<Vector2>();
+
     private const string m_terrainTilesPath = "Tiles/MergeTerrainTiles/Spritesheetmerge";
 
+    /*Parameters to locate where is the ping*/
+    private float m_TileSize;
+    //The gap between the left of the screen and the first tile
+    private float m_XStartOffset;
+    //The gap between the bottom of the screen and the first tile
+    private float m_YStartOffset;
 
     private void Awake()
     {
@@ -47,53 +61,69 @@ public class GameModel : MonoBehaviour
 		LoadLevel(GameLobbyData.BlocksJson, GameLobbyData.PlayersJson, GameLobbyData.ObjectsJson, GameLobbyData.LevelName);
 	}
 
-	private void startRandomMusic()
+	private void StartRandomMusic()
     {
         m_audioSource.clip = musics[Random.Range(0, musics.Count)];
         m_audioSource.Play();
     }
     private void Update()
     {
-        m_GameTimer += Time.deltaTime;
-        if (needsFullRedraw)
+        if (gameWon)
         {
-            blocksTileMap.ClearAllTiles();
-            objectsTileMap.ClearAllTiles();
-            GameObject[] container = GameObject.FindGameObjectsWithTag("PlayersContainer");
-            foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
+            virtualDPad.SetActive(false);
+            winMessageContainer.SetActive(true);
+        }
+        else
+        {
+            m_GameTimer += Time.deltaTime;
+            if (needsFullRedraw)
             {
-                Destroy(g);
+                blocksTileMap.ClearAllTiles();
+                objectsTileMap.ClearAllTiles();
+                GameObject[] container = GameObject.FindGameObjectsWithTag("PlayersContainer");
+                foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
+                {
+                    Destroy(g);
+                }
+                RefreshBlocksTilemap();
+                RefreshObjectsTilemap();
+                UpdateCameraSettings();
+                StartRandomMusic();
+                m_GameTimer = 0;
+                needsFullRedraw = false;
             }
-            RefreshBlocksTilemap();
-            RefreshObjectsTilemap();
-            UpdateCameraSettings();
-            startRandomMusic();
-            m_GameTimer = 0;
-            needsFullRedraw = false;
-        }
-        else if (needsObjectsRedraw)
-        {
-            RefreshObjectsTilemap();
-        }
-
-        if(m_playerToInstantiate.Count > 0)
-        {
-            Player p = Instantiate(playerPrefab);
-            //Debug.Log("Instatiating new player : " + m_playerToInstantiate[0][0] + m_playerToInstantiate[0][1] + m_playerToInstantiate[0][2]);
-            p.id = (int) m_playerToInstantiate[0][2];
-            AnimatorController animController = animFactory.GetAnimatorController(p.id);
-            p.SetAnimatorController(animController);
-            p.transform.position = new Vector3(m_playerToInstantiate[0][0], -m_playerToInstantiate[0][1],0);
-            m_players.Add(p);
-            Debug.Log(p.transform.position);
-
-            GameObject[] container = GameObject.FindGameObjectsWithTag("PlayersContainer");
-            if (container.Length > 0)
+            else if (needsObjectsRedraw)
             {
-                p.transform.SetParent(container[0].transform);
+                RefreshObjectsTilemap();
             }
 
-            m_playerToInstantiate.RemoveAt(0);
+            if (m_playerToInstantiate.Count > 0)
+            {
+                Player p = Instantiate(playerPrefab);
+                //Debug.Log("Instatiating new player : " + m_playerToInstantiate[0][0] + m_playerToInstantiate[0][1] + m_playerToInstantiate[0][2]);
+                p.id = (int)m_playerToInstantiate[0][2];
+                RuntimeAnimatorController animController = animFactory.GetAnimatorController(p.id);
+                p.SetAnimatorController(animController);
+                p.transform.position = new Vector3(m_playerToInstantiate[0][0], -m_playerToInstantiate[0][1], 0);
+                m_players.Add(p);
+                //Debug.Log(p.transform.position);
+
+                GameObject[] container = GameObject.FindGameObjectsWithTag("PlayersContainer");
+                if (container.Length > 0)
+                {
+                    p.transform.SetParent(container[0].transform);
+                }
+
+                m_playerToInstantiate.RemoveAt(0);
+            }
+
+            if(m_PingToInstantiate.Count > 0)
+            {
+                GameObject ping = Instantiate(pingPrefab);
+                ping.transform.position = new Vector3(m_PingToInstantiate[0].x, -m_PingToInstantiate[0].y, 0);
+                Debug.Log("New ping at :" + ping.transform.position);
+                m_PingToInstantiate.RemoveAt(0);
+            }
         }
     }
 
@@ -102,23 +132,35 @@ public class GameModel : MonoBehaviour
     /// </summary>
     private void UpdateCameraSettings()
     {
+        Debug.Log("Screen Dimension : " + Screen.width + " " + Screen.height);
         /* Dertemine wich dimension is reaching the border */
         int width = m_blocksLayer[0].Length;
         int height = m_blocksLayer.Length;
         //Debug.Log("Sizes : " + width + " " + height);
-        float widthRatio = width / 5.0f;
-        float heightRatio = height / 8.0f;
-        //Debug.Log("Ratios : " + widthRatio + " " + heightRatio);
+        float aspectRatio = (float)Screen.width / (float)Screen.height;
+        Debug.Log("Aspect ratio : " + aspectRatio);
+
+        float widthRatio = width / aspectRatio;
+        float heightRatio = height;
+        Debug.Log("Ratios : " + widthRatio + " " + heightRatio);
         if (widthRatio > heightRatio)
         {
-            //Debug.Log("Width is limiting");
-            mainCamera.orthographicSize = (widthRatio * 8) / 2;
+            Debug.Log("Width is limiting");
+            mainCamera.orthographicSize = width / aspectRatio / 2;
+            Debug.Log("New size is "+ widthRatio);
+            m_TileSize = Screen.width / width;
+            m_XStartOffset = 0;
+            m_YStartOffset = (Screen.height - (height * m_TileSize)) / 2;
         }
         else
         {
-            //Debug.Log("Height is limiting");
+            Debug.Log("Height is limiting");
             mainCamera.orthographicSize = height / 2;
+            m_TileSize = Screen.height / height;
+            m_YStartOffset = 0;
+            m_XStartOffset = (Screen.width - (width* m_TileSize)) / 2;
         }
+        Debug.Log("New tile size is : " + m_TileSize);
 
         mainCamera.transform.position = new Vector3(width / 2.0f, -height / 2.0f, mainCamera.transform.position.z);
     }
@@ -237,6 +279,9 @@ public class GameModel : MonoBehaviour
             LoadObjects(objects.Count, objects[0].Count, objects);
         }
         needsFullRedraw = true;
+        gameWon = false;
+        virtualDPad.SetActive(true);
+        winMessageContainer.SetActive(false);
     }
 
     /// <summary>
@@ -254,7 +299,7 @@ public class GameModel : MonoBehaviour
     public void UpdateObjects(JSONArray changes)
     {
         if (changes == null) return;
-
+        if (m_objectsLayer.Length <= 0) Debug.LogError("Trying to change an object but the matrix is empty");
         for(int i = 0; i < changes.Count; ++i)
         {
             Debug.Log("Changing object at " + changes[i]["yPos"] + " " + changes[i]["xPos"] +" from " + m_objectsLayer[changes[i]["yPos"]][changes[i]["xPos"]] + " to " + changes[i]["value"]);
@@ -263,4 +308,31 @@ public class GameModel : MonoBehaviour
         }
     }
 
+    public Vector2 PixelPosToTilePos(int x,int y)
+    {
+        int width = m_blocksLayer[0].Length;
+        int height = m_blocksLayer.Length;
+        float tileX, tileY;
+        tileX = (x - m_XStartOffset) / m_TileSize;
+        tileY = (y - m_YStartOffset) / m_TileSize;
+        if (tileX < 0) tileX = 0;
+        if (tileY < 0) tileY = 0;
+        if (tileX >= width) tileX = width - 1;
+        if (tileY >= height) tileY = height - 1;
+
+        /*Inverse Y because our origin is TOPleft while this one is BOTleft*/
+        tileY = -(tileY - height);
+
+        return new Vector2(tileX, tileY);
+    }
+
+    public void CreatePing(int x, int y)
+    {
+        m_PingToInstantiate.Add(new Vector2(x, y));
+    }
+
+    public void SetPlayerFacing(int x,int y)
+    {
+        m_players[GameLobbyData.PlayerId].SetFacing(x, y);
+    }
 }

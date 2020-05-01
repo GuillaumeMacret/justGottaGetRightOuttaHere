@@ -44,14 +44,23 @@ public class LobbyMessageHandler : MonoBehaviour, IMessageHandler {
 				JSONArray players = loadLevelJson["Players"].AsArray;
 				string levelName = loadLevelJson["Name"];
 
-				sceneManager.ToGameboardScene(blocks, objects, players, levelName);
-				//model.LoadLevel(blocks, players, objects);
+                sceneManager.SetLoadingBoxActive(true);
+                sceneManager.ToGameboardScene(blocks, objects, players, levelName);
 				break;
 
 			case "cantStartGame":
 				JSONNode cantStart = JSON.Parse(JSONString);
-				string errorMessage = cantStart["MoreInfo"];
-				//TODO : Display the error message
+				string errorMessage = "Couldn't start the game:\n" + cantStart["MoreInfo"];
+				lobbyManager.ShowErrorMessage(errorMessage);
+				break;
+
+			case "leaveGame":
+				JSONNode leaveGame = JSON.Parse(JSONString);
+				int id = leaveGame["Player"];
+				if (id == GameLobbyData.PlayerId)
+					sceneManager.ToGameListScene();
+				else
+					lobbyManager.PlayerLeftGame(id);
 				break;
 			default:
 				Debug.LogError("Can't handle this action : " + action.Action);

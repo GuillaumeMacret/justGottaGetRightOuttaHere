@@ -1,4 +1,5 @@
 ﻿using SimpleJSON;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,29 +7,40 @@ using UnityEngine.SceneManagement;
 
 public class GameSceneManager : MonoBehaviour
 {
+    public GameObject loadingBox;
+
+    private bool goToGameListScene;
 	private bool goToLobbyScene;
 	private bool goToGameScene;
 
-	void Start() {
+    private bool isLoadingMap;
+    void Start() {
+		goToGameListScene = false;
 		goToLobbyScene = false;
 		goToGameScene = false;
-	}
+        isLoadingMap = false;
+    }
 
-	void Update() {
+	void Update()
+    {
+        if (goToGameListScene) {
+			goToGameListScene = false;
+			SceneManager.LoadScene("GameList");
+		}
 		if(goToLobbyScene) {
 			goToLobbyScene = false;
 			SceneManager.LoadScene("Lobby");
 		}
 		if(goToGameScene) {
-			goToGameScene = false;
+            RefreshLoadingBox();
+            goToGameScene = false;
 			SceneManager.LoadScene("GameBoard");
 		}
 	}
 	public void ToGameListScene() {
-		SceneManager.LoadScene("GameList");
+		goToGameListScene = true;
 	}
-	
-	public void ToLobbyScene() {
+    public void ToLobbyScene() {
 		goToLobbyScene = true;
 	}
 
@@ -57,4 +69,20 @@ public class GameSceneManager : MonoBehaviour
 		GameLobbyData.LevelName = levelName;
 		goToGameScene = true;
 	}
+
+    public void SetLoadingBoxActive(bool active)
+    {
+        isLoadingMap = active;
+    }
+    public void RefreshLoadingBox()
+    {
+        if (isLoadingMap && loadingBox != null)
+        {
+            loadingBox.SetActive(true);
+        }
+        else if (loadingBox != null)
+        {
+            loadingBox.SetActive(false);
+        }
+    }
 }

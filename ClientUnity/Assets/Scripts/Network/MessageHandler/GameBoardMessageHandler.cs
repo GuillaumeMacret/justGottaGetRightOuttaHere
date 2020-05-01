@@ -34,7 +34,13 @@ public class GameBoardMessageHandler : MonoBehaviour, IMessageHandler
                 JSONArray updates = updateLevelJson["Changes"].AsArray;
                 model.UpdateObjects(updates);
                 model.MovePlayer(updateLevelJson["Player"], updateLevelJson["PosX"], updateLevelJson["PosY"]);
-
+                break;
+            case "win":
+                model.gameWon = true;
+                break;
+            case "sendPing":
+                var pingJson = JSON.Parse(JSONString);
+                model.CreatePing(pingJson["PosX"], pingJson["PosY"]);
                 break;
             default:
                 Debug.LogError("Can't handle this action : " + action.Action);

@@ -15,10 +15,10 @@ public class TCPClient
         return INSTANCE;
     }
 
-    public static bool socketConnected = false;
+    //public static bool socketConnected = false;
     public static void ConnectIfNotConnected()
     {
-        if (socketConnected) return;
+        if (socketConnection != null) return;
         ConnectToTcpServer();
     }
 
@@ -27,7 +27,8 @@ public class TCPClient
     private static Thread clientReceiveThread;
     private const int BUFFER_SIZE = 50000;
 
-    private const string SERVER_ADRESS = "norcisrasp.ddns.net";
+    public static string serverAddr = "";
+    public const string DEFAULT_SERVER_ADDR = "norcisrasp.ddns.net";
     private const int SERVER_PORT = 1789;
     static IMessageHandler  m_MessageHandler = null;
     #endregion
@@ -46,13 +47,14 @@ public class TCPClient
     /// </summary> 	
     private static void ConnectToTcpServer()
     {
-        Debug.Log("Trying to connect to " + SERVER_ADRESS + ":" + SERVER_PORT);
+        if (serverAddr.Length <= 1) serverAddr = DEFAULT_SERVER_ADDR;
+        Debug.Log("Trying to connect to " + serverAddr + ":" + SERVER_PORT);
         try
         {
             clientReceiveThread = new Thread(new ThreadStart(ListenForData));
             clientReceiveThread.IsBackground = true;
             clientReceiveThread.Start();
-            socketConnected = true;
+            //socketConnected = true;
             Debug.Log("Connected !");
         }
         catch (Exception e)
@@ -67,7 +69,7 @@ public class TCPClient
     {
         try
         {
-            socketConnection = new TcpClient(SERVER_ADRESS, SERVER_PORT);
+            socketConnection = new TcpClient(serverAddr, SERVER_PORT);
             Byte[] bytes = new Byte[BUFFER_SIZE];
             StringBuilder stringBuilder = new StringBuilder();
             while (true)

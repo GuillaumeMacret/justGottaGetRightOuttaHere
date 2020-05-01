@@ -1,27 +1,69 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameListNetworkRunner : MonoBehaviour
 {
 	public GameListMessageHandler handler;
 	public float TimeBetweenRefreshRequests = 5f;
+	public float TimeoutThreshold = 10f;
+
+	public Image ConnectingToServerPanel;
+	public Image TimeoutMessagePanel;
+
 	private float lastRefresh;
+	private float waitingForConnection;
+	private bool timeoutMessage;
+	private bool isConnected;
     // Start is called before the first frame update
     void Start()
     {
-		TCPClient.ConnectIfNotConnected();
-		TCPClient.SetMessageHandler(handler);
+		ConnectToServer();
 		lastRefresh = 0f;
-		SendGameListRequest();
+		waitingForConnection = 0f;
+		TimeBetweenRefreshRequests = 1f;
+		isConnected = false;
+		timeoutMessage = false;
 	}
 
 	void Update() {
-		lastRefresh += Time.deltaTime;
-		if(lastRefresh > TimeBetweenRefreshRequests) 
-		{
-			SendGameListRequest();
+		isConnected = TCPClient.IsSocketConnected();
+		if (!isConnected) 
+		{ 
+			waitingForConnection += Time.deltaTime;
+			ConnectingToServerPanel.gameObject.SetActive(true);
 		}
+		else 
+		{
+			lastRefresh += Time.deltaTime;
+			ConnectingToServerPanel.gameObject.SetActive(false);
+			if(lastRefresh > TimeBetweenRefreshRequests) 
+			{
+				SendGameListRequest();
+				TimeBetweenRefreshRequests = 5f;
+			}
+		}
+		if (waitingForConnection > TimeoutThreshold && !timeoutMessage) 
+		{
+			timeoutMessage = true;
+			TimeoutMessagePanel.gameObject.SetActive(true);
+		}
+	}
+
+	private void ConnectToServer() 
+	{
+		TCPClient.ConnectIfNotConnected();
+		TCPClient.SetMessageHandler(handler);
+		TimeoutMessagePanel.gameObject.SetActive(false);
+	}
+
+	public void RetryToConnect() 
+	{
+		timeoutMessage = false;
+		waitingForConnection = 0f;
+		isConnected = false;
+		ConnectToServer();
 	}
 
 	public void SendGameListRequest() 
@@ -29,7 +71,6 @@ public class GameListNetworkRunner : MonoBehaviour
 		string messageToSend = MessageBuilders.BuildGameListMessage();
 		if (messageToSend != "") 
 		{
-			while(!TCPClient.IsSocketConnected());
 			TCPClient.SendMessage(messageToSend);
 			lastRefresh = 0f;
 		}
@@ -42,5 +83,11 @@ public class GameListNetworkRunner : MonoBehaviour
 		{
 			TCPClient.SendMessage(messageToSend);
 		}
+	}
+
+	public void CloseTimeoutMessage() 
+	{
+		timeoutMessage = false;
+		waitingForConnection = 0f;
 	}
 }

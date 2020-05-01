@@ -126,10 +126,12 @@ void Server::requestAction(int userIndex)
 
     if (g != nullptr)
     {
-        std::string answer, changes = g->doActionPlayer(_players[userIndex]->getInGameID());
-        answer = "{\"Action\":\"" ACTION_ACTION "\", \"PosX\":" + std::to_string(_players[userIndex]->getPosX());
-        answer += ", \"PosY\":" + std::to_string(_players[userIndex]->getPosY());
-        answer += ", \"Player\":" + std::to_string(_players[userIndex]->getInGameID());
+        Player *p = _players[userIndex];
+        std::string answer, changes = g->doActionPlayer(p->getInGameID());
+        answer = "{\"Action\":\"" ACTION_ACTION "\", \"PosX\":" + std::to_string(p->getPosX());
+        answer += ", \"PosY\":" + std::to_string(p->getPosY());
+        answer += ", \"Player\":" + std::to_string(p->getInGameID());
+        answer += ", \"Direction\":" + p->getLastDirection();
         answer += ", \"Changes\":" + changes;
         answer += "};\n";
         broadcastGame(g, answer);
@@ -287,24 +289,26 @@ void Server::requestMove(int userIndex, std::string moveDir)
     std::string changes = "";
     if (g != nullptr)
     {
-        changes = g->movePlayer(_players[userIndex]->getInGameID(), moveDir);
-    }
+        Player *p = _players[userIndex];
+        changes = g->movePlayer(p->getInGameID(), moveDir);
 
-    std::string answer;
-    answer = "{\"Action\":\"" ACTION_MOVE "\", \"PosX\":" + std::to_string(_players[userIndex]->getPosX());
-    answer += ", \"PosY\":" + std::to_string(_players[userIndex]->getPosY());
-    answer += ", \"Player\":" + std::to_string(_players[userIndex]->getInGameID());
-    answer += ", \"Changes\":[" + changes;
-    answer += "]};\n";
+        std::string answer;
+        answer = "{\"Action\":\"" ACTION_MOVE "\", \"PosX\":" + std::to_string(p->getPosX());
+        answer += ", \"PosY\":" + std::to_string(p->getPosY());
+        answer += ", \"Player\":" + std::to_string(p->getInGameID());
+        answer += ", \"Direction\":" + p->getLastDirection();
+        answer += ", \"Changes\":[" + changes;
+        answer += "]};\n";
 
-    broadcastGame(g, answer);
-
-    if (g->getFinished())
-    {
-        std::cout << "Game is finished" << std::endl;
-        answer = "{\"Action\":\"win\"};\n";
         broadcastGame(g, answer);
-        g->setFinished(false);
+
+        if (g->getFinished())
+        {
+            std::cout << "Game is finished" << std::endl;
+            answer = "{\"Action\":\"win\"};\n";
+            broadcastGame(g, answer);
+            g->setFinished(false);
+        }
     }
 }
 

@@ -6,7 +6,8 @@
 #include <sstream>
 #include "RSJParser.tcc"
 
-Game::Game(int gameID, std::string selectedMap) : _buttonState(false), _finished(false), _started(false), _nbPlayers(0), _currentLevel(0), _gameID(gameID), _nbKeys(0), _selectedMap(selectedMap) {}
+Game::Game(int gameID, std::string selectedMap) : _buttonState(false), _finished(false), _started(false), _nbPlayers(0), _currentLevel(0),
+_gameID(gameID), _nbKeys(0), _nbReady(0), _selectedMap(selectedMap) {}
 
 void Game::enableSecondaryAction(int roleID)
 {
@@ -550,7 +551,7 @@ std::string Game::doActionPlayer(int playerID)
 
 bool Game::addPlayer(Player *p)
 {
-    if (_players.size() < 4)
+    if (_players.size() < NB_MAX_PLAYERS)
     {
         p->setGame(this);
         p->setInGameID(_players.size());
@@ -975,6 +976,7 @@ void Game::resetGame()
         std::cout << "reset Player " << p->getInGameID() << std::endl;
         p->setSecondaryAction(false);
         p->deleteDummy();
+        p->setReadyStatus(false);
     }
     for(unsigned int i = 0; i < _grid.size(); ++i)
     {
@@ -991,6 +993,7 @@ void Game::resetGame()
     _offBlocks.clear();
     std::cout << "reset stairways" << std::endl;
     _stairways.clear();
+    _nbReady = 0;
 }
 
 bool Game::getStarted()
@@ -1001,6 +1004,19 @@ bool Game::getStarted()
 void Game::setStarted(bool started)
 {
     _started = started;
+}
+
+bool Game::increaseNbReady(int userID)
+{
+    if(!_players[userID]->getReadyStatus())
+    {
+        _players[userID]->setReadyStatus(true);
+        if(++_nbReady == NB_MAX_PLAYERS)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 Game::~Game()

@@ -1,7 +1,7 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
-//#define NB_PLAYERS 4
+#define NB_MAX_PLAYERS 4
 
 /******** BACKGROUND ********/
 #define EMPTY 0
@@ -92,7 +92,7 @@ private:
     /* List of stairways and their position */
     std::vector<Block> _stairways;
 
-    /* Position of the 4 tiles representing the lock */
+    /* Position of the tiles representing the lock */
     std::vector<Point> _lockPosition;
 
     /* Boolean that is true if On Blocks are displayed, false otherwise */
@@ -121,6 +121,9 @@ private:
 
     /* Number of keys to collect in order to break the lock and complete the level */
     int _nbKeys;
+
+    /* Number of players with a fully loaded map */
+    int _nbReady;
 
     /* The name of the current map selected by the leader of the party */
     std::string _selectedMap;
@@ -324,6 +327,11 @@ public:
 
     /* Changes the game state */
     void setStarted(bool);
+
+    /** Increase the number of players ready to play
+     * @userID the player now ready to play
+     * returns true if all the players are ready, false otherwise */
+    bool increaseNbReady(int userID);
 
     ~Game();
 };

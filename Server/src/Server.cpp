@@ -368,6 +368,19 @@ void Server::requestSendPing(int userIndex, int posX, int posY)
     }
 }
 
+void Server::requestNoticeReady(int userIndex)
+{
+    Game *g = getGameFromPlayer(userIndex);
+    if(g != nullptr)
+    {
+        if(g->increaseNbReady(_players[userIndex]->getInGameID()))
+        {
+            std::string answer = "{\"Action\"" ACTION_GAME_READY "};\n";
+            broadcastGame(g, answer);
+        }
+    }
+}
+
 Game *Server::getGameFromPlayer(int userIndex)
 {
     return _players[userIndex]->getGame();

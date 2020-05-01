@@ -117,6 +117,10 @@ public:
      * @posY: the y position of the ping*/
     void requestSendPing(int userIndex, int posX, int posY);
 
+    /** Informs the corresponding game that one more player is ready
+     * @userIndex: the index of the player */
+    void requestNoticeReady(int userIndex);
+
     /** Retrieves the game corresponding to the player given
      * @userIndex: the index of the player
      * Returns the game associated to the player */

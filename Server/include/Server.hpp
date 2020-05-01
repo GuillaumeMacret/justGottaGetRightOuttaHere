@@ -10,6 +10,7 @@
 #define ERROR_COMMUNICATION "communicationError"
 #define ERROR_GAME_DOES_NOT_EXIST "gameDoesNotExist"
 #define ERROR_GAME_FULL "gameFull"
+#define ERROR_GAME_STARTED "gameStarted"
 #define ERROR_NOT_ENOUGH_PLAYERS "notEnoughPlayers"
 #define ERROR_DUPLICATE_ROLE "dupRole"
 
@@ -31,7 +32,6 @@ class Server
     Player *_players[MAX_CONNECTION_TCP];
 
 private:
-
     /** Handles the communication with the users
      * @fd: The index of the player */
     void runPlayer(int fd);

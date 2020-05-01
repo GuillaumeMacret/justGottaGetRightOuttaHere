@@ -188,38 +188,34 @@ void Server::requestJoinGame(int userIndex, int gameID)
     }
     if (g != nullptr)
     {
+        if (g->getStarted())
+        {
+            answer = "{\"Action\":\"" ACTION_CANT_JOIN_GAME "\", \"GameId\":" + std::to_string(gameID);
+            answer += ", \"MoreInfo\":\"" ERROR_GAME_STARTED "\"";
+            answer += "};\n";
+
+            TCPConn.answers[userIndex] = answer;
+            return;
+        }
         if (g->addPlayer(_players[userIndex]))
         {
-            if (!g->getStarted())
+            answer = "{\"Action\":\"" ACTION_JOINED_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
+            answer += ", \"PlayersRoles\":[";
+            int i = 0;
+            for (Player *p : g->getPlayers())
             {
-
-                answer = "{\"Action\":\"" ACTION_JOINED_GAME "\", \"GameId\":" + std::to_string(g->getGameID());
-                answer += ", \"PlayersRoles\":[";
-                int i = 0;
-                for (Player *p : g->getPlayers())
-                {
-                    if (i)
-                        answer += ", ";
-                    answer += std::to_string(p->getRole());
-                    ++i;
-                }
-                answer += "], \"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
-                answer += ", \"Map\":\"" + g->getMapName();
-                //answer += ", \"Lobby\":\"" + g->isInLobby();
-                answer += "\"};\n";
-
-                broadcastGame(g, answer);
-                return;
+                if (i)
+                    answer += ", ";
+                answer += std::to_string(p->getRole());
+                ++i;
             }
-            else
-            {
-                answer = "{\"Action\":\"" ACTION_LOAD_LEVEL "\", ";
-                answer += g->getCurrentStateToJSON();
-                answer += g->getPlayersToJSON();
-                answer += "};\n";
-                TCPConn.answers[userIndex] = answer;
-                return;
-            }
+            answer += "], \"PlayerId\":" + std::to_string(_players[userIndex]->getInGameID());
+            answer += ", \"Map\":\"" + g->getMapName();
+            //answer += ", \"Lobby\":\"" + g->isInLobby();
+            answer += "\"};\n";
+
+            broadcastGame(g, answer);
+            return;
         }
         else
         {
@@ -375,9 +371,9 @@ void Server::requestSendPing(int userIndex, int posX, int posY)
 void Server::requestNoticeReady(int userIndex)
 {
     Game *g = getGameFromPlayer(userIndex);
-    if(g != nullptr)
+    if (g != nullptr)
     {
-        if(g->increaseNbReady(_players[userIndex]->getInGameID()))
+        if (g->increaseNbReady(_players[userIndex]->getInGameID()))
         {
             std::string answer = "{\"Action\"" ACTION_GAME_READY "};\n";
             broadcastGame(g, answer);

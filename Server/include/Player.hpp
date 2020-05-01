@@ -40,7 +40,7 @@ class Player
 public:
     Player();
     Player(int index, class Game *game = nullptr);
-    Player(Player*);
+    Player(Player *);
 
     /* Getter for the X position */
     int getPosX();

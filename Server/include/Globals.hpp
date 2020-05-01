@@ -36,7 +36,6 @@
 #define ACTION_RETURNED_LOBBY "returnToLobby"
 #define ACTION_GAME_READY "gameReady"
 
-
 /* Client & Server actions */
 #define ACTION_GAMES_LIST "gameList"
 #define ACTION_CHANGE_ROLE "roleChange"

@@ -181,7 +181,7 @@ int Parser::getAction(std::string &req, Server &server, int userIndex)
         {
             res = requestAction(req, server, userIndex);
         }
-        else if(s == ACTION_SEND_PING)
+        else if (s == ACTION_SEND_PING)
         {
             res = requestSendPing(req, server, userIndex);
         }
@@ -189,7 +189,7 @@ int Parser::getAction(std::string &req, Server &server, int userIndex)
         {
             res = requestGamesList(req, server, userIndex);
         }
-        else if(s == ACTION_NOTICE_READY)
+        else if (s == ACTION_NOTICE_READY)
         {
             res = requestNoticeReady(req, server, userIndex);
         }

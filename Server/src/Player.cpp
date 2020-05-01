@@ -74,7 +74,7 @@ Point *Player::setDummy()
 
 void Player::deleteDummy()
 {
-    if(_dummy)
+    if (_dummy)
     {
         delete _dummy;
         _dummy = nullptr;

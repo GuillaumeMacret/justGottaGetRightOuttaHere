@@ -77,10 +77,10 @@ class Game
 {
 private:
     //Player *_players[NB_PLAYERS];
-    
+
     /* List of players in the game */
     std::vector<Player *> _players;
-    
+
     /* Array of tiles representing the map state */
     std::vector<std::vector<Tile>> _grid;
 
@@ -136,7 +136,7 @@ private:
     /** Reads the objects layer of the selected map, in a JSON format
      * @layerResource: contains the JSON information of the layer */
     void readObjects(RSJresource layerResource);
-    
+
     /** Reads the key layer of the selected map, in a JSON format and which contains the position
      * of the lock and the keys
      * @layerResource: contains the JSON information of the layer */
@@ -162,7 +162,7 @@ private:
         * @posX: the X position of the tile
         * @posY: the Y position of the tile
         * @value: the tile ID
-        * Returns a string corresponding to the JSON object */ 
+        * Returns a string corresponding to the JSON object */
     std::string tileToJSON(int posX, int posY, int value);
 
     /** Checks if the player that requested the action 'Push' can do this action
@@ -316,7 +316,6 @@ public:
 
     /* Transforms the map in a JSON format that can be read by the client */
     std::string getMapToJSON();
-
 
     /* Transforms the current state of the map in a JSON format that can be read by the client */
     std::string getCurrentStateToJSON();

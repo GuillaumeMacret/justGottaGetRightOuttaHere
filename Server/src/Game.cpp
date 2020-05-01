@@ -7,7 +7,7 @@
 #include "RSJParser.tcc"
 
 Game::Game(int gameID, std::string selectedMap) : _buttonState(false), _finished(false), _started(false), _nbPlayers(0), _currentLevel(0),
-_gameID(gameID), _nbKeys(0), _nbReady(0), _selectedMap(selectedMap) {}
+                                                  _gameID(gameID), _nbKeys(0), _nbReady(0), _selectedMap(selectedMap) {}
 
 void Game::enableSecondaryAction(int roleID)
 {
@@ -160,7 +160,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
         {
             _players[playerID]->setOnLock(true);
             _finished = true;
-            
+
             for (Player *pl : _players)
             {
                 if (!pl->isOnLock())
@@ -414,7 +414,7 @@ std::string Game::checkTeleport(Player *p)
                 }
             }
         }
-        
+
         dummy = p->setDummy();
         res += tileToJSON(dummy->posX, dummy->posY, TELEPORT);
         //changes
@@ -542,9 +542,9 @@ std::string Game::doActionPlayer(int playerID)
         }
         res += actionString;
         checkTileTargetedByPlayer(p->getPosX(), p->getPosY(), playerID, checkString);
-        if(checkString.size() > 0)
+        if (checkString.size() > 0)
         {
-            if(actionString.size() > 0)
+            if (actionString.size() > 0)
             {
                 res += ',';
             }
@@ -588,9 +588,9 @@ bool Game::addPlayer(Player *p)
 
 void Game::disconnectPlayer(int playerIndex)
 {
-    for(uint i = 0; i < _players.size(); ++i)
+    for (uint i = 0; i < _players.size(); ++i)
     {
-        if(_players[i]->getIndex() == playerIndex)
+        if (_players[i]->getIndex() == playerIndex)
         {
             //Create a copy of the player
             Player *tmp = new Player(_players[i]);
@@ -851,10 +851,10 @@ void Game::readMap()
         _width = json_file_resource["width"].as<int>();
         _height = json_file_resource["height"].as<int>();
 
-        for(int i = 0; i < _height; ++i)
+        for (int i = 0; i < _height; ++i)
         {
             std::vector<Tile> v;
-            for(int j = 0; j < _width; ++j)
+            for (int j = 0; j < _width; ++j)
             {
                 v.push_back(Tile{0, 0, C_NOTHING});
             }
@@ -984,7 +984,7 @@ void Game::resetGame()
         p->deleteDummy();
         p->setReadyStatus(false);
     }
-    for(unsigned int i = 0; i < _grid.size(); ++i)
+    for (unsigned int i = 0; i < _grid.size(); ++i)
     {
         std::cout << "reset grid " << i << std::endl;
         _grid[i].clear();
@@ -1014,10 +1014,10 @@ void Game::setStarted(bool started)
 
 bool Game::increaseNbReady(int userID)
 {
-    if(!_players[userID]->getReadyStatus())
+    if (!_players[userID]->getReadyStatus())
     {
         _players[userID]->setReadyStatus(true);
-        if(++_nbReady == NB_MAX_PLAYERS)
+        if (++_nbReady == NB_MAX_PLAYERS)
         {
             return true;
         }

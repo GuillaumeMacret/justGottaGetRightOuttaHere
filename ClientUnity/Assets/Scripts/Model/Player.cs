@@ -58,9 +58,17 @@ public class Player : MonoBehaviour
             }
             else
             {
-
                 Vector3 direction = targetPositions[0] - transform.position;
-                SetFacing((int)direction.x, (int)direction.y);
+                if (Mathf.Abs(direction.x) > .5f)
+                {
+                    m_animator.SetFloat("MoveX", direction.x);
+                    m_animator.SetFloat("MoveY", 0);
+                }
+                else if(Mathf.Abs(direction.y) > .5f)
+                {
+                    m_animator.SetFloat("MoveX", 0);
+                    m_animator.SetFloat("MoveY", direction.y);
+                }
                 if (direction.magnitude > 3)
                 {
                     Debug.Log("Big movement detected, going sneaky mode");
@@ -75,7 +83,6 @@ public class Player : MonoBehaviour
                     m_audioSource.pitch = Random.Range(pitchRangeDown, pitchRangeUp);
                     m_audioSource.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Count)]);
                 }
-                lastDirection = direction;
             }
         }
         else

@@ -20,6 +20,59 @@ void Game::enableSecondaryAction(int roleID)
     }
 }
 
+void Game::checkTileTargetedByPlayer(int newPosX, int newPosY, int playerID, std::string changes)
+{
+    Player *p = _players[playerID];
+
+    // Player moved and now stands on a stairway
+    if (_grid[newPosY][newPosX].backgroundValue == STAIRWAY)
+    {
+        int index = 0;
+        for (Block sw : _stairways)
+        {
+            ++index;
+            if (sw.p.posX == newPosX && sw.p.posY == newPosY)
+            {
+                break;
+            }
+        }
+        Block b = _stairways[index % _stairways.size()];
+        p->setPos(b.p.posX, b.p.posY);
+    }
+    else
+    {
+        p->setPos(newPosX, newPosY);
+        if (checkOnObject(_grid[newPosY][newPosX].blockValue))
+        {
+            _grid[newPosY][newPosX].blockValue = EMPTY;
+            _grid[newPosY][newPosX].collisionValue = C_NOTHING;
+            changes += tileToJSON(newPosX, newPosY, EMPTY);
+        }
+        else
+        {
+            //Player stands on a key
+            if (_grid[newPosY][newPosX].blockValue == KEY)
+            {
+                _grid[newPosY][newPosX].blockValue = EMPTY;
+                _grid[newPosY][newPosX].collisionValue = C_NOTHING;
+                changes += tileToJSON(newPosX, newPosY, EMPTY);
+                --_nbKeys;
+                if (!_nbKeys)
+                {
+                    //change lock to empty
+                    for (Point point : _lockPosition)
+                    {
+                        changes += ',';
+                        _grid[point.posY][point.posX].blockValue = EMPTY;
+                        _grid[point.posY][point.posX].collisionValue = C_NOTHING;
+                        changes += tileToJSON(point.posX, point.posY, EMPTY);
+                    }
+                }
+            }
+        }
+    }
+}
+
 bool Game::checkOnObject(int tileValue)
 {
     switch (tileValue)
@@ -46,9 +99,9 @@ bool Game::checkOnObject(int tileValue)
 std::string Game::movePlayer(int playerID, std::string direction)
 {
     Player *p = _players[playerID];
+    p->setOnLock(false);
     int newPosX = p->getPosX(), newPosY = p->getPosY();
     int posX = newPosX, posY = newPosY;
-    bool _foundLock = false;
     std::string changes = "";
 
     // Retrieves the position the player is facing
@@ -77,77 +130,8 @@ std::string Game::movePlayer(int playerID, std::string direction)
         {
             _grid[posY][posX].collisionValue = p->getLastCollisionType();
 
-            // Player moved and now stands on a stairway
-            if (_grid[newPosY][newPosX].backgroundValue == STAIRWAY)
-            {
-                int index = 0;
-                for (Block sw : _stairways)
-                {
-                    ++index;
-                    if (sw.p.posX == newPosX && sw.p.posY == newPosY)
-                    {
-                        break;
-                    }
-                }
-                Block b = _stairways[index % _stairways.size()];
-                p->setPos(b.p.posX, b.p.posY);
-            }
-            else
-            {
-                p->setPos(newPosX, newPosY);
-                if (checkOnObject(_grid[newPosY][newPosX].blockValue))
-                {
-                    _grid[newPosY][newPosX].blockValue = EMPTY;
-                    _grid[newPosY][newPosX].collisionValue = C_NOTHING;
-                    changes += tileToJSON(newPosX, newPosY, EMPTY);
-                }
-                else
-                {
-                    //Player stands on a key
-                    if (_grid[newPosY][newPosX].blockValue == KEY)
-                    {
-                        _grid[newPosY][newPosX].blockValue = EMPTY;
-                        _grid[newPosY][newPosX].collisionValue = C_NOTHING;
-                        changes += tileToJSON(newPosX, newPosY, EMPTY);
-                        --_nbKeys;
-                        if (!_nbKeys)
-                        {
-                            //change lock to empty
-                            for (Point point : _lockPosition)
-                            {
-                                changes += ',';
-                                _grid[point.posY][point.posX].blockValue = EMPTY;
-                                _grid[point.posY][point.posX].collisionValue = C_NOTHING;
-                                changes += tileToJSON(point.posX, point.posY, EMPTY);
-                            }
-                        }
-                    }
-                    // Checks if the player is on a lock, and if so, if all the players stand on a lock
-                    else
-                    {
-                        for (Point p : _lockPosition)
-                        {
-                            if (newPosX == p.posX && newPosY == p.posY)
-                            {
-                                std::cout << "OnLock player " << playerID << std::endl;
-                                _players[playerID]->setOnLock(true);
-                                _finished = true;
-                                _foundLock = true;
-                                for (Player *p : _players)
-                                {
-                                    if (!p->isOnLock())
-                                    {
-                                        std::cout << "But not OnLock for player " << p->getInGameID() << " so not finished game" << std::endl;
-                                        _finished = false;
-                                        break;
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+            checkTileTargetedByPlayer(newPosX, newPosY, playerID, changes);
+
             p->setLastCollisionType(_grid[newPosY][newPosX].collisionValue);
         }
         // Checks if the player tries to go through a ghost wall
@@ -170,10 +154,24 @@ std::string Game::movePlayer(int playerID, std::string direction)
     }
     p->setLastDirection(direction);
 
-    // Checks if the player no longer stands on a lock.
-    // If it is still on a lock, this will have no effect
-    // as the boolean is already set
-    p->setOnLock(_foundLock);
+    for (Point p : _lockPosition)
+    {
+        if (newPosX == p.posX && newPosY == p.posY)
+        {
+            _players[playerID]->setOnLock(true);
+            _finished = true;
+            
+            for (Player *pl : _players)
+            {
+                if (!pl->isOnLock())
+                {
+                    _finished = false;
+                    break;
+                }
+            }
+            break;
+        }
+    }
 
     return changes;
 }
@@ -476,7 +474,7 @@ std::string Game::checkPassEnemy()
 
 std::string Game::doActionPlayer(int playerID)
 {
-    std::string res = "[";
+    std::string res = "[", checkString = "";
     Player *p = _players[playerID];
     int posX = p->getPosX(), posY = p->getPosY();
     std::string dir = p->getLastDirection();
@@ -543,8 +541,16 @@ std::string Game::doActionPlayer(int playerID)
             break;
         }
         res += actionString;
+        checkTileTargetedByPlayer(p->getPosX(), p->getPosY(), playerID, checkString);
+        if(checkString.size() > 0)
+        {
+            if(actionString.size() > 0)
+            {
+                res += ',';
+            }
+            res += checkString;
+        }
     }
-
     res += "]";
     return res;
 }

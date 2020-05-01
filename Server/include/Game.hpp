@@ -237,6 +237,13 @@ private:
      * @roleID: The role related to the secondary action to enable */
     void enableSecondaryAction(int roleID);
 
+    /** Checks the tile targeted by the player (after move/action) and modifies the logic if needed
+     * @posX: the x position of the tile to check
+     * @posY: the y position of the tile to check
+     * @playerID: The player requiring the check
+     * @changes: the changes to send to the client */
+    void checkTileTargetedByPlayer(int posX, int posY, int playerID, std::string changes);
+
 public:
     enum Roles
     {

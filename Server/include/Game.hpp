@@ -2,6 +2,7 @@
 #define _GAME_H_
 
 #define NB_MAX_PLAYERS 4
+#define DEFAULT_MAP "Tuto0"
 
 /******** BACKGROUND ********/
 #define EMPTY 0
@@ -249,7 +250,7 @@ public:
     /** Constructor of the game
      * @gameID: the ID of the game
      * @selectedMap: the current map selected by the player */
-    Game(int gameID, std::string selectedMap = "map");
+    Game(int gameID, std::string selectedMap = DEFAULT_MAP);
 
     /* Function called by the server when a player asks to move
         * @playerID: ID of the requesting player

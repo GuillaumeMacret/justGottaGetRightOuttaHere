@@ -131,8 +131,8 @@ void Server::requestAction(int userIndex)
         answer = "{\"Action\":\"" ACTION_ACTION "\", \"PosX\":" + std::to_string(p->getPosX());
         answer += ", \"PosY\":" + std::to_string(p->getPosY());
         answer += ", \"Player\":" + std::to_string(p->getInGameID());
-        answer += ", \"Direction\":" + p->getLastDirection();
-        answer += ", \"Changes\":" + changes;
+        answer += ", \"Direction\":\"" + p->getLastDirection();
+        answer += "\", \"Changes\":" + changes;
         answer += "};\n";
         broadcastGame(g, answer);
     }
@@ -292,8 +292,8 @@ void Server::requestMove(int userIndex, std::string moveDir)
         answer = "{\"Action\":\"" ACTION_MOVE "\", \"PosX\":" + std::to_string(p->getPosX());
         answer += ", \"PosY\":" + std::to_string(p->getPosY());
         answer += ", \"Player\":" + std::to_string(p->getInGameID());
-        answer += ", \"Direction\":" + p->getLastDirection();
-        answer += ", \"Changes\":[" + changes;
+        answer += ", \"Direction\":\"" + p->getLastDirection();
+        answer += "\", \"Changes\":[" + changes;
         answer += "]};\n";
 
         broadcastGame(g, answer);

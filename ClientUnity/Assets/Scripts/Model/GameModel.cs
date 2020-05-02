@@ -53,6 +53,9 @@ public class GameModel : MonoBehaviour
     private const int UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4;
 
     private bool m_SceneWasLocked = true;
+    private GameObject[] m_ObjectsToLock;
+    private GameObject m_LoadingBox;
+    public bool CanUnlockScene = false;
 
     /// <summary>
     /// Looks for objects with tag "LockedDuringLoad" in scene and disable them
@@ -62,12 +65,12 @@ public class GameModel : MonoBehaviour
     public void LockSceneInputs()
     {
         m_SceneWasLocked = true;
-        GameObject[] objects = GameObject.FindGameObjectsWithTag("LockedDuringLoad");
-        foreach(GameObject o in objects)
+        foreach(GameObject o in m_ObjectsToLock)
         {
             o.SetActive(false);
         }
-        GameObject.FindGameObjectWithTag("LoadingMessage").SetActive(true);
+        m_LoadingBox.SetActive(true);
+        CanUnlockScene = false;
     }
 
     /// <summary>
@@ -75,17 +78,18 @@ public class GameModel : MonoBehaviour
     /// </summary>
     public void UnlockSceneInputs()
     {
-        GameObject[] objects = GameObject.FindGameObjectsWithTag("LockedDuringLoad");
-        foreach (GameObject o in objects)
+        foreach (GameObject o in m_ObjectsToLock)
         {
             o.SetActive(true);
         }
-        GameObject.FindGameObjectWithTag("LoadingMessage").SetActive(false);
+        m_LoadingBox.SetActive(false);
         m_GameTimer = 0;
     }
 
     private void Awake()
     {
+        m_ObjectsToLock = GameObject.FindGameObjectsWithTag("LockedDuringLoad");
+        m_LoadingBox = GameObject.FindGameObjectWithTag("LoadingMessage");
         LockSceneInputs();
         m_audioSource = GetComponent<AudioSource>();
         m_GameTimer = 0;
@@ -112,6 +116,11 @@ public class GameModel : MonoBehaviour
     }
     private void Update()
     {
+        if (CanUnlockScene)
+        {
+            UnlockSceneInputs();
+            CanUnlockScene = false;
+        }
         if (GameLobbyData.PlayerId != 0)
         {
             returnButton.interactable = false;

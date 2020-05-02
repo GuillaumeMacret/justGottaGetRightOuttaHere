@@ -375,7 +375,7 @@ void Server::requestNoticeReady(int userIndex)
     {
         if (g->increaseNbReady(_players[userIndex]->getInGameID()))
         {
-            std::string answer = "{\"Action\":\"" ACTION_GAME_READY "};\n";
+            std::string answer = "{\"Action\":\"" ACTION_GAME_READY "\"};\n";
             broadcastGame(g, answer);
         }
     }

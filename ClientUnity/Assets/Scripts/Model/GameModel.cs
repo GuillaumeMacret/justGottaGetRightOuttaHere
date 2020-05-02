@@ -94,7 +94,13 @@ public class GameModel : MonoBehaviour
     private void Start() 
 	{
 		LoadLevel(GameLobbyData.BlocksJson, GameLobbyData.PlayersJson, GameLobbyData.ObjectsJson, GameLobbyData.LevelName);
-	}
+        if (m_SceneWasLocked)
+        {
+            string messageToSend = MessageBuilders.BuildRdyMessage();
+            TCPClient.SendMessage(messageToSend);
+            m_SceneWasLocked = false;
+        }
+    }
 
     /// <summary>
     /// Plays a music at random picked from the musics array
@@ -106,12 +112,6 @@ public class GameModel : MonoBehaviour
     }
     private void Update()
     {
-        if (m_SceneWasLocked)
-        {
-            string messageToSend = MessageBuilders.BuildRdyMessage();
-            TCPClient.SendMessage(messageToSend);
-            m_SceneWasLocked = false;
-        }
         if (GameLobbyData.PlayerId != 0)
         {
             returnButton.interactable = false;
@@ -333,7 +333,6 @@ public class GameModel : MonoBehaviour
         }
         needsFullRedraw = true;
         gameWon = false;
-        virtualDPad.SetActive(true);
         winMessageContainer.SetActive(false);
     }
 

@@ -36,7 +36,7 @@ public class Player : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, movementVector, step);
         m_facing = (int) targetPositions[0].z;
 
-        if (transform.position == targetPositions[0])
+        if (transform.position.x == targetPositions[0].x && transform.position.y == targetPositions[0].y)
         {
             targetPositions.RemoveAt(0);
         }
@@ -55,14 +55,16 @@ public class Player : MonoBehaviour
         speed = 10;
         if (targetPositions.Count > 0)
         {
-            if (transform.position == targetPositions[0])
+            if (transform.position.x == targetPositions[0].x && transform.position.y == targetPositions[0].y)
             {
                 targetPositions.RemoveAt(0);
                 return;
             }
             else
             {
-                Vector3 direction = targetPositions[0] - transform.position;
+                Vector3 from = new Vector3(transform.position.x, transform.position.y, 0);
+                Vector3 to = new Vector3(targetPositions[0].x, targetPositions[0].y, 0);
+                Vector3 direction = to - from;
                 if (Mathf.Abs(direction.x) > .5f)
                 {
                     m_animator.SetFloat("MoveX", direction.x);
@@ -98,10 +100,10 @@ public class Player : MonoBehaviour
             case 0:
                 break;
             case UP:
-                SetFacing(0, -1);
+                SetFacing(0, 1);
                 break;
             case DOWN:
-                SetFacing(0, 1);
+                SetFacing(0, -1);
                 break;
             case LEFT:
                 SetFacing(-1, 0);

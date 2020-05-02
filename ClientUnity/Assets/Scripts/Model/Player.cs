@@ -38,6 +38,8 @@ public class Player : MonoBehaviour
 
         if (transform.position.x == targetPositions[0].x && transform.position.y == targetPositions[0].y)
         {
+            m_facing = (int)targetPositions[0].z;
+            RefreshFacing();
             targetPositions.RemoveAt(0);
         }
     }
@@ -57,6 +59,8 @@ public class Player : MonoBehaviour
         {
             if (transform.position.x == targetPositions[0].x && transform.position.y == targetPositions[0].y)
             {
+                m_facing = (int)targetPositions[0].z;
+                RefreshFacing();
                 targetPositions.RemoveAt(0);
                 return;
             }
@@ -95,6 +99,16 @@ public class Player : MonoBehaviour
         {
             m_animator.SetBool("Moving", false);
         }
+        /*
+        m_animator.SetFloat("MoveX", lastDirection.x);
+        m_animator.SetFloat("MoveY", lastDirection.y);
+        */
+        RefreshFacing();
+
+    }
+
+    private void RefreshFacing()
+    {
         switch (m_facing)
         {
             case 0:
@@ -112,11 +126,6 @@ public class Player : MonoBehaviour
                 SetFacing(1, 0);
                 break;
         }
-        /*
-        m_animator.SetFloat("MoveX", lastDirection.x);
-        m_animator.SetFloat("MoveY", lastDirection.y);
-        */
-
     }
 
     public void AddDestination(int xPos, int yPos, int facing)

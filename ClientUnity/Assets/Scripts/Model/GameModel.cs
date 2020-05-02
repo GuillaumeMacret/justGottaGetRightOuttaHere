@@ -95,10 +95,20 @@ public class GameModel : MonoBehaviour
         m_GameTimer = 0;
     }
 
+    private bool EverythingHasBeenInstantiated()
+    {
+        if(m_playerToInstantiate.Count != 0)
+        {
+            return false;
+        }
+        return true;
+    }
+
     private void Start() 
 	{
-		LoadLevel(GameLobbyData.BlocksJson, GameLobbyData.PlayersJson, GameLobbyData.ObjectsJson, GameLobbyData.LevelName);
-        if (m_SceneWasLocked)
+        LoadLevel(GameLobbyData.BlocksJson, GameLobbyData.PlayersJson, GameLobbyData.ObjectsJson, GameLobbyData.LevelName);
+        
+        if (m_SceneWasLocked && EverythingHasBeenInstantiated())
         {
             string messageToSend = MessageBuilders.BuildRdyMessage();
             TCPClient.SendMessage(messageToSend);
@@ -193,35 +203,35 @@ public class GameModel : MonoBehaviour
     /// </summary>
     private void UpdateCameraSettings()
     {
-        Debug.Log("Screen Dimension : " + Screen.width + " " + Screen.height);
+        //Debug.Log("Screen Dimension : " + Screen.width + " " + Screen.height);
         /* Dertemine wich dimension is reaching the border */
         int width = m_blocksLayer[0].Length;
         int height = m_blocksLayer.Length;
         //Debug.Log("Sizes : " + width + " " + height);
         float aspectRatio = (float)Screen.width / (float)Screen.height;
-        Debug.Log("Aspect ratio : " + aspectRatio);
+        //Debug.Log("Aspect ratio : " + aspectRatio);
 
         float widthRatio = width / aspectRatio;
         float heightRatio = height;
-        Debug.Log("Ratios : " + widthRatio + " " + heightRatio);
+        //Debug.Log("Ratios : " + widthRatio + " " + heightRatio);
         if (widthRatio > heightRatio)
         {
-            Debug.Log("Width is limiting");
+            //Debug.Log("Width is limiting");
             mainCamera.orthographicSize = width / aspectRatio / 2;
-            Debug.Log("New size is "+ widthRatio);
+            //Debug.Log("New size is "+ widthRatio);
             m_TileSize = Screen.width / width;
             m_XStartOffset = 0;
             m_YStartOffset = (Screen.height - (height * m_TileSize)) / 2;
         }
         else
         {
-            Debug.Log("Height is limiting");
+            //Debug.Log("Height is limiting");
             mainCamera.orthographicSize = height / 2;
             m_TileSize = Screen.height / height;
             m_YStartOffset = 0;
             m_XStartOffset = (Screen.width - (width* m_TileSize)) / 2;
         }
-        Debug.Log("New tile size is : " + m_TileSize);
+        //Debug.Log("New tile size is : " + m_TileSize);
 
         mainCamera.transform.position = new Vector3(width / 2.0f, -height / 2.0f, mainCamera.transform.position.z);
     }

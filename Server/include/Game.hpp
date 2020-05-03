@@ -1,7 +1,8 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
-//#define NB_PLAYERS 4
+#define NB_MAX_PLAYERS 4
+#define DEFAULT_MAP "Tuto0"
 
 /******** BACKGROUND ********/
 #define EMPTY 0
@@ -76,10 +77,10 @@ class Game
 {
 private:
     //Player *_players[NB_PLAYERS];
-    
+
     /* List of players in the game */
     std::vector<Player *> _players;
-    
+
     /* Array of tiles representing the map state */
     std::vector<std::vector<Tile>> _grid;
 
@@ -92,7 +93,7 @@ private:
     /* List of stairways and their position */
     std::vector<Block> _stairways;
 
-    /* Position of the 4 tiles representing the lock */
+    /* Position of the tiles representing the lock */
     std::vector<Point> _lockPosition;
 
     /* Boolean that is true if On Blocks are displayed, false otherwise */
@@ -122,6 +123,9 @@ private:
     /* Number of keys to collect in order to break the lock and complete the level */
     int _nbKeys;
 
+    /* Number of players with a fully loaded map */
+    int _nbReady;
+
     /* The name of the current map selected by the leader of the party */
     std::string _selectedMap;
 
@@ -132,7 +136,7 @@ private:
     /** Reads the objects layer of the selected map, in a JSON format
      * @layerResource: contains the JSON information of the layer */
     void readObjects(RSJresource layerResource);
-    
+
     /** Reads the key layer of the selected map, in a JSON format and which contains the position
      * of the lock and the keys
      * @layerResource: contains the JSON information of the layer */
@@ -158,7 +162,7 @@ private:
         * @posX: the X position of the tile
         * @posY: the Y position of the tile
         * @value: the tile ID
-        * Returns a string corresponding to the JSON object */ 
+        * Returns a string corresponding to the JSON object */
     std::string tileToJSON(int posX, int posY, int value);
 
     /** Checks if the player that requested the action 'Push' can do this action
@@ -233,6 +237,13 @@ private:
      * @roleID: The role related to the secondary action to enable */
     void enableSecondaryAction(int roleID);
 
+    /** Checks the tile targeted by the player (after move/action) and modifies the logic if needed
+     * @posX: the x position of the tile to check
+     * @posY: the y position of the tile to check
+     * @playerID: The player requiring the check
+     * @changes: the changes to send to the client */
+    void checkTileTargetedByPlayer(int posX, int posY, int playerID, std::string &changes);
+
 public:
     enum Roles
     {
@@ -246,7 +257,7 @@ public:
     /** Constructor of the game
      * @gameID: the ID of the game
      * @selectedMap: the current map selected by the player */
-    Game(int gameID, std::string selectedMap = "map");
+    Game(int gameID, std::string selectedMap = DEFAULT_MAP);
 
     /* Function called by the server when a player asks to move
         * @playerID: ID of the requesting player
@@ -306,7 +317,6 @@ public:
     /* Transforms the map in a JSON format that can be read by the client */
     std::string getMapToJSON();
 
-
     /* Transforms the current state of the map in a JSON format that can be read by the client */
     std::string getCurrentStateToJSON();
 
@@ -324,6 +334,11 @@ public:
 
     /* Changes the game state */
     void setStarted(bool);
+
+    /** Increase the number of players ready to play
+     * @userID the player now ready to play
+     * returns true if all the players are ready, false otherwise */
+    bool increaseNbReady(int userID);
 
     ~Game();
 };

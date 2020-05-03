@@ -160,6 +160,12 @@ int Parser::requestSendPing(std::string &req, class Server &server, int userInde
     return 0;
 }
 
+int Parser::requestNoticeReady(std::string &req, Server &server, int userIndex)
+{
+    server.requestNoticeReady(userIndex);
+    return 0;
+}
+
 int Parser::getAction(std::string &req, Server &server, int userIndex)
 {
     std::string s = readArg(req);
@@ -167,9 +173,25 @@ int Parser::getAction(std::string &req, Server &server, int userIndex)
     int res = 1;
     if (s != "")
     {
-        if (s == ACTION_GAMES_LIST)
+        if (s == ACTION_MOVE)
+        {
+            res = requestMove(req, server, userIndex);
+        }
+        else if (s == ACTION_ACTION)
+        {
+            res = requestAction(req, server, userIndex);
+        }
+        else if (s == ACTION_SEND_PING)
+        {
+            res = requestSendPing(req, server, userIndex);
+        }
+        else if (s == ACTION_GAMES_LIST)
         {
             res = requestGamesList(req, server, userIndex);
+        }
+        else if (s == ACTION_NOTICE_READY)
+        {
+            res = requestNoticeReady(req, server, userIndex);
         }
         else if (s == ACTION_CHANGE_ROLE)
         {
@@ -178,10 +200,6 @@ int Parser::getAction(std::string &req, Server &server, int userIndex)
         else if (s == ACTION_CHANGE_MAP)
         {
             res = requestChangeMap(req, server, userIndex);
-        }
-        else if (s == ACTION_ACTION)
-        {
-            res = requestAction(req, server, userIndex);
         }
         else if (s == ACTION_CREATE_GAME)
         {
@@ -195,13 +213,9 @@ int Parser::getAction(std::string &req, Server &server, int userIndex)
         {
             res = requestStartGame(req, server, userIndex);
         }
-        else if (s == ACTION_MOVE)
-        {
-            res = requestMove(req, server, userIndex);
-        }
         else if (s == ACTION_NEXT_LEVEL)
         {
-            res = requestMove(req, server, userIndex);
+            res = requestNextLevel(req, server, userIndex);
         }
         else if (s == ACTION_LEAVE_GAME)
         {
@@ -210,9 +224,6 @@ int Parser::getAction(std::string &req, Server &server, int userIndex)
         else if (s == ACTION_RETURN_LOBBY)
         {
             res = requestReturnToLobby(req, server, userIndex);
-        } else if(s == ACTION_SEND_PING)
-        {
-            res = requestSendPing(req, server, userIndex);
         }
     }
     return res;

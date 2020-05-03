@@ -24,6 +24,8 @@ class Player
     bool _secondaryAction;
     /* Indicates if the player is standing on a lock, used to check victory condition */
     bool _onLock;
+    /* Indicates if the player has the map fully loaded */
+    bool _ready;
     /* The direction the player is facing */
     std::string _lastDirection;
     /* The previous state of the tile the player stands on.
@@ -38,7 +40,7 @@ class Player
 public:
     Player();
     Player(int index, class Game *game = nullptr);
-    Player(Player*);
+    Player(Player *);
 
     /* Getter for the X position */
     int getPosX();
@@ -66,6 +68,11 @@ public:
     int getInGameID();
     /* Changes the in-game ID */
     void setInGameID(int inGameID);
+    /* Getter for the ready status of the player */
+    bool getReadyStatus();
+    /* Changes the status of the player */
+    void setReadyStatus(bool readyStatus);
+    /* Getter for the in-game ID */
     /* Getter to know if the player is connected to the server */
     bool isConnected();
     /* Changes the connected status of the player */
@@ -86,8 +93,11 @@ public:
     Point *getDummy();
     /* Sets the dummy of the player */
     Point *setDummy();
+    /* Teleport the player to the dummy if it is set up */
     void teleport();
+    /* Copies the properties of another player */
     void copy(Player *);
+    /* Deletes the dummy of the player if it is set up */
     void deleteDummy();
 
     ~Player();

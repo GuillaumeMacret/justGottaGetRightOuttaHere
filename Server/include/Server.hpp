@@ -10,6 +10,7 @@
 #define ERROR_COMMUNICATION "communicationError"
 #define ERROR_GAME_DOES_NOT_EXIST "gameDoesNotExist"
 #define ERROR_GAME_FULL "gameFull"
+#define ERROR_GAME_STARTED "gameStarted"
 #define ERROR_NOT_ENOUGH_PLAYERS "notEnoughPlayers"
 #define ERROR_DUPLICATE_ROLE "dupRole"
 
@@ -31,7 +32,6 @@ class Server
     Player *_players[MAX_CONNECTION_TCP];
 
 private:
-
     /** Handles the communication with the users
      * @fd: The index of the player */
     void runPlayer(int fd);
@@ -116,6 +116,10 @@ public:
      * @posX: the x position of the ping
      * @posY: the y position of the ping*/
     void requestSendPing(int userIndex, int posX, int posY);
+
+    /** Informs the corresponding game that one more player is ready
+     * @userIndex: the index of the player */
+    void requestNoticeReady(int userIndex);
 
     /** Retrieves the game corresponding to the player given
      * @userIndex: the index of the player

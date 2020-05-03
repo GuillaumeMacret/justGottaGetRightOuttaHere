@@ -22,6 +22,7 @@
 #define ACTION_LEAVE_GAME "leaveGame"
 #define ACTION_CHANGE_MAP "changeMap"
 #define ACTION_RETURN_LOBBY "returnToLobby"
+#define ACTION_NOTICE_READY "noticeReady"
 
 /* Server actions */
 #define ACTION_CREATED_GAME "createdGame"
@@ -33,7 +34,7 @@
 #define ACTION_WIN "win"
 #define ACTION_CHANGED_MAP "changedMap"
 #define ACTION_RETURNED_LOBBY "returnToLobby"
-
+#define ACTION_GAME_READY "gameReady"
 
 /* Client & Server actions */
 #define ACTION_GAMES_LIST "gameList"

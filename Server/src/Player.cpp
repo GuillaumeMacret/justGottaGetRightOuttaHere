@@ -1,7 +1,7 @@
 #include "Player.hpp"
 #include "Game.hpp"
 
-Player::Player() : _posX(0), _posY(0), _role(0), _index(0), _connected(true), _secondaryAction(false), _onLock(false), _lastCollisionType(0), _dummy(nullptr) {}
+Player::Player() : _posX(0), _posY(0), _role(0), _index(0), _connected(true), _secondaryAction(false), _onLock(false), _ready(false), _lastCollisionType(0), _dummy(nullptr) {}
 
 Player::Player(int index, Game *game) : _posX(0), _posY(0), _role(0), _index(index), _game(game), _connected(true), _lastDirection("down") {}
 
@@ -54,6 +54,10 @@ bool Player::isOnLock() { return _onLock; }
 
 void Player::setOnLock(bool onLock) { _onLock = onLock; }
 
+bool Player::getReadyStatus() { return _ready; }
+
+void Player::setReadyStatus(bool readyStatus) { _ready = readyStatus; }
+
 std::string Player::getLastDirection() { return _lastDirection; }
 
 void Player::setLastDirection(std::string direction) { _lastDirection = direction; }
@@ -70,7 +74,7 @@ Point *Player::setDummy()
 
 void Player::deleteDummy()
 {
-    if(_dummy)
+    if (_dummy)
     {
         delete _dummy;
         _dummy = nullptr;

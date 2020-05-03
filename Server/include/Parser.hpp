@@ -30,6 +30,7 @@ private:
     int requestLeaveGame(std::string &req, class Server &server, int userIndex);
     int requestReturnToLobby(std::string &req, class Server &server, int userIndex);
     int requestSendPing(std::string &req, class Server &server, int userIndex);
+    int requestNoticeReady(std::string &req, class Server &server, int userIndex);
 
 public:
     static Parser getInstance();

@@ -157,7 +157,7 @@ std::string Game::movePlayer(int playerID, std::string direction)
 
     for (Point lock : _lockPosition)
     {
-        if (newPosX == lock.posX && newPosY == lock.posY)
+        if (p->getPosX() == lock.posX && p->getPosY() == lock.posY)
         {
             _players[playerID]->setOnLock(true);
             bool allOnLock = true;

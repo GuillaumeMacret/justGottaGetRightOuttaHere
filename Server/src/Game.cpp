@@ -220,7 +220,7 @@ std::string Game::checkPush(std::string dir, int posX, int posY, Player *p)
             p->setPos(posX, posY);
             _grid[posY][posX].blockValue = EMPTY;
             _grid[posY][posX].collisionValue = C_WALKABLE;
-            p->setLastCollisionType(_grid[posY][posX].collisionValue);
+            p->setLastCollisionType(EMPTY);
 
             res += tileToJSON(posX, posY, EMPTY);
             res += ',';

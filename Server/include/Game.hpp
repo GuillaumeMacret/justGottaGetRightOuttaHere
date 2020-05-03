@@ -242,7 +242,7 @@ private:
      * @posY: the y position of the tile to check
      * @playerID: The player requiring the check
      * @changes: the changes to send to the client */
-    void checkTileTargetedByPlayer(int posX, int posY, int playerID, std::string changes);
+    void checkTileTargetedByPlayer(int posX, int posY, int playerID, std::string &changes);
 
 public:
     enum Roles

@@ -20,7 +20,7 @@ void Game::enableSecondaryAction(int roleID)
     }
 }
 
-void Game::checkTileTargetedByPlayer(int newPosX, int newPosY, int playerID, std::string changes)
+void Game::checkTileTargetedByPlayer(int newPosX, int newPosY, int playerID, std::string &changes)
 {
     Player *p = _players[playerID];
 

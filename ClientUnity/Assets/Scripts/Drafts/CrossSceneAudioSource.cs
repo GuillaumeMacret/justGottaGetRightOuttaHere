@@ -7,11 +7,10 @@ public class CrossSceneAudioSource : MonoBehaviour
     private static CrossSceneAudioSource Instance = null;
     public static CrossSceneAudioSource instance { get { return instance; } }
 
-
-    public static AudioSource source = null;
+    
     private void Awake()
     {
-        if(Instance != null && Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
             return;
@@ -23,8 +22,9 @@ public class CrossSceneAudioSource : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
     }
 
-    public static void PlayClip(AudioClip audioClip)
+    public void PlayClip(AudioClip audioClip)
     {
+        AudioSource source = GetComponent<AudioSource>();
         if(source == null)
         {
             Debug.LogError("No cross scene audio source was found!");

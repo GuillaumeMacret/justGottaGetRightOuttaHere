@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PlayersContainer
   - LoadingMessage
+  - LockedDuringLoad
   layers:
   - Default
   - TransparentFX

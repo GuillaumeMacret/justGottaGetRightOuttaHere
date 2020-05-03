@@ -21,8 +21,8 @@ public class GameModel : MonoBehaviour
     public Image actionButtonImage;
     public Image pingButtonImage;
     public GameObject pingPrefab;
-    
-
+    public Button returnButton;
+    public GameObject loadingBox;
 
     private static float m_GameTimer;
     public static float GameTimer { get => m_GameTimer; }
@@ -50,17 +50,68 @@ public class GameModel : MonoBehaviour
     //The gap between the bottom of the screen and the first tile
     private float m_YStartOffset;
 
+    private const int UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4;
+
+    private bool m_SceneWasLocked = true;
+    private GameObject[] m_ObjectsToLock;
+    private GameObject m_LoadingBox;
+    public bool CanUnlockScene = false;
+
+    /// <summary>
+    /// Looks for objects with tag "LockedDuringLoad" in scene and disable them
+    /// Looks also for an object with tag "LoadingMessage" to enable it
+    /// The goal here is to prevent players from sending update message while other are still loading the scene
+    /// </summary>
+    public void LockSceneInputs()
+    {
+        m_SceneWasLocked = true;
+        foreach(GameObject o in m_ObjectsToLock)
+        {
+            o.SetActive(false);
+        }
+        m_LoadingBox.SetActive(true);
+        CanUnlockScene = false;
+    }
+
+    /// <summary>
+    /// Does the opposite of LockSceneInputs()
+    /// </summary>
+    public void UnlockSceneInputs()
+    {
+        foreach (GameObject o in m_ObjectsToLock)
+        {
+            o.SetActive(true);
+        }
+        m_LoadingBox.SetActive(false);
+        m_GameTimer = 0;
+    }
+
     private void Awake()
     {
+        m_ObjectsToLock = GameObject.FindGameObjectsWithTag("LockedDuringLoad");
+        m_LoadingBox = GameObject.FindGameObjectWithTag("LoadingMessage");
+        LockSceneInputs();
         m_audioSource = GetComponent<AudioSource>();
         m_GameTimer = 0;
     }
 
-	private void Start() 
-	{
-		LoadLevel(GameLobbyData.BlocksJson, GameLobbyData.PlayersJson, GameLobbyData.ObjectsJson, GameLobbyData.LevelName);
-	}
+    private bool EverythingHasBeenInstantiated()
+    {
+        if(m_playerToInstantiate.Count != 0)
+        {
+            return false;
+        }
+        return true;
+    }
 
+    private void Start() 
+	{
+        LoadLevel(GameLobbyData.BlocksJson, GameLobbyData.PlayersJson, GameLobbyData.ObjectsJson, GameLobbyData.LevelName);
+    }
+
+    /// <summary>
+    /// Plays a music at random picked from the musics array
+    /// </summary>
 	private void StartRandomMusic()
     {
         m_audioSource.clip = musics[Random.Range(0, musics.Count)];
@@ -68,6 +119,26 @@ public class GameModel : MonoBehaviour
     }
     private void Update()
     {
+        //Debug.Log("Scene lock : " + m_SceneWasLocked + " instanciation : " + EverythingHasBeenInstantiated());
+        if (m_SceneWasLocked && EverythingHasBeenInstantiated())
+        {
+            string messageToSend = MessageBuilders.BuildRdyMessage();
+            TCPClient.SendMessage(messageToSend);
+            m_SceneWasLocked = false;
+        }
+        if (CanUnlockScene)
+        {
+            UnlockSceneInputs();
+            CanUnlockScene = false;
+        }
+        if (GameLobbyData.PlayerId != 0)
+        {
+            returnButton.interactable = false;
+        }
+        else
+        {
+            returnButton.interactable = true;
+        }
         if (gameWon)
         {
             virtualDPad.SetActive(false);
@@ -132,35 +203,35 @@ public class GameModel : MonoBehaviour
     /// </summary>
     private void UpdateCameraSettings()
     {
-        Debug.Log("Screen Dimension : " + Screen.width + " " + Screen.height);
+        //Debug.Log("Screen Dimension : " + Screen.width + " " + Screen.height);
         /* Dertemine wich dimension is reaching the border */
         int width = m_blocksLayer[0].Length;
         int height = m_blocksLayer.Length;
         //Debug.Log("Sizes : " + width + " " + height);
         float aspectRatio = (float)Screen.width / (float)Screen.height;
-        Debug.Log("Aspect ratio : " + aspectRatio);
+        //Debug.Log("Aspect ratio : " + aspectRatio);
 
         float widthRatio = width / aspectRatio;
         float heightRatio = height;
-        Debug.Log("Ratios : " + widthRatio + " " + heightRatio);
+        //Debug.Log("Ratios : " + widthRatio + " " + heightRatio);
         if (widthRatio > heightRatio)
         {
-            Debug.Log("Width is limiting");
+            //Debug.Log("Width is limiting");
             mainCamera.orthographicSize = width / aspectRatio / 2;
-            Debug.Log("New size is "+ widthRatio);
+            //Debug.Log("New size is "+ widthRatio);
             m_TileSize = Screen.width / width;
             m_XStartOffset = 0;
             m_YStartOffset = (Screen.height - (height * m_TileSize)) / 2;
         }
         else
         {
-            Debug.Log("Height is limiting");
+            //Debug.Log("Height is limiting");
             mainCamera.orthographicSize = height / 2;
             m_TileSize = Screen.height / height;
             m_YStartOffset = 0;
             m_XStartOffset = (Screen.width - (width* m_TileSize)) / 2;
         }
-        Debug.Log("New tile size is : " + m_TileSize);
+        //Debug.Log("New tile size is : " + m_TileSize);
 
         mainCamera.transform.position = new Vector3(width / 2.0f, -height / 2.0f, mainCamera.transform.position.z);
     }
@@ -263,6 +334,7 @@ public class GameModel : MonoBehaviour
     /// <param name="loadLevelObject"></param>
     public void LoadLevel(JSONArray blocks, JSONArray players, JSONArray objects, string levelName)
     {
+        LockSceneInputs();
         m_LevelName = levelName;
         if (blocks.Count > 0)
         {
@@ -280,7 +352,6 @@ public class GameModel : MonoBehaviour
         }
         needsFullRedraw = true;
         gameWon = false;
-        virtualDPad.SetActive(true);
         winMessageContainer.SetActive(false);
     }
 
@@ -291,11 +362,31 @@ public class GameModel : MonoBehaviour
     /// <param name="id"></param>
     /// <param name="xPos"></param>
     /// <param name="yPos"></param>
-    public void MovePlayer(int id, int xPos, int yPos)
+    public void MovePlayer(int id, int xPos, int yPos, string directionFacing)
     {
-        m_players[id].AddDestination(xPos, -yPos);
+        int facing = 0;
+        switch (directionFacing)
+        {
+            case "up":
+                facing = UP;
+                break;
+            case "down":
+                facing = DOWN;
+                break;
+            case "left":
+                facing = LEFT;
+                break;
+            case "right":
+                facing = RIGHT;
+                break;
+        }
+        m_players[id].AddDestination(xPos, -yPos, facing);
     }
 
+    /// <summary>
+    /// Updates the object matrix according to the JSON array given in argument
+    /// </summary>
+    /// <param name="changes"></param>
     public void UpdateObjects(JSONArray changes)
     {
         if (changes == null) return;
@@ -308,6 +399,12 @@ public class GameModel : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Give the x and y of the tile clicked on according to the x and y postion of the pixel given in parameter
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public Vector2 PixelPosToTilePos(int x,int y)
     {
         int width = m_blocksLayer[0].Length;
@@ -326,11 +423,21 @@ public class GameModel : MonoBehaviour
         return new Vector2(tileX, tileY);
     }
 
+    /// <summary>
+    /// Adds a ping wich will be instantiated in the next update loop
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
     public void CreatePing(int x, int y)
     {
         m_PingToInstantiate.Add(new Vector2(x, y));
     }
 
+    /// <summary>
+    /// Sets the user's player facing direction
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
     public void SetPlayerFacing(int x,int y)
     {
         m_players[GameLobbyData.PlayerId].SetFacing(x, y);

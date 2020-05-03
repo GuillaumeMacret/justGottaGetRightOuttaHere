@@ -57,4 +57,9 @@ public class MessageBuilders
     {
         return "{\"Action\":\"sendPing\",\"PosX\":" + x + ",\"PosY\":" + y + "}";
     }
+
+    public static string BuildRdyMessage()
+    {
+        return "{\"Action\":\"noticeReady\"}";
+    }
 }

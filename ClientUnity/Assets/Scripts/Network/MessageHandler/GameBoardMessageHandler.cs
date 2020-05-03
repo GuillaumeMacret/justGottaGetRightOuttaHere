@@ -26,14 +26,14 @@ public class GameBoardMessageHandler : MonoBehaviour, IMessageHandler
 				break;
             case "move":
                 var moveJson = JSON.Parse(JSONString);
-                model.MovePlayer(moveJson["Player"], moveJson["PosX"], moveJson["PosY"]);
+                model.MovePlayer(moveJson["Player"], moveJson["PosX"], moveJson["PosY"], moveJson["Direction"]);
                 model.UpdateObjects(moveJson["Changes"].AsArray);
                 break;
             case "action":
                 var updateLevelJson = JSON.Parse(JSONString);
                 JSONArray updates = updateLevelJson["Changes"].AsArray;
                 model.UpdateObjects(updates);
-                model.MovePlayer(updateLevelJson["Player"], updateLevelJson["PosX"], updateLevelJson["PosY"]);
+                model.MovePlayer(updateLevelJson["Player"], updateLevelJson["PosX"], updateLevelJson["PosY"], updateLevelJson["Direction"]);
                 break;
             case "win":
                 model.gameWon = true;
@@ -41,6 +41,9 @@ public class GameBoardMessageHandler : MonoBehaviour, IMessageHandler
             case "sendPing":
                 var pingJson = JSON.Parse(JSONString);
                 model.CreatePing(pingJson["PosX"], pingJson["PosY"]);
+                break;
+            case "gameReady":
+                model.CanUnlockScene = true;
                 break;
             default:
                 Debug.LogError("Can't handle this action : " + action.Action);

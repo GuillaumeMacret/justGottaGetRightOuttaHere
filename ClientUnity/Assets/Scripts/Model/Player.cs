@@ -16,6 +16,8 @@ public class Player : MonoBehaviour
     private SpriteRenderer m_SpriteRenderer;
 
     private Vector3 lastDirection;
+    private int m_facing;
+    private const int UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4;
     public List<Vector3> targetPositions;
 
     private void Awake()
@@ -29,10 +31,15 @@ public class Player : MonoBehaviour
     {
         Debug.Log("Player " + id + " Moving toward " + targetPositions[0]);
         float step = speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, targetPositions[0], step);
 
-        if(transform.position == targetPositions[0])
+        Vector3 movementVector = new Vector3(targetPositions[0].x, targetPositions[0].y, 0);
+        transform.position = Vector3.MoveTowards(transform.position, movementVector, step);
+        m_facing = (int) targetPositions[0].z;
+
+        if (transform.position.x == targetPositions[0].x && transform.position.y == targetPositions[0].y)
         {
+            m_facing = (int)targetPositions[0].z;
+            RefreshFacing();
             targetPositions.RemoveAt(0);
         }
     }
@@ -50,17 +57,28 @@ public class Player : MonoBehaviour
         speed = 10;
         if (targetPositions.Count > 0)
         {
-            //Try to prevent pivot when bumping into a wall
-            if (transform.position == targetPositions[0])
+            if (transform.position.x == targetPositions[0].x && transform.position.y == targetPositions[0].y)
             {
+                m_facing = (int)targetPositions[0].z;
+                RefreshFacing();
                 targetPositions.RemoveAt(0);
                 return;
             }
             else
             {
-
-                Vector3 direction = targetPositions[0] - transform.position;
-                SetFacing((int)direction.x, (int)direction.y);
+                Vector3 from = new Vector3(transform.position.x, transform.position.y, 0);
+                Vector3 to = new Vector3(targetPositions[0].x, targetPositions[0].y, 0);
+                Vector3 direction = to - from;
+                if (Mathf.Abs(direction.x) > .5f)
+                {
+                    m_animator.SetFloat("MoveX", direction.x);
+                    m_animator.SetFloat("MoveY", 0);
+                }
+                else if(Mathf.Abs(direction.y) > .5f)
+                {
+                    m_animator.SetFloat("MoveX", 0);
+                    m_animator.SetFloat("MoveY", direction.y);
+                }
                 if (direction.magnitude > 3)
                 {
                     Debug.Log("Big movement detected, going sneaky mode");
@@ -75,7 +93,6 @@ public class Player : MonoBehaviour
                     m_audioSource.pitch = Random.Range(pitchRangeDown, pitchRangeUp);
                     m_audioSource.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Count)]);
                 }
-                lastDirection = direction;
             }
         }
         else
@@ -86,12 +103,34 @@ public class Player : MonoBehaviour
         m_animator.SetFloat("MoveX", lastDirection.x);
         m_animator.SetFloat("MoveY", lastDirection.y);
         */
+        RefreshFacing();
 
     }
 
-    public void AddDestination(int xPos, int yPos)
+    private void RefreshFacing()
     {
-        targetPositions.Add(new Vector3(xPos, yPos, 0));
+        switch (m_facing)
+        {
+            case 0:
+                break;
+            case UP:
+                SetFacing(0, 1);
+                break;
+            case DOWN:
+                SetFacing(0, -1);
+                break;
+            case LEFT:
+                SetFacing(-1, 0);
+                break;
+            case RIGHT:
+                SetFacing(1, 0);
+                break;
+        }
+    }
+
+    public void AddDestination(int xPos, int yPos, int facing)
+    {
+        targetPositions.Add(new Vector3(xPos, yPos, facing));
     }
 
     public void SetAnimatorController(RuntimeAnimatorController anim)

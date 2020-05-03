@@ -107,13 +107,6 @@ public class GameModel : MonoBehaviour
     private void Start() 
 	{
         LoadLevel(GameLobbyData.BlocksJson, GameLobbyData.PlayersJson, GameLobbyData.ObjectsJson, GameLobbyData.LevelName);
-        
-        if (m_SceneWasLocked && EverythingHasBeenInstantiated())
-        {
-            string messageToSend = MessageBuilders.BuildRdyMessage();
-            TCPClient.SendMessage(messageToSend);
-            m_SceneWasLocked = false;
-        }
     }
 
     /// <summary>
@@ -126,6 +119,13 @@ public class GameModel : MonoBehaviour
     }
     private void Update()
     {
+        //Debug.Log("Scene lock : " + m_SceneWasLocked + " instanciation : " + EverythingHasBeenInstantiated());
+        if (m_SceneWasLocked && EverythingHasBeenInstantiated())
+        {
+            string messageToSend = MessageBuilders.BuildRdyMessage();
+            TCPClient.SendMessage(messageToSend);
+            m_SceneWasLocked = false;
+        }
         if (CanUnlockScene)
         {
             UnlockSceneInputs();

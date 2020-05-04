@@ -98,6 +98,7 @@ bool Game::checkOnObject(int tileValue)
 
 std::string Game::movePlayer(int playerID, std::string direction)
 {
+    _mapMutex.lock();
     Player *p = _players[playerID];
     p->setOnLock(false);
     int newPosX = p->getPosX(), newPosY = p->getPosY();
@@ -154,25 +155,26 @@ std::string Game::movePlayer(int playerID, std::string direction)
     }
     p->setLastDirection(direction);
 
-    for (Point p : _lockPosition)
+    for (Point lock : _lockPosition)
     {
-        if (newPosX == p.posX && newPosY == p.posY)
+        if (p->getPosX() == lock.posX && p->getPosY() == lock.posY)
         {
             _players[playerID]->setOnLock(true);
-            _finished = true;
+            bool allOnLock = true;
 
             for (Player *pl : _players)
             {
                 if (!pl->isOnLock())
                 {
-                    _finished = false;
+                    allOnLock = false;
                     break;
                 }
             }
+            _finished = allOnLock;
             break;
         }
     }
-
+    _mapMutex.unlock();
     return changes;
 }
 
@@ -498,6 +500,7 @@ std::string Game::doActionPlayer(int playerID)
     if (posX >= 0 && posX < _width && posY >= 0 && posY < _height)
     {
         std::string actionString = "";
+        _mapMutex.lock();
         switch (p->getRole())
         {
         // Executes the main action of the player. If it is not possible,
@@ -542,6 +545,7 @@ std::string Game::doActionPlayer(int playerID)
         }
         res += actionString;
         checkTileTargetedByPlayer(p->getPosX(), p->getPosY(), playerID, checkString);
+        _mapMutex.unlock();
         if (checkString.size() > 0)
         {
             if (actionString.size() > 0)
